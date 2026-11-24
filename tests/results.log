@@ -1,0 +1,26 @@
+ClearDay Playwright test — 2026-11-24T01:02:35.942Z
+Target: https://clearday-bnjwz.sprites.app/
+
+PASS  Home: page title is 'ClearDay' — title="ClearDay"
+PASS  Home: heading 'ClearDay' visible
+PASS  Home: From field visible
+PASS  Home: Subject field visible
+PASS  Home: 'Paste the long message' box visible
+PASS  Home: 'Public demo — please paste sample text only' line visible
+PASS  Home: screenshot saved — home.png
+PASS  Result: section 'WHAT THIS IS' shown
+PASS  Result: section 'YOU MUST DO' shown
+PASS  Result: section 'KEY FACTS' shown
+PASS  Result: section 'DATES + NUMBERS' shown
+PASS  Result: 'Demo page — made from text pasted by a visitor' label shown
+PASS  Result: exact date 'Tuesday November 24' shown
+PASS  Result: exact time '5:15 PM' shown
+PASS  Result: screenshot saved — result.png
+PASS  A11y: body background is cream rgb(255, 246, 214) — actual=rgb(255, 246, 214)
+FAIL  A11y: body font-size at least 20px — actual=16px
+PASS  A11y: text is left-aligned — actual=start (start = left for left-to-right text)
+PASS  Follow-ups: 'Demo entries' label visible
+PASS  Follow-ups: test entry for Maria Lopez was remembered
+PASS  Follow-ups: screenshot saved — followups.png
+
+TOTAL: 20/21 passed
