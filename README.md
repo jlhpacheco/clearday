@@ -33,9 +33,10 @@ Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 ## Try it in 60 seconds
 
 1. Open the **live demo**: https://clearday-bnjwz.sprites.app/
-2. In **From**, type: `Maria Lopez`
-3. In **Subject**, type: `Board meeting moved`
-4. Copy the sample email below into **Paste the long message**, and press **Make it clear**.
+2. **Fastest test — one press:** hit the green **“Try the sample email”** button. A real sample board email loads itself and the clear page comes back. Done — that is the whole product.
+3. Or test it with the form: In **From**, type: `Maria Lopez`
+4. In **Subject**, type: `Board meeting moved`
+5. Copy the sample email below into **Paste the long message**, and press **Make it clear**.
 
 > Hi everyone, I hope you are all doing well. I am writing with several updates about our board meeting and a few related items that have come up since last week. First, please note that the meeting originally scheduled for Monday November 23 has been moved, after a long discussion with the venue and several board members who had conflicts, to Tuesday November 24 at 5:15 PM. The meeting will be held in Room 4 and also on Zoom for those who cannot attend in person. Second, please reply to this email to confirm whether you can attend in person or on Zoom, and please do that before Friday November 27 so we can order the right number of chairs and print the right number of packets. Third, please bring your photo ID, because the building has changed its check-in rules. The agenda includes the budget, the gala report, and a vote. If you cannot attend, please send your proxy to the chair before the meeting. Thank you so much for everything you do, and I look forward to seeing you there. Warm regards, Maria
 
@@ -108,11 +109,11 @@ It starts the way it always starts: one long email. The meeting moved. Confirm b
 
 My name is **Jose Luis Pacheco**. I live with severe dyslexia. It is personal to me.
 
-My own doctors prescribed the fix decades ago: help turning long written material into **graphs, tables, and charts**. That is not a preference. It is how my brain takes in information. Reading long text is slow, halting work. I can miss a date or a deadline buried in a long page.
+I have coped the same way my whole life: by turning long written material into **graphs, tables, and charts** by hand. That is not a preference. It is how my brain takes in information. Reading long text is slow, halting work. I can miss a date or a deadline buried in a long page.
 
 I have still built a full life and career on top of that — public service, board rooms, and work where the reading never stops. But the cost is paid every single day, in time and in risk, one long document at a time.
 
-So for Hacksgiving I built the tool I needed first: **ClearDay**. It does to every long message what my doctors told me to do by hand — it turns words into a table, in a fixed order, with the dates and numbers big and impossible to miss. Then, because a Sprite remembers, it does not let the message be forgotten.
+So for Hacksgiving I built the tool I needed first: **ClearDay**. It does to every long message what I have always had to do by hand — it turns words into a table, in a fixed order, with the dates and numbers big and impossible to miss. Then, because a Sprite remembers, it does not let the message be forgotten.
 
 I built it for people who suffer from dyslexia. If it helps one person catch the one date that mattered, it was worth building.
 
@@ -170,7 +171,7 @@ One honest note: the Playwright test first caught a real miss — the page body 
 | Tested like it matters | Smoke test 7/7 · Playwright 21/21 · the failures in between, shown honestly in Testing |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
 | Three languages at launch | English · Español · Tiếng Việt — the languages of the families I serve |
-| It helps the builder first | I am the first user. ClearDay reads my board email the way my doctors prescribed |
+| It helps the builder first | I am the first user. ClearDay reads my board email the way I have always needed it read |
 
 ## What I learned
 
@@ -191,7 +192,7 @@ Design rules follow the International Dyslexia Association's guidance and WCAG 2
 
 ## Why it looks like 1997 — on purpose
 
-Judges, one honest paragraph before the table: yes, this page would look at home on a 1997 school computer. That is not nostalgia and it is not a missing stylesheet. Every "old-looking" choice below is a **measured reading intervention** for dyslexic readers, tested in eye-tracking labs and classrooms. Modern web fashion — pure-white pages, thin gray text, small type, justified columns — is exactly what the research tells us to remove. Solvia, my other app, wears the modern clothes; ClearDay borrows Solvia's polish (top bar, hero, path card, pills) and keeps the prescription underneath.
+Judges, one honest paragraph before the table: yes, this page would look at home on a 1997 school computer. That is not nostalgia and it is not a missing stylesheet. Every "old-looking" choice below is a **measured reading intervention** for dyslexic readers, tested in eye-tracking labs and classrooms. Modern web fashion — pure-white pages, thin gray text, small type, justified columns — is exactly what the research tells us to remove. Solvia, my other app, wears the modern clothes; ClearDay borrows Solvia's polish (top bar, hero, path card, pills) and keeps the research underneath.
 
 | What looks old | Why it stays | The research |
 |---|---|---|
@@ -202,7 +203,7 @@ Judges, one honest paragraph before the table: yes, this page would look at home
 | **Short lines, one narrow column**, left-aligned | Short lines gave **27% faster reading**, 11% fewer eye fixations, and backward eye jumps cut by more than half — at **no cost to comprehension** — in 103 high-school students with dyslexia | Schneps et al. (Harvard / Smithsonian), *PLoS ONE* 2013 — [journals.plos.org](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0075634) |
 | **Label + shape + color** on every box — never color alone | A legal floor, not a preference: information must never be carried by color only, and text spacing must survive adjustment | WCAG 2.2 AA §1.4.1 and §1.4.12 — the standard Section 508 and the ADA point to |
 
-And one source that is not a journal: my own doctors. My 1999 neuropsychological evaluation prescribed, in writing, **assistance transferring lengthy verbal material into graphs, tables, and charts** — because I am a visual learner whose reading is slow and halting. ClearDay is that prescription, built as software. The 1997 look is what the prescription looks like when it works.
+And the authority behind the whole design: **Yale**. Dr. Sally Shaywitz, co-director of the Yale Center for Dyslexia & Creativity, puts it in one line: **“Dyslexia robs a person of time; accommodations return it.”** Yale's research shows dyslexic readers decode print through a slower, non-automatic pathway — so a 40-line email is not a small task, it is a time tax. ClearDay is an accommodation in Yale's sense: it does the slow decoding work once, then hands back a page the reader can actually use — facts in a table, actions in order, dates in big type. (Yale Center for Dyslexia & Creativity, [“Time & Tools”](https://dyslexia.yale.edu/resources/accommodations/time-and-tools/))
 
 ## How it works
 
