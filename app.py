@@ -9,7 +9,7 @@ import json, os, html
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 from clearday import transform
-from render import render_page, render_form
+from render import render_page, render_form, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 
@@ -41,8 +41,12 @@ class H(BaseHTTPRequestHandler):
             self._send(render_form(f"<h2 style='font-size:28px;'>Connector check</h2><div style='font-size:22px;padding:10px;'>{msg}</div>"))
         elif self.path.startswith("/followups"):
             items = load_memory()
-            rows = "".join(f"<div style='font-size:22px;padding:10px;'>&#9679; {html.escape(str(i['what']))} — no reply yet — I will nudge {html.escape(str(i['sender']))}</div>" for i in items) or "<div style='font-size:22px;padding:10px;'>No follow-ups waiting.</div>"
-            self._send(render_form(f"<h2 style='font-size:28px;'>Follow-ups I remember</h2><p class='big'><b>Demo entries — made from sample text pasted by visitors.</b></p>{rows}"))
+            def row(i):
+                s = S(i.get("lang", "en"))
+                return f"<div style='font-size:22px;padding:10px;'>&#9679; {html.escape(str(i['what']))} — {s['nudge']} {html.escape(str(i['sender']))}</div>"
+            en = S("en")
+            rows = "".join(row(i) for i in items) or f"<div style='font-size:22px;padding:10px;'>{en['no_followups']}</div>"
+            self._send(render_form(f"<h2 style='font-size:28px;'>{en['followups_title']}</h2><p class='big'><b>{en['demo_entries']}</b></p>{rows}"))
         else:
             self._send(render_form())
     def do_POST(self):
@@ -51,10 +55,13 @@ class H(BaseHTTPRequestHandler):
             self._send(render_form("<p class='big'><b>That message is too long for the demo. Please paste a shorter sample.</b></p>")); return
         data = parse_qs(self.rfile.read(n).decode())
         text = (data.get("text") or [""])[0]; sender = (data.get("sender") or [""])[0]; subject = (data.get("subject") or [""])[0]
+        lang = (data.get("lang") or ["en"])[0]
+        if lang not in ("en", "es", "vi"):
+            lang = "en"
         if not text.strip():
-            self._send(render_form("<p style='font-size:22px;'><b>Paste a message first.</b></p>")); return
-        page = transform(text, sender, subject)
-        items = load_memory(); items.append({"what": page["what"], "sender": page["sender"]}); save_memory(items[-20:])
+            self._send(render_form("<p style='font-size:22px;'><b>Paste a message first.</b></p>", lang)); return
+        page = transform(text, sender, subject, lang)
+        items = load_memory(); items.append({"what": page["what"], "sender": page["sender"], "lang": page.get("lang", lang)}); save_memory(items[-20:])
         self._send(render_page(page))
 
 if __name__ == "__main__":
