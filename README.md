@@ -14,7 +14,17 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
+**Tested:** Smoke test **6/6** · Playwright browser test **21/21** · 1 real bug caught by the tests and fixed (see Testing).
+
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
+
+## How ClearDay meets the Hacksgiving rules
+
+| Rule | Proof |
+|---|---|
+| Runs on a Fly.io Sprite | The live demo above *is* the Sprite — it sleeps when idle and wakes on your click |
+| Uses at least one Sprites connector | **GitHub** — live proof at [/connected](https://clearday-bnjwz.sprites.app/connected); this repo itself was created through that connector, from inside the Sprite |
+| Built during Hacksgiving week | Built and submitted **Monday, November 23, 2026** — the first day |
 
 ## Try it in 60 seconds
 
@@ -26,6 +36,20 @@ Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 > Hi everyone, I hope you are all doing well. I am writing with several updates about our board meeting and a few related items that have come up since last week. First, please note that the meeting originally scheduled for Monday November 23 has been moved, after a long discussion with the venue and several board members who had conflicts, to Tuesday November 24 at 5:15 PM. The meeting will be held in Room 4 and also on Zoom for those who cannot attend in person. Second, please reply to this email to confirm whether you can attend in person or on Zoom, and please do that before Friday November 27 so we can order the right number of chairs and print the right number of packets. Third, please bring your photo ID, because the building has changed its check-in rules. The agenda includes the budget, the gala report, and a vote. If you cannot attend, please send your proxy to the chair before the meeting. Thank you so much for everything you do, and I look forward to seeing you there. Warm regards, Maria
 
 What comes out: one clear page — the meeting moved to **Tuesday November 24, 5:15 PM**, 3 things to do, the facts in a table, and every date in big type. Then check **Follow-ups**: ClearDay remembered it.
+
+## See it — the whole trip, in pictures
+
+**1. The form.** One box. Paste the long message.
+
+![ClearDay form](tests/home.png)
+
+**2. The clear page.** Same order every time: what this is, what you must do, the facts, the dates in big type.
+
+![ClearDay clear page](tests/result.png)
+
+**3. It remembers.** The follow-up list — what is still waiting for a reply.
+
+![ClearDay follow-ups](tests/followups.png)
 
 ---
 
@@ -112,6 +136,15 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 ---
 
+## Testing — checked the way a judge will use it
+
+| Test | What it proves | Result |
+|---|---|---|
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · connector check names the GitHub user · pasted code stays escaped · giant pastes refused · follow-ups labeled | **6 of 6 PASS** — log in `tests/smoke-test-2026-11-23.log` |
+| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned | **21 of 21 PASS** — script, log, and screenshots in `tests/` |
+
+One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
+
 ## How ClearDay is designed for dyslexic readers
 
 Design rules follow the International Dyslexia Association's guidance and WCAG 2.2 AA / ADA / Section 508 practice:
@@ -125,6 +158,22 @@ Design rules follow the International Dyslexia Association's guidance and WCAG 2
 - The same page order, every time — no surprises to re-learn
 
 ## How it works
+
+```
+  PASTE A LONG MESSAGE
+          |
+          v
+  +------------------------------+
+  |  SPRITE: clearday            |
+  |  transform -> clear page     |
+  |  memory.json -> follow-ups   |
+  +------------------------------+
+          |                \
+          v                 v
+  ONE CLEAR PAGE      GITHUB CONNECTOR
+  (same order,        (this repo was made
+   every time)         through it)
+```
 
 | Step | What happens |
 |---|---|
@@ -157,3 +206,5 @@ Optional: set `CLEARDAY_MODEL_URL` to a Sprites Connector gateway URL for a mode
 ## Submission (Hacksgiving)
 
 ClearDay — a persistent accessibility agent on a Fly Sprite that turns long, hard-to-read messages into one clear page for people with dyslexia, then remembers and follows up. Built by Jose Luis Pacheco, who lives with severe dyslexia, during Hacksgiving week.
+
+**What's next:** real readers. The next step is putting ClearDay in front of dyslexic readers in my own communities — my college district and the Latinas Contra Cancer network — and letting their feedback set the next version. A tool for readers should be judged by readers.
