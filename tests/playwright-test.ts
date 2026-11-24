@@ -136,6 +136,24 @@ async function main() {
   await page.screenshot({ path: path.join(HERE, "home.png"), fullPage: true });
   check("Home: screenshot saved", fs.existsSync(path.join(HERE, "home.png")), "home.png");
 
+  // ---------- Step 1b: the green sample button path (added Nov 24) ----------
+  // The button must FILL the form where the reader can see it - never skip it.
+  await page.click("a.btn");
+  await page.waitForSelector('input[name="sender"][value="Maria Lopez"]', { timeout: 30_000 });
+  const sFrom = await page.inputValue('input[name="sender"]');
+  check("Sample button: From filled with 'Maria Lopez'", sFrom === "Maria Lopez", `from="${sFrom}"`);
+  const sSubj = await page.inputValue('input[name="subject"]');
+  check("Sample button: Subject filled", sSubj === "Board meeting moved", `subject="${sSubj}"`);
+  const sBody = await page.inputValue('textarea[name="text"]');
+  check("Sample button: message body filled in the box", sBody.includes("Room 4") && sBody.length > 100, `body length=${sBody.length}`);
+  const filled = await bodyText(page);
+  check("Sample button: 'Sample loaded in the form' note shown", filled.includes("Sample loaded in the form"));
+  await page.click('button[type="submit"]');
+  await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
+  const sRes = await bodyText(page);
+  check("Sample button: result page shows exact date 'Tuesday November 24'", sRes.includes("Tuesday November 24"));
+  await page.goto(BASE + "/", { waitUntil: "load", timeout: 90_000 });
+
   // ---------- Step 2: submit the sample email ----------
   await page.fill('input[name="sender"]', "Maria Lopez");
   await page.fill('input[name="subject"]', "Board meeting moved");
