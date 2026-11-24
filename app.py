@@ -5,7 +5,7 @@ Connector use (Hacksgiving rule): on a Sprite, set CLEARDAY_MODEL_URL to a
 Sprites Connector gateway URL (Anthropic / OpenRouter) and/or receive mail
 via the AgentMail connector inbox and forward it to POST /inbox.
 """
-import json, os, html, http.client, smtplib, urllib.request
+import json, os, html, http.client, smtplib, urllib.request, threading
 from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
@@ -14,6 +14,7 @@ from render import render_page, render_form, render_inbox, render_reply_sent, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
+SEED_LOCK = threading.Lock()
 
 def mp_api(path):
     req = urllib.request.Request(MP + path, headers={"User-Agent": "ClearDay/1.0"})
@@ -54,7 +55,12 @@ class H(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
     def _proxy_mailpit(self):
-        """Pass /mailpit* through to Mailpit on localhost - its real UI, unmodified."""
+        """Pass /mailpit* through to Mailpit on localhost - its real UI, unmodified.
+        READ-ONLY for the public: the demo inbox can be looked at, never written
+        to or emptied through this door (red-team finding, Nov 24)."""
+        if self.command in ("POST", "PUT", "DELETE", "PATCH"):
+            self._send("<html><body style='font-family:Arial;font-size:21px'>This demo inbox is read-only. To try sending, use ClearDay's own Inbox page.</body></html>", 403)
+            return
         if (self.headers.get("Upgrade") or "").lower() == "websocket":
             self._send("<html><body>Live updates are off in this demo view. Refresh to see new mail.</body></html>", 501)
             return
@@ -127,11 +133,14 @@ class H(BaseHTTPRequestHandler):
                 lang = "en"
             msgs, up = mp_messages()
             if up and not msgs:
-                try:
-                    mp_seed()
-                    msgs, up = mp_messages()
-                except Exception:
-                    pass
+                with SEED_LOCK:
+                    msgs, up = mp_messages()  # re-check inside the lock (no double seed)
+                    if up and not msgs:
+                        try:
+                            mp_seed()
+                            msgs, up = mp_messages()
+                        except Exception:
+                            pass
             self._send(render_inbox(msgs, lang, down=not up))
         elif self.path.startswith("/sample"):
             q = parse_qs(urlparse(self.path).query)
@@ -172,6 +181,15 @@ class H(BaseHTTPRequestHandler):
             self._send(render_form("", lang, {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": text}))
         else:
             self._send(render_form())
+    def _other_method(self):
+        if self.path.startswith("/mailpit"):
+            self._proxy_mailpit()  # its guard answers 403 for writes
+        else:
+            self._send("Not found", 404)
+    do_DELETE = _other_method
+    do_PUT = _other_method
+    do_PATCH = _other_method
+
     def do_POST(self):
         if self.path.startswith("/mailpit"):
             self._proxy_mailpit()
