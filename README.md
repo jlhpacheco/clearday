@@ -29,6 +29,20 @@ What comes out: one clear page — the meeting moved to **Tuesday November 24, 5
 
 ---
 
+## Three languages — built for the communities I serve
+
+ClearDay works in **English, Español, and Tiếng Việt**. Pick the language on the form. The whole clear page comes back in that language — the labels, the steps, the fact table — and the date finder reads dates the way each language writes them:
+
+| Language | A date, as written | What ClearDay finds |
+|---|---|---|
+| English | Tuesday November 24, 5:15 PM | Tuesday November 24 · 5:15 PM |
+| Español | martes 24 de noviembre, 5:15 p. m. | martes 24 de noviembre · 5:15 p. m. |
+| Tiếng Việt | ngày 24 tháng 11, 17 giờ 15 | ngày 24 tháng 11 · 17 giờ 15 |
+
+Why these three: they are the languages of the families I serve in the South Bay — at my college district, in labor, and at Latinas Contra Cancer. A clear page only helps if it arrives in the language you dream in. Every translation was checked for plain, everyday wording — short phrases, no fancy words — because that is the rule for all three languages.
+
+---
+
 ## Why this matters: dyslexia, in numbers
 
 Every number below was checked on the source's own page. Sources are US institutions.
