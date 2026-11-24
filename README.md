@@ -33,7 +33,7 @@ Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 ## Try it in 60 seconds
 
 1. Open the **live demo**: https://clearday-bnjwz.sprites.app/
-2. **Fastest test — one press:** hit the green **“Try the sample email”** button. A real sample board email loads itself and the clear page comes back. Done — that is the whole product.
+2. **Fastest test:** hit the green **“Load the sample email”** button. The form fills itself with a real sample board email — From, Subject, and the whole message, where you can read it. Then press **Make it clear**. Two presses, nothing hidden — that is the whole product.
 3. Or test it with the form: In **From**, type: `Maria Lopez`
 4. In **Subject**, type: `Board meeting moved`
 5. Copy the sample email below into **Paste the long message**, and press **Make it clear**.
