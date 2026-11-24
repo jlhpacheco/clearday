@@ -26,6 +26,15 @@ STRINGS = {
            "path_title": "Your path to a clear page", "path_sub": "Three steps. No guesswork.",
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
+           "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
+           "trust1": "Dates copied exactly — never invented", "trust2": "Same order, every time",
+           "trust3": "Cream page + big type — by prescription, not fashion",
+           "why_title": "Why the cream page? For judges",
+           "why1": "Cream, not white — warm backgrounds tested best for dyslexic readers; pure white glares (Rello & Baeza-Yates)",
+           "why2": "Arial, bold, no italics — eye-tracking, 48 dyslexic readers: italics were the slowest (ACM ASSETS 2013)",
+           "why3": "Wide letter spacing — reading errors cut in half in 74 dyslexic children (PNAS 2012)",
+           "why4": "Short lines, one column — 27% faster reading, backward eye jumps cut by more than half (Harvard–Smithsonian, 2013)",
+           "why5": "Color never works alone — every box has a big label + a shape (WCAG 2.2 AA)",
            "another": "Make another clear", "followups": "Follow-ups",
            "followups_title": "Follow-ups I remember",
            "demo_entries": "Demo entries — made from sample text pasted by visitors.",
@@ -43,6 +52,15 @@ STRINGS = {
            "path_title": "Tu camino a una página clara", "path_sub": "Tres pasos. Sin adivinar.",
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
+           "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
+           "trust1": "Fechas copiadas exactas — nunca inventadas", "trust2": "El mismo orden, siempre",
+           "trust3": "Página crema y letra grande — por prescripción, no por moda",
+           "why_title": "¿Por qué la página crema? Para los jueces",
+           "why1": "Crema, no blanco — los fondos cálidos fueron los mejores para lectores con dislexia; el blanco puro deslumbra (Rello y Baeza-Yates)",
+           "why2": "Arial, negrita, sin cursiva — seguimiento ocular en 48 lectores con dislexia: la cursiva fue lo más lento (ACM ASSETS 2013)",
+           "why3": "Espaciado amplio entre letras — los errores de lectura se redujeron a la mitad en 74 niños con dislexia (PNAS 2012)",
+           "why4": "Líneas cortas, una columna — lectura 27% más rápida y menos de la mitad de saltos hacia atrás (Harvard–Smithsonian, 2013)",
+           "why5": "El color nunca actúa solo — cada caja tiene una etiqueta grande y una forma (WCAG 2.2 AA)",
            "another": "Hacer otra página clara", "followups": "Seguimientos",
            "followups_title": "Seguimientos que recuerdo",
            "demo_entries": "Entradas de demostración: creadas con texto de ejemplo pegado por visitantes.",
@@ -60,6 +78,15 @@ STRINGS = {
            "path_title": "Đường tới một trang rõ ràng", "path_sub": "Ba bước. Không phải đoán.",
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
+           "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
+           "trust1": "Ngày tháng sao chép chính xác — không bao giờ bịa ra", "trust2": "Cùng thứ tự, mọi lần",
+           "trust3": "Trang màu kem + chữ lớn — theo chỉ định, không theo thời trang",
+           "why_title": "Vì sao trang màu kem? Dành cho giám khảo",
+           "why1": "Màu kem, không phải trắng — nền ấm cho kết quả tốt nhất với người khó đọc; trắng tinh gây chói (Rello & Baeza-Yates)",
+           "why2": "Arial, chữ đậm, không nghiêng — theo dõi mắt 48 người khó đọc: chữ nghiêng chậm nhất (ACM ASSETS 2013)",
+           "why3": "Khoảng cách chữ rộng — lỗi đọc giảm một nửa ở 74 trẻ khó đọc (PNAS 2012)",
+           "why4": "Dòng ngắn, một cột — đọc nhanh hơn 27%, số lần mắt nhảy ngược giảm hơn một nửa (Harvard–Smithsonian, 2013)",
+           "why5": "Màu sắc không bao giờ đứng một mình — mỗi hộp có nhãn lớn + hình dạng (WCAG 2.2 AA)",
            "another": "Tạo một trang rõ ràng khác", "followups": "Việc cần theo dõi",
            "followups_title": "Những việc tôi ghi nhớ",
            "demo_entries": "Mục demo — được tạo từ văn bản mẫu do khách truy cập dán vào.",
@@ -106,26 +133,33 @@ font-weight:bold;background:#FFFDF4;cursor:pointer;margin-right:8px;font-size:20
 .langrow label:has(input:checked){background:#123A7A;color:#FFF6D6}
 .langrow input{width:auto}
 a{color:#123A7A;font-weight:bold}
+.navrow{display:flex;gap:26px;flex-wrap:wrap;border-bottom:3px solid rgba(32,36,46,.15);padding:8px 0 12px;margin-bottom:6px}
+.navrow a{text-decoration:none;color:#20242E}
+.layout{display:block}
+.trust div{margin-top:8px}
+.why div{margin-top:10px}
+@media(min-width:920px){.wrap{max-width:1080px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}}
 """
 
 def _shell(inner):
     return f"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>ClearDay</title><style>{CSS}</style></head><body><div class='wrap'>{inner}</div></body></html>"
 
-def _topbar(right=""):
+def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
-<div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>"""
+<div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>
+<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
+
+def _why_card(s):
+    items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
+    return f"<div class='card why'><div class='cardtitle'>&#9670; {s['why_title']}</div>{items}</div>"
 
 def render_form(extra="", lang="en"):
     s = S(lang)
     checked = {code: ("checked" if code == lang else "") for code in STRINGS}
-    return _shell(f"""{_topbar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>")}
+    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+<div class='layout'><div>
 <div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
 <div class='big'>{s['hero_sub']}</div>
-<div class='card'><div class='cardtitle'>&#9632; {s['path_title']}</div>
-<div>{s['path_sub']}</div>
-<div class='step'><div class='num'>01</div><div><b>{s['step1']}</b></div></div>
-<div class='step'><div class='num'>02</div><div><b>{s['step2']}</b></div></div>
-<div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 {extra}
 <div class='card'><form method='post'>
 <p class='big'><b>{s['language']}</b></p>
@@ -138,6 +172,15 @@ def render_form(extra="", lang="en"):
 <p><label class='big'><b>{s['paste']}</b></label><textarea name='text' rows='10'></textarea></p>
 <p class='big'><b>{s['demo_warn']}</b></p>
 <button type='submit'>{s['button']}</button></form></div>
+{_why_card(s)}
+</div><div>
+<div class='card'><div class='cardtitle'>&#9632; {s['path_title']}</div>
+<div>{s['path_sub']}</div>
+<div class='step'><div class='num'>01</div><div><b>{s['step1']}</b></div></div>
+<div class='step'><div class='num'>02</div><div><b>{s['step2']}</b></div></div>
+<div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
+<div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
+</div></div>
 <p class='big'><a href='/followups'>{s['see_followups']}</a></p>""")
 
 def render_page(p):
@@ -152,7 +195,7 @@ def render_page(p):
         pill = f"<span class='pill pill-ai'>&#9679; {s['ai_live']}" + (f" &middot; {short_model}" if short_model else "") + "</span>"
     else:
         pill = f"<span class='pill'>&#9670; {s['ai_rules']}</span>"
-    return _shell(f"""{_topbar(pill)}
+    return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
 <div class='box blue'><span class='lbl'>&#9632; {s['what']}</span><div class='big'>{esc(p.get('what',''))}</div></div>
 <div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{actions}</div>
@@ -161,4 +204,5 @@ def render_page(p):
 {risk}
 <p class='big' style='margin-top:16px;'>{s['steps']}: {steps}</p>
 <p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
+{_why_card(s)}
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""")
