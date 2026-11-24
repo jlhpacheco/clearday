@@ -75,38 +75,99 @@ def heuristic_transform(text, sender="", subject="", lang="en"):
         "lang": lang,
     }
 
-def llm_transform(text, sender="", subject=""):
-    """Optional: use a Sprites Connector gateway model if configured.
+LANG_NAMES = {"en": "English", "es": "Spanish (Español)", "vi": "Vietnamese (Tiếng Việt)"}
+
+def _clean_str(v, max_words):
+    if not isinstance(v, str):
+        return ""
+    return " ".join(v.split()[:max_words]).strip()
+
+def _clean_str_list(v, max_items, max_words):
+    if not isinstance(v, list):
+        return []
+    out = []
+    for item in v:
+        s = _clean_str(item, max_words)
+        if s:
+            out.append(s)
+        if len(out) >= max_items:
+            break
+    return out
+
+def _clean_facts(v):
+    if not isinstance(v, dict):
+        return {}
+    out = {}
+    for k, val in v.items():
+        key = _clean_str(str(k), 3)
+        value = _clean_str(val, 10) if isinstance(val, str) else ""
+        if key and value:
+            out[key] = value
+        if len(out) >= 4:
+            break
+    return out
+
+def llm_transform(text, sender="", subject="", lang="en"):
+    """Optional model pass, through a Sprites Connector gateway (Together AI).
     Env: CLEARDAY_MODEL_URL (connector gateway base, OpenAI-compatible),
-         CLEARDAY_MODEL (model name). No key needed through the gateway
-         (dummy key) - the gateway attaches the stored credential.
-    Falls back to heuristic on any failure. Never blocks the demo.
+         CLEARDAY_MODEL (model name). No key inside the Sprite - the gateway
+         attaches the stored credential.
+    The model drafts WORDS ONLY (what / actions / facts / steps / risk).
+    It never supplies dates or numbers - the rules own those, always.
+    Returns a cleaned partial dict, or None on any failure. Never blocks.
     """
     base = os.environ.get("CLEARDAY_MODEL_URL")
     if not base:
         return None
+    if lang not in LANG_NAMES:
+        lang = "en"
     prompt = (
+        f"Write every value in {LANG_NAMES[lang]}. "
         "Turn this message into JSON only with keys: what (<=8 words), "
-        "actions (max 3, each <=7 words, verb first), facts (Who, What, Where), "
-        "dates_numbers (list, exact dates/times/money from text only, never invent), "
-        "steps (max 5, each <=6 words), risk (<=8 words or empty). "
+        "actions (max 3, each <=7 words, verb first), facts (object, max 4 short key/value pairs), "
+        "steps (max 5, each <=6 words), risk (<=8 words or empty string). "
+        "Do NOT output dates or numbers - they are handled separately. "
         f"Sender: {sender}\nSubject: {subject}\nText: {text[:6000]}"
     )
     body = json.dumps({"model": os.environ.get("CLEARDAY_MODEL", "unused"),
+                       "temperature": 0.2, "max_tokens": 1500,
                        "messages": [{"role": "user", "content": prompt}]}).encode()
     req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=body,
-                                 headers={"Content-Type": "application/json", "Authorization": "Bearer unused"})
+                                 headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
+                                          "User-Agent": "ClearDay/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
             data = json.loads(r.read())
         content = data["choices"][0]["message"]["content"]
-        out = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
-        out["sender"] = sender; out["source_date"] = datetime.now().strftime("%a %b %d")
-        return out
+        raw = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
     except Exception:
         return None
+    out = {
+        "what": _clean_str(raw.get("what"), 10),
+        "actions": _clean_str_list(raw.get("actions"), 3, 9),
+        "facts": _clean_facts(raw.get("facts")),
+        "steps": _clean_str_list(raw.get("steps"), 5, 8),
+        "risk": _clean_str(raw.get("risk"), 10),
+    }
+    if not out["what"] and not out["actions"]:
+        return None
+    return out
 
 def transform(text, sender="", subject="", lang="en"):
-    out = llm_transform(text, sender, subject) or heuristic_transform(text, sender, subject, lang)
-    out.setdefault("lang", lang)
+    """Hybrid: rules first (they own dates + numbers, copied exactly).
+    If a model is configured, its cleaned words overlay the rule output.
+    Dates and numbers ALWAYS come from the rules - never from the model.
+    """
+    out = heuristic_transform(text, sender, subject, lang)
+    model = llm_transform(text, sender, subject, lang)
+    if model:
+        for key in ("what", "actions", "facts", "steps", "risk"):
+            if model.get(key):
+                out[key] = model[key]
+        out["source"] = "model"
+        out["model_name"] = os.environ.get("CLEARDAY_MODEL", "")
+    else:
+        out["source"] = "rules"
+        out["model_name"] = ""
+    out["lang"] = lang if lang in CORE else "en"
     return out
