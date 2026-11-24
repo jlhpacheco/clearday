@@ -47,7 +47,7 @@ STRINGS = {
 def S(lang):
     return STRINGS.get(lang, STRINGS["en"])
 CSS = """
-body{font-family:Arial,Verdana,sans-serif;background:#FFF6D6;color:#20242E;
+body{font-family:Arial,Verdana,sans-serif;background:#FFF6D6;color:#20242E;font-size:21px;
 line-height:1.7;letter-spacing:.04em;margin:0;padding:20px}
 .wrap{max-width:680px;margin:0 auto}
 h1{font-size:32px;line-height:1.3;margin:0}
