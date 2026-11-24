@@ -18,7 +18,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **8/8** · Playwright browser test **26/26** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **10/10** · Playwright browser test **29/29** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -147,12 +147,14 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 | Test | What it proves | Result |
 |---|---|---|
-| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · follow-ups labeled | **8 of 8 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
-| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** | **26 of 26 PASS** — script, log, and screenshots in `tests/` |
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow** · follow-ups labeled | **10 of 10 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
+| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** · **the inbox path: nav → Inbox → Make it clear** | **29 of 29 PASS** — script, log, and screenshots in `tests/` |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
 
 Second honest note (Nov 24): the green sample button first shipped **untested** — it jumped straight to the result and never showed the email in the form. The builder found it himself, in one press. The button now **fills the form first**, where the reader can see it, and the button path is inside both test suites (smoke check 8; five Playwright checks). A feature is not tested until the test touches it.
+
+Third honest note (Nov 24): the rule paid for itself the same day. The first smoke run with the new inbox checks **failed at the last check** — the inbox path had saved a follow-up in the wrong shape, and the follow-ups page crashed on it (KeyError: 'what'). No judge ever saw it; the test caught it, the shape was fixed, and the re-run is 10 of 10.
 
 ## Challenges we ran into
 
@@ -170,7 +172,8 @@ Second honest note (Nov 24): the green sample button first shipped **untested** 
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 8/8 · Playwright 26/26 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 10/10 · Playwright 29/29 · the failures in between, shown honestly in Testing |
+| A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
 | Three languages at launch | English · Español · Tiếng Việt — the languages of the families I serve |
 | It helps the builder first | I am the first user. ClearDay reads my board email the way I have always needed it read |
@@ -206,6 +209,15 @@ Judges, one honest paragraph before the table: yes, this page would look at home
 | **Label + shape + color** on every box — never color alone | A legal floor, not a preference: information must never be carried by color only, and text spacing must survive adjustment | WCAG 2.2 AA §1.4.1 and §1.4.12 — the standard Section 508 and the ADA point to |
 
 And the authority behind the whole design: **Yale**. Dr. Sally Shaywitz, co-director of the Yale Center for Dyslexia & Creativity, puts it in one line: **“Dyslexia robs a person of time; accommodations return it.”** Yale's research shows dyslexic readers decode print through a slower, non-automatic pathway — so a 40-line email is not a small task, it is a time tax. ClearDay is an accommodation in Yale's sense: it does the slow decoding work once, then hands back a page the reader can actually use — facts in a table, actions in order, dates in big type. (Yale Center for Dyslexia & Creativity, [“Time & Tools”](https://dyslexia.yale.edu/resources/accommodations/time-and-tools/))
+
+## The inbox — Mailpit, on purpose
+
+ClearDay also has a **real inbox**, and you can watch email arrive in it:
+
+1. **[Open the Inbox page](https://clearday-bnjwz.sprites.app/inbox)** — ClearDay's clear-style list of what is sitting in the inbox right now. Press **Make it clear** on any message.
+2. **[Open the raw inbox — Mailpit](https://clearday-bnjwz.sprites.app/mailpit/)** — the same inbox in Mailpit's own screen: small, dense, gray text.
+
+The Mailpit screen is **not dyslexia-friendly — and that is the point.** That cramped gray list is what every inbox looks like to a dyslexic reader. ClearDay is the layer that fixes it. Mailpit is a real mail service (real SMTP, real storage) running as a second service on the same Sprite; the sample board email was really sent into it, and the Inbox page re-sends it if the box is ever empty. *(The GIF above shows the paste path; the inbox is a second door to the same clear page.)*
 
 ## How it works
 
