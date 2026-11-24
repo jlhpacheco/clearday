@@ -153,6 +153,53 @@ def llm_transform(text, sender="", subject="", lang="en"):
         return None
     return out
 
+REPLY_TEMPLATES = {
+    "en": "Hello {name},\n\nThank you for your message. I confirm{dates_line}.\n\nThank you,\nJose Luis",
+    "es": "Hola {name},\n\nGracias por su mensaje. Confirmo{dates_line}.\n\nGracias,\nJose Luis",
+    "vi": "Xin chào {name},\n\nCảm ơn tin nhắn của bạn. Tôi xác nhận{dates_line}.\n\nCảm ơn bạn,\nJose Luis",
+}
+REPLY_DATES_LINE = {
+    "en": " - I have noted: {dates}",
+    "es": " - He anotado: {dates}",
+    "vi": " - Tôi đã ghi: {dates}",
+}
+
+def draft_reply(text, sender="", subject="", lang="en", dates=None):
+    """Draft a short reply to the sender. The model may draft the words;
+    the only dates allowed are the extracted ones (rules-owned, exact).
+    Falls back to a plain template. Returns the reply body text."""
+    if lang not in LANG_NAMES:
+        lang = "en"
+    dates = [d for d in (dates or []) if d]
+    base = os.environ.get("CLEARDAY_MODEL_URL")
+    if base:
+        prompt = (
+            f"Write in {LANG_NAMES[lang]}. Draft a short, polite email reply (3-5 lines) "
+            "to the sender of this message, confirming what they asked. "
+            "You may ONLY use these exact dates/times, copied word for word, and no others: "
+            f"{dates if dates else 'NONE - do not mention any date or time'}. "
+            "Do not invent any fact, date, time, place, or number. "
+            "Sign off as Jose Luis. Output the reply text only, no subject line. "
+            f"Sender: {sender}\nSubject: {subject}\nMessage: {text[:4000]}"
+        )
+        body = json.dumps({"model": os.environ.get("CLEARDAY_MODEL", "unused"),
+                           "temperature": 0.2, "max_tokens": 1500,
+                           "messages": [{"role": "user", "content": prompt}]}).encode()
+        req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=body,
+                                     headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
+                                              "User-Agent": "ClearDay/1.0"})
+        try:
+            with urllib.request.urlopen(req, timeout=20) as r:
+                data = json.loads(r.read())
+            content = (data["choices"][0]["message"]["content"] or "").strip()
+            if content and len(content) > 20:
+                return content[:2000]
+        except Exception:
+            pass
+    name = (sender or "").split("<")[0].strip() or sender or "there"
+    dates_line = REPLY_DATES_LINE[lang].format(dates=", ".join(dates[:3])) if dates else ""
+    return REPLY_TEMPLATES[lang].format(name=name, dates_line=dates_line)
+
 def transform(text, sender="", subject="", lang="en"):
     """Hybrid: rules first (they own dates + numbers, copied exactly).
     If a model is configured, its cleaned words overlay the rule output.
