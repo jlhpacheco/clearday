@@ -39,6 +39,19 @@ class H(BaseHTTPRequestHandler):
                 except Exception as e:
                     msg = f"GitHub connector call failed: {e}"
             self._send(render_form(f"<h2 style='font-size:28px;'>Connector check</h2><div style='font-size:22px;padding:10px;'>{msg}</div>"))
+        elif self.path.startswith("/sample"):
+            from urllib.parse import urlparse, parse_qs as _pq
+            q = _pq(urlparse(self.path).query)
+            lang = (q.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            try:
+                text = open(os.path.join(os.path.dirname(__file__), "sample_email.txt")).read()
+            except Exception:
+                text = ""
+            page = transform(text, "Maria Lopez", "Board meeting moved", lang)
+            items = load_memory(); items.append({"what": page["what"], "sender": page["sender"], "lang": page.get("lang", lang)}); save_memory(items[-20:])
+            self._send(render_page(page))
         elif self.path.startswith("/followups"):
             items = load_memory()
             def row(i):
