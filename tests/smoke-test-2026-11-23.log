@@ -1,0 +1,20 @@
+ClearDay SMOKE TEST — 2026-11-23
+Target: Fly Sprite "clearday" (id sprite-c61677d4-f77e-45eb-b69d-dc441e30e33e), org jose-luis-pacheco-208
+Method: tests run INSIDE the Sprite via sprites_deploy.py exec, against the live service at http://localhost:8080
+(public URL fetch is cached/stale, so the inside service is the source of truth)
+Access proof: sprites_api.py list returned clearday (public) + web-terminal before testing.
+
+[PASS] 1 GET / form + demo label :: status=200 labels_found=['From', 'Subject', 'Paste the long message', 'Public demo — please paste sample text only']
+[PASS] 2 POST sample -> clear page, exact dates :: status=200 YOU_MUST_DO=True KEY_FACTS=True dates_found=['Monday November 23', 'Tuesday November 24', '5:15 PM', 'Friday November 27']
+       Sample: /home/sprite/clearday/sample_email.txt, sender "Maria Lopez", subject "Board meeting moved". No invented dates — all 4 extracted dates match the source exactly.
+[PASS] 3 GET /connected names jlhpacheco :: status=200 jlhpacheco=True
+[PASS] 4 HTML escaping :: escaped_present=True (&lt;b&gt; shown) raw_tag_present=False (no raw <b>ZZTEST</b> tag served)
+       Payload: subject "<b>ZZTEST</b>", benign test text.
+[PASS] 5 Oversize >50KB rejected :: status=200 too_long_msg=True ("too long for the demo" returned for a 60,000-char paste)
+[PASS] 6 GET /followups Demo entries label :: status=200 label=True ("Demo entries" present)
+
+SUMMARY: 6 of 6 passed
+
+CLEANUP (mandatory, done after tests):
+- rm -f /home/sprite/clearday/memory.json inside the Sprite — confirmed gone ("ls: cannot access ... No such file or directory")
+- GET /followups after cleanup shows "No follow-ups waiting." — test entries from tests 2 and 4 do NOT remain on the public demo.
