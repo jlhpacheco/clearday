@@ -27,6 +27,13 @@ STRINGS = {
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
+           "nav_inbox": "Inbox", "inbox_title": "THE INBOX - the before picture",
+           "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
+           "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
+           "inbox_seed": "Send the sample email into this inbox",
+           "inbox_down": "The inbox is resting right now. The paste form still works.",
+           "inbox_raw": "See the raw inbox (Mailpit)",
+           "inbox_raw_note": "Small, dense, gray text - not dyslexia-friendly. Shown on purpose: that is what ClearDay replaces.",
            "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
            "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
            "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
@@ -56,6 +63,13 @@ STRINGS = {
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
+           "nav_inbox": "Bandeja", "inbox_title": "LA BANDEJA - la foto del antes",
+           "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
+           "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
+           "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
+           "inbox_down": "La bandeja está descansando ahora. El formulario para pegar sigue funcionando.",
+           "inbox_raw": "Ver la bandeja sin procesar (Mailpit)",
+           "inbox_raw_note": "Texto pequeño, denso y gris - no apto para dislexia. Se muestra a propósito: eso es lo que ClearDay reemplaza.",
            "sample_title": "La forma más rápida de probar", "sample_btn": "Cargar el correo de ejemplo",
            "sample_line": "¿Sin un correo a mano? Un botón llena el formulario con un correo real de ejemplo de la junta. Lo ves primero — luego pulsa Hazlo claro.",
            "sample_loaded": "Ejemplo cargado en el formulario — léelo y pulsa Hazlo claro.",
@@ -85,6 +99,13 @@ STRINGS = {
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
+           "nav_inbox": "Hộp thư", "inbox_title": "HỘP THƯ - hình ảnh trước",
+           "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
+           "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
+           "inbox_seed": "Gửi email mẫu vào hộp thư này",
+           "inbox_down": "Hộp thư đang nghỉ. Biểu mẫu dán vẫn hoạt động.",
+           "inbox_raw": "Xem hộp thư thô (Mailpit)",
+           "inbox_raw_note": "Chữ nhỏ, dày, xám - không thân thiện với chứng khó đọc. Cố ý hiển thị: đó là thứ ClearDay thay thế.",
            "sample_title": "Cách thử nhanh nhất", "sample_btn": "Nạp email mẫu",
            "sample_line": "Không có email sẵn? Một lần nhấn sẽ điền email mẫu thật của ban vào biểu mẫu bên dưới. Bạn xem trước — rồi nhấn Làm rõ.",
            "sample_loaded": "Đã nạp mẫu vào biểu mẫu — xem lại rồi nhấn Làm rõ.",
@@ -158,11 +179,37 @@ def _shell(inner):
 def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
 <div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>
-<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
+<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/inbox'>{s['nav_inbox']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
 
 def _why_card(s):
     items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
     return f"<div class='card why'><div class='cardtitle'>&#9670; {s['why_title']}</div>{items}</div>"
+
+def render_inbox(messages, lang="en", down=False):
+    s = S(lang)
+    if down:
+        body = f"<div class='card'><p class='big'>{s['inbox_down']}</p></div>"
+    elif not messages:
+        body = f"<div class='card'><p class='big'>{s['inbox_empty']}</p></div>"
+    else:
+        cards = ""
+        for m in messages:
+            frm = m.get("From") or {}
+            who = esc(frm.get("Name") or frm.get("Address") or "")
+            when = esc((m.get("Created") or "")[:16].replace("T", " "))
+            cards += (f"<div class='card'><div class='big'><b>{who}</b></div>"
+                      f"<div class='big'>{esc(m.get('Subject') or '')}</div>"
+                      f"<div>{when}</div>"
+                      f"<p><a class='btn' href='/inbox/clear?id={esc(m.get('ID') or '')}&lang={lang}'>{s['inbox_clear']}</a></p></div>")
+        body = cards
+    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+<h1>{s['inbox_title']}</h1>
+<div class='card'><p>{s['inbox_line']}</p></div>
+{body}
+<div class='card'><form method='post' action='/inbox/seed?lang={lang}'><button type='submit'>{s['inbox_seed']}</button></form></div>
+<div class='card'><div class='cardtitle'>&#9632; {s['inbox_raw']}</div>
+<div>{s['inbox_raw_note']}</div>
+<p><a href='/mailpit/'>Mailpit</a></p></div>""")
 
 def render_form(extra="", lang="en", prefill=None):
     s = S(lang)
