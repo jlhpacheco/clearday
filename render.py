@@ -28,6 +28,12 @@ STRINGS = {
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
            "nav_inbox": "Inbox", "inbox_title": "THE INBOX - the before picture",
+           "thinking": "AI is thinking - reading your message...",
+           "reply_title": "REPLY", "reply_btn": "Draft and send a reply", "reply_btn_draft": "Draft a reply",
+           "reply_note": "ClearDay drafts the reply with the AI and sends it back to the sender through the inbox (Mailpit). You will see the email it made.",
+           "reply_draft_only": "Draft only here - sending works from the Inbox, where the sender's real address lives.",
+           "reply_sent_title": "REPLY SENT", "reply_draft_title": "YOUR REPLY DRAFT",
+           "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
            "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
            "inbox_seed": "Send the sample email into this inbox",
@@ -64,6 +70,12 @@ STRINGS = {
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
            "nav_inbox": "Bandeja", "inbox_title": "LA BANDEJA - la foto del antes",
+           "thinking": "La IA está pensando - leyendo tu mensaje...",
+           "reply_title": "RESPUESTA", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
+           "reply_note": "ClearDay redacta la respuesta con la IA y la envía al remitente por la bandeja (Mailpit). Verás el correo que creó.",
+           "reply_draft_only": "Aquí solo el borrador - el envío funciona desde la Bandeja, donde está la dirección real del remitente.",
+           "reply_sent_title": "RESPUESTA ENVIADA", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
+           "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
            "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
@@ -100,6 +112,12 @@ STRINGS = {
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
            "nav_inbox": "Hộp thư", "inbox_title": "HỘP THƯ - hình ảnh trước",
+           "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
+           "reply_title": "TRẢ LỜI", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
+           "reply_note": "ClearDay soạn thư trả lời bằng AI và gửi lại cho người gửi qua hộp thư (Mailpit). Bạn sẽ thấy email nó đã tạo.",
+           "reply_draft_only": "Ở đây chỉ là bản nháp - gửi được từ Hộp thư, nơi có địa chỉ thật của người gửi.",
+           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
+           "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
            "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
@@ -167,14 +185,22 @@ a.btn{display:inline-block;background:#0E7A5F;color:#FFF6D6;border:3px solid #0E
 padding:12px 22px;font-size:22px;font-weight:bold;text-decoration:none;box-shadow:0 4px 0 rgba(32,36,46,.25);margin-top:10px}
 .navrow{display:flex;gap:26px;flex-wrap:wrap;border-bottom:3px solid rgba(32,36,46,.15);padding:8px 0 12px;margin-bottom:6px}
 .navrow a{text-decoration:none;color:#20242E}
+.thinking{display:none;background:#123A7A;color:#FFF6D6;border-radius:16px;padding:18px 22px;font-size:24px;font-weight:bold;margin-bottom:14px}
+.thinking .dot{display:inline-block;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.15}}
+@media (prefers-reduced-motion: reduce){.thinking .dot{animation:none}}
 .layout{display:block}
 .trust div{margin-top:8px}
 .why div{margin-top:10px}
 @media(min-width:920px){.wrap{max-width:1080px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}}
 """
 
-def _shell(inner):
-    return f"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>ClearDay</title><style>{CSS}</style></head><body><div class='wrap'>{inner}</div></body></html>"
+def _shell(inner, s):
+    return f"""<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>ClearDay</title><style>{CSS}</style></head><body><div class='wrap'><div class='thinking' id='thinking'><span class='dot'>&#9679;</span> {s['thinking']}</div>{inner}</div><script>
+function showThinking(){{var t=document.getElementById('thinking');if(t){{t.style.display='block';window.scrollTo(0,0);}}}}
+document.addEventListener('submit',function(e){{if((e.target.getAttribute('action')||'').indexOf('/inbox/seed')>=0)return;showThinking();var b=e.target.querySelector('button[type=submit]');if(b){{b.disabled=true;}}}});
+document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.btn'):null;if(a){{var h=a.getAttribute('href')||'';if(h.indexOf('/inbox/clear')>=0||h.indexOf('sample=1')>=0||h.indexOf('/sample')>=0){{showThinking();}}}}var b=e.target.closest?e.target.closest('button[type=submit]'):null;if(b&&b.form&&(b.form.getAttribute('action')||'').indexOf('/inbox/seed')<0){{showThinking();}}}});
+</script></body></html>"""
 
 def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
@@ -209,7 +235,7 @@ def render_inbox(messages, lang="en", down=False):
 <div class='card'><form method='post' action='/inbox/seed?lang={lang}'><button type='submit'>{s['inbox_seed']}</button></form></div>
 <div class='card'><div class='cardtitle'>&#9632; {s['inbox_raw']}</div>
 <div>{s['inbox_raw_note']}</div>
-<p><a href='/mailpit/'>Mailpit</a></p></div>""")
+<p><a href='/mailpit/'>Mailpit</a></p></div>""", s)
 
 def render_form(extra="", lang="en", prefill=None):
     s = S(lang)
@@ -248,7 +274,7 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
 </div></div>
-<p class='big'><a href='/followups'>{s['see_followups']}</a></p>""")
+<p class='big'><a href='/followups'>{s['see_followups']}</a></p>""", s)
 
 def render_page(p):
     s = S(p.get("lang", "en"))
@@ -262,6 +288,20 @@ def render_page(p):
         pill = f"<span class='pill pill-ai'>&#9679; {s['ai_live']}" + (f" &middot; {short_model}" if short_model else "") + "</span>"
     else:
         pill = f"<span class='pill'>&#9670; {s['ai_rules']}</span>"
+    reply_card = ""
+    if p.get("_text") is not None:
+        can_send = bool(p.get("_addr"))
+        btn = s['reply_btn'] if can_send else s['reply_btn_draft']
+        note = s['reply_note'] if can_send else s['reply_draft_only']
+        reply_card = f"""<div class='card'><div class='cardtitle'>&#9993; {s['reply_title']}</div>
+<div>{note}</div>
+<form method='post' action='/reply'>
+<input type='hidden' name='mid' value='{esc(p.get("_mid", ""))}'>
+<input type='hidden' name='sender' value='{esc(p.get("sender", ""))}'>
+<input type='hidden' name='subject' value='{esc(p.get("_subject", ""))}'>
+<input type='hidden' name='lang' value='{esc(p.get("lang", "en"))}'>
+<textarea name='text' style='display:none'>{esc(p.get("_text", ""))}</textarea>
+<p><button type='submit'>{btn}</button></p></form></div>"""
     return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
 <div class='box blue'><span class='lbl'>&#9632; {s['what']}</span><div class='big'>{esc(p.get('what',''))}</div></div>
@@ -271,5 +311,16 @@ def render_page(p):
 {risk}
 <p class='big' style='margin-top:16px;'>{s['steps']}: {steps}</p>
 <p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
+{reply_card}
 {_why_card(s)}
-<p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""")
+<p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
+
+def render_reply_sent(to, subject, body_text, sent, lang="en"):
+    s = S(lang)
+    title = s['reply_sent_title'] if sent else s['reply_draft_title']
+    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+<h1>{title}</h1>
+<div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
+<div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
+<div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div></div>
+<p class='big'><a href='/inbox'>{s['nav_inbox']}</a> &middot; <a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
