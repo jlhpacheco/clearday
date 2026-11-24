@@ -69,6 +69,20 @@ I built it for people who suffer from dyslexia. If it helps one person catch the
 
 From that talk: I am an IT professional at the San Jose Evergreen Community College District, where I have worked since 2015. I am a past president of CSEA Chapter 363 and a former South Bay Labor Council delegate. I serve on the board of Latinas Contra Cancer. I hold two bachelor's degrees — economics, and biological sciences. I did all of that reading the way I read: slowly, carefully, and with tables and charts doing the heavy lifting. That is the reader ClearDay is built for.
 
+## Serving others — and thankful for it
+
+My whole career has one shape: serving other people.
+
+| Where I served | Who it was for |
+|---|---|
+| CalPERS Board of Administration | The retirees and workers whose pension money had to be guarded with care |
+| CSEA Chapter 363, as president | School employees — so nobody works a lifetime in public service and retires with nothing |
+| South Bay Labor Council, as a delegate | Working families across the South Bay |
+| Latinas Contra Cancer, board chair | Latina women and families facing breast cancer and its disparities |
+| My day job in IT since 2015 | The students and staff of a community college district |
+
+I am thankful — for every teacher, colleague, and friend who ever handed me a chart instead of a chapter, and for every chance I have had to serve. ClearDay is that same service, in software: helping people get the message without fighting the page. Serving others is the work. This is just my newest way of doing it — and I think it is an awesome one.
+
 ---
 
 ## How ClearDay is designed for dyslexic readers
