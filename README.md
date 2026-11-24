@@ -189,6 +189,21 @@ Design rules follow the International Dyslexia Association's guidance and WCAG 2
 - The same page order, every time — no surprises to re-learn
 - Page polish — brand top bar, hero headline, numbered path card, pill badges — is modeled on **Solvia**, my parking-permit app. The accessibility rules above never change; only the polish does
 
+## Why it looks like 1997 — on purpose
+
+Judges, one honest paragraph before the table: yes, this page would look at home on a 1997 school computer. That is not nostalgia and it is not a missing stylesheet. Every "old-looking" choice below is a **measured reading intervention** for dyslexic readers, tested in eye-tracking labs and classrooms. Modern web fashion — pure-white pages, thin gray text, small type, justified columns — is exactly what the research tells us to remove. Solvia, my other app, wears the modern clothes; ClearDay borrows Solvia's polish (top bar, hero, path card, pills) and keeps the prescription underneath.
+
+| What looks old | Why it stays | The research |
+|---|---|---|
+| **Cream background (#FFF6D6)**, never pure white | Warm backgrounds — peach, cream, yellow — tested **best** for dyslexic readers; cool colors (blue, green, blue-gray) tested worse. Pure white with pure black glares and can make letters swim | Rello & Baeza-Yates, eye-tracking research on text presentation for dyslexia (summarized by the Rhode Island Dept. of Education) |
+| **Arial / Verdana, bold only** — no italics, no underlining | With 48 readers with dyslexia tracked by eye movement, sans-serif roman fonts (Arial, Helvetica, Verdana, Courier) read fastest — and **italics read significantly slower** | Rello & Baeza-Yates, *Good Fonts for Dyslexia*, ACM ASSETS 2013 |
+| **Big type (21–22px)**, line height 1.7 | Larger type improved objective readability and comprehension for dyslexic readers in the same research program | Rello & Baeza-Yates, *Universal Access in the Information Society* |
+| **Extra letter spacing** (.04em) | Dyslexic readers are hurt by **crowding** — letters packed tight interfere with each other. Extra-large spacing **cut reading errors in half** in 74 dyslexic children, with no training at all | Zorzi et al., *PNAS* 2012 — [pubmed.ncbi.nlm.nih.gov/22665803](https://pubmed.ncbi.nlm.nih.gov/22665803/) |
+| **Short lines, one narrow column**, left-aligned | Short lines gave **27% faster reading**, 11% fewer eye fixations, and backward eye jumps cut by more than half — at **no cost to comprehension** — in 103 high-school students with dyslexia | Schneps et al. (Harvard / Smithsonian), *PLoS ONE* 2013 — [journals.plos.org](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0075634) |
+| **Label + shape + color** on every box — never color alone | A legal floor, not a preference: information must never be carried by color only, and text spacing must survive adjustment | WCAG 2.2 AA §1.4.1 and §1.4.12 — the standard Section 508 and the ADA point to |
+
+And one source that is not a journal: my own doctors. My 1999 neuropsychological evaluation prescribed, in writing, **assistance transferring lengthy verbal material into graphs, tables, and charts** — because I am a visual learner whose reading is slow and halting. ClearDay is that prescription, built as software. The 1997 look is what the prescription looks like when it works.
+
 ## How it works
 
 ```
