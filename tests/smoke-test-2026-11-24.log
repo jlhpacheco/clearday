@@ -1,7 +1,8 @@
-ClearDay SMOKE TEST — 2026-11-24
+ClearDay SMOKE TEST — 2026-11-24 (updated run, 13:35 PT)
 Target: Fly Sprite "clearday", org jose-luis-pacheco-208
 Method: tests run INSIDE the Sprite (smoke_test.py), against the live service at http://localhost:8080
-Context: Together AI hybrid live (DeepSeek V4.1 Flash via Sprites Custom API connector) + new Solvia-style UI
+Context: Together AI hybrid live (DeepSeek V4.1 Flash via Sprites Custom API connector) + Solvia-style UI.
+Check 8 was added after Jose Luis found the sample button untested — the button path is now IN the test.
 
 PASS - form 200 + labels + demo line
 PASS - sample -> sections + exact 4 dates
@@ -9,5 +10,6 @@ PASS - green pill: live model answered
 PASS - /connected names jlhpacheco
 PASS - pasted HTML never raw (escaped or paraphrased)
 PASS - 60,000-char paste refused politely
+PASS - sample button fills the form (From + banner + body)
 PASS - /followups demo label
-SMOKE TOTAL: 7/7
+SMOKE TOTAL: 8/8
