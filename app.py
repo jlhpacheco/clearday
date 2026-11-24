@@ -60,6 +60,17 @@ class H(BaseHTTPRequestHandler):
             en = S("en")
             rows = "".join(row(i) for i in items) or f"<div style='font-size:22px;padding:10px;'>{en['no_followups']}</div>"
             self._send(render_form(f"<h2 style='font-size:28px;'>{en['followups_title']}</h2><p class='big'><b>{en['demo_entries']}</b></p>{rows}"))
+        elif "sample=1" in self.path:
+            from urllib.parse import urlparse, parse_qs as _pq
+            q = _pq(urlparse(self.path).query)
+            lang = (q.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            try:
+                text = open(os.path.join(os.path.dirname(__file__), "sample_email.txt")).read()
+            except Exception:
+                text = ""
+            self._send(render_form("", lang, {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": text}))
         else:
             self._send(render_form())
     def do_POST(self):
