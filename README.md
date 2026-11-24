@@ -4,6 +4,8 @@
 
 **1 in 5 people has dyslexia** (Yale Center for Dyslexia & Creativity). A 40-line email goes in. **3 actions, a fact table, and the dates in big type** come out.
 
+![ClearDay demo — paste a long email, get one clear page](demo.gif)
+
 ClearDay is a personal agent built for people with dyslexia. It takes a long, hard-to-read email or document and turns it into one clear page, in the same order every time:
 
 1. **WHAT THIS IS** — in one sentence
