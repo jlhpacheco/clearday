@@ -5,7 +5,7 @@ Connector use (Hacksgiving rule): on a Sprite, set CLEARDAY_MODEL_URL to a
 Sprites Connector gateway URL (Anthropic / OpenRouter) and/or receive mail
 via the AgentMail connector inbox and forward it to POST /inbox.
 """
-import json, os
+import json, os, html
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 from clearday import transform
@@ -41,18 +41,20 @@ class H(BaseHTTPRequestHandler):
             self._send(render_form(f"<h2 style='font-size:28px;'>Connector check</h2><div style='font-size:22px;padding:10px;'>{msg}</div>"))
         elif self.path.startswith("/followups"):
             items = load_memory()
-            rows = "".join(f"<div style='font-size:22px;padding:10px;'>&#9679; {i['what']} — no reply yet — I will nudge {i['sender']}</div>" for i in items) or "<div style='font-size:22px;padding:10px;'>No follow-ups waiting.</div>"
-            self._send(render_form(f"<h2 style='font-size:28px;'>Follow-ups I remember</h2>{rows}"))
+            rows = "".join(f"<div style='font-size:22px;padding:10px;'>&#9679; {html.escape(str(i['what']))} — no reply yet — I will nudge {html.escape(str(i['sender']))}</div>" for i in items) or "<div style='font-size:22px;padding:10px;'>No follow-ups waiting.</div>"
+            self._send(render_form(f"<h2 style='font-size:28px;'>Follow-ups I remember</h2><p class='big'><b>Demo entries — made from sample text pasted by visitors.</b></p>{rows}"))
         else:
             self._send(render_form())
     def do_POST(self):
         n = int(self.headers.get("Content-Length", 0))
+        if n > 50000:
+            self._send(render_form("<p class='big'><b>That message is too long for the demo. Please paste a shorter sample.</b></p>")); return
         data = parse_qs(self.rfile.read(n).decode())
         text = (data.get("text") or [""])[0]; sender = (data.get("sender") or [""])[0]; subject = (data.get("subject") or [""])[0]
         if not text.strip():
             self._send(render_form("<p style='font-size:22px;'><b>Paste a message first.</b></p>")); return
         page = transform(text, sender, subject)
-        items = load_memory(); items.append({"what": page["what"], "sender": page["sender"]}); save_memory(items)
+        items = load_memory(); items.append({"what": page["what"], "sender": page["sender"]}); save_memory(items[-20:])
         self._send(render_page(page))
 
 if __name__ == "__main__":
