@@ -175,6 +175,18 @@ async function main() {
   await page.screenshot({ path: path.join(HERE, "result.png"), fullPage: true });
   check("Result: screenshot saved", fs.existsSync(path.join(HERE, "result.png")), "result.png");
 
+  // ---------- Step 2b: the Mailpit inbox path (added Nov 24) ----------
+  // A judge's walk: nav -> Inbox (real email in a real inbox) -> Make it clear.
+  await page.click('a[href="/inbox"]');
+  await page.waitForSelector("text=THE INBOX", { timeout: 30_000 });
+  const ib = await bodyText(page);
+  check("Inbox: real email from 'Maria Lopez' listed", ib.includes("Maria Lopez"));
+  check("Inbox: 'Make it clear' button shown", ib.includes("Make it clear"));
+  await page.click("text=Make it clear");
+  await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
+  const ibRes = await bodyText(page);
+  check("Inbox: clear page shows exact date 'Tuesday November 24'", ibRes.includes("Tuesday November 24"));
+
   // ---------- Step 4: accessibility spot checks (on the result page) ----------
   const style = await page.evaluate(() => {
     const cs = getComputedStyle(document.body);
