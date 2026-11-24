@@ -9,7 +9,7 @@ ClearDay is a personal agent built for people with dyslexia. It takes a long, ha
 3. **KEY FACTS** — who, what, where, in a table
 4. **DATES + NUMBERS** — big type, one per line
 
-Then ClearDay acts: it drafts a reply, and it **remembers**. If no reply comes in 2 days, it follows up. It runs on a Fly.io Sprite — a small computer of its own that sleeps when idle, wakes in seconds, and keeps its memory on a persistent disk. It uses the Sprites **GitHub connector** (see the live connector check at `/connected`).
+Then ClearDay **remembers**. Its follow-up list shows what is still waiting for a reply, so nothing gets lost. It runs on a Fly.io Sprite — a small computer of its own that sleeps when idle, wakes in seconds, and keeps its memory on a persistent disk. It uses the Sprites **GitHub connector** (see the live connector check at `/connected`).
 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
@@ -53,7 +53,7 @@ Sources:
 
 My name is **Jose Luis Pacheco**. I live with severe dyslexia. It is personal to me.
 
-My own doctors prescribed the fix decades ago: help turning long written material into **graphs, tables, and charts**. That is not a preference. It is how my brain takes in information. Reading long text is slow, halting work. I can miss a word, and a missed word can flip the meaning of a whole page.
+My own doctors prescribed the fix decades ago: help turning long written material into **graphs, tables, and charts**. That is not a preference. It is how my brain takes in information. Reading long text is slow, halting work. I can miss a date or a deadline buried in a long page.
 
 I have still built a full life and career on top of that — public service, board rooms, and work where the reading never stops. But the cost is paid every single day, in time and in risk, one long document at a time.
 
@@ -65,7 +65,9 @@ I built it for people who suffer from dyslexia. If it helps one person catch the
 
 **Hear it in my own voice** — this is me, speaking for myself, not a bio written about me:
 
-- [SDAC, October 24, 2024 — Jose Luis Pacheco, speaking to board members while serving his first term on the CalPERS Board of Administration](https://www.youtube.com/watch?v=S0sxcC-EQrg)
+- [SDAC, October 24, 2024 — Jose Luis Pacheco, speaking to board members during his first term on the CalPERS Board of Administration (2022–2026)](https://www.youtube.com/watch?v=S0sxcC-EQrg)
+
+ClearDay is my personal project, built on my personal accounts. It is not a District project.
 
 From that talk: I am an IT professional at the San Jose Evergreen Community College District, where I have worked since 2015. I am a past president of CSEA Chapter 363 and a former South Bay Labor Council delegate. I serve on the board of Latinas Contra Cancer. I hold two bachelor's degrees — economics, and biological sciences. I did all of that reading the way I read: slowly, carefully, and with tables and charts doing the heavy lifting. That is the reader ClearDay is built for.
 
