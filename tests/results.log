@@ -1,4 +1,4 @@
-ClearDay Playwright test — 2026-11-24T22:08:17.868Z
+ClearDay Playwright test — 2026-11-24T22:20:20.263Z
 Target: https://clearday-bnjwz.sprites.app/
 
 PASS  Home: page title is 'ClearDay' — title="ClearDay"
@@ -13,6 +13,7 @@ PASS  Sample button: Subject filled — subject="Board meeting moved"
 PASS  Sample button: message body filled in the box — body length=1105
 PASS  Sample button: 'Sample loaded in the form' note shown
 PASS  Sample button: result page shows exact date 'Tuesday November 24'
+PASS  Thinking: blinking 'AI is thinking' banner shows while the model works
 PASS  Result: section 'WHAT THIS IS' shown
 PASS  Result: section 'YOU MUST DO' shown
 PASS  Result: section 'KEY FACTS' shown
@@ -24,6 +25,12 @@ PASS  Result: screenshot saved — result.png
 PASS  Inbox: real email from 'Maria Lopez' listed
 PASS  Inbox: 'Make it clear' button shown
 PASS  Inbox: clear page shows exact date 'Tuesday November 24'
+PASS  Reply: thinking banner shows while the AI drafts the reply
+PASS  Reply: sent page shows the sender's real address
+PASS  Reply: sent page shows subject 'Re: Board meeting moved'
+PASS  Inbox ES: 'LA BANDEJA' title shown
+PASS  Inbox ES: 'Hazlo claro' button shown
+PASS  Inbox: seed button adds one more real email — 6 -> 7
 PASS  A11y: body background is cream rgb(255, 246, 214) — actual=rgb(255, 246, 214)
 PASS  A11y: body font-size at least 20px — actual=21px
 PASS  A11y: text is left-aligned — actual=start (start = left for left-to-right text)
@@ -31,4 +38,4 @@ PASS  Follow-ups: 'Demo entries' label visible
 PASS  Follow-ups: test entry for Maria Lopez was remembered
 PASS  Follow-ups: screenshot saved — followups.png
 
-TOTAL: 29/29 passed
+TOTAL: 36/36 passed
