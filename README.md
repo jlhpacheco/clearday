@@ -13,12 +13,12 @@ ClearDay is a personal agent built for people with dyslexia. It takes a long, ha
 3. **KEY FACTS** — who, what, where, in a table
 4. **DATES + NUMBERS** — big type, one per line
 
-Then ClearDay **remembers**. Its follow-up list shows what is still waiting for a reply, so nothing gets lost. It runs on a Fly.io Sprite — a small computer of its own that sleeps when idle, wakes in seconds, and keeps its memory on a persistent disk. It uses the Sprites **GitHub connector** (see the live connector check at `/connected`).
+Then ClearDay **remembers**. Its follow-up list shows what is still waiting for a reply, so nothing gets lost. It runs on a Fly.io Sprite — a small computer of its own that sleeps when idle, wakes in seconds, and keeps its memory on a persistent disk. It uses the Sprites **GitHub connector** (see the live connector check at `/connected`). Since Nov 24 it also uses a **Together AI model through a Sprites Custom API connector** — the model drafts the words, the rules keep the dates (see How it works).
 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **6/6** · Playwright browser test **21/21** · 1 real bug caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **7/7** · Playwright browser test **21/21** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -27,7 +27,7 @@ Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 | Rule | Proof |
 |---|---|
 | Runs on a Fly.io Sprite | The live demo above *is* the Sprite — it sleeps when idle and wakes on your click |
-| Uses at least one Sprites connector | **GitHub** — live proof at [/connected](https://clearday-bnjwz.sprites.app/connected); this repo itself was created through that connector, from inside the Sprite |
+| Uses at least one Sprites connector | **GitHub** — live proof at [/connected](https://clearday-bnjwz.sprites.app/connected); this repo itself was created through that connector, from inside the Sprite. **Together AI** (Custom API connector) — a live model drafts each page's words; the green pill on every result page proves it answered |
 | Built during Hacksgiving week | Built and submitted **Monday, November 23, 2026** — the first day |
 
 ## Try it in 60 seconds
@@ -146,7 +146,7 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 | Test | What it proves | Result |
 |---|---|---|
-| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · connector check names the GitHub user · pasted code stays escaped · giant pastes refused · follow-ups labeled | **6 of 6 PASS** — log in `tests/smoke-test-2026-11-23.log` |
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · follow-ups labeled | **7 of 7 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
 | **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned | **21 of 21 PASS** — script, log, and screenshots in `tests/` |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
@@ -159,6 +159,7 @@ One honest note: the Playwright test first caught a real miss — the page body 
 | My own design rule, broken quietly | The Playwright test caught the page body at 16px — under the 21–22px rule — even though every visible element looked right. One line of CSS fixed it; the re-run passed 21 of 21 |
 | Three languages, three date systems | Spanish writes *martes 24 de noviembre, 5:15 p. m.*; Vietnamese writes *ngày 24 tháng 11, 17 giờ 15*. Each needed its own date finder — and a translation checker caught 6 wording fixes before launch |
 | A Sprite is a real little computer | Services, restarts, and persistent memory all had to be learned and verified live — nothing was assumed from the docs alone |
+| Finding a model that could actually answer | The famous small models (Llama 3.1 8B, Qwen2.5 7B) were **not serverless** on my Together account — Together said so itself. Two reasoning models spent the whole token budget thinking and returned an empty page. **DeepSeek V4.1 Flash** answered clean JSON in about 6 seconds — and whenever any model cannot answer, ClearDay's rules answer alone, instantly |
 
 ## Accomplishments I am proud of
 
@@ -166,7 +167,8 @@ One honest note: the Playwright test first caught a real miss — the page body 
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 6/6 · Playwright 21/21 · the failure in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 7/7 · Playwright 21/21 · the failures in between, shown honestly in Testing |
+| A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
 | Three languages at launch | English · Español · Tiếng Việt — the languages of the families I serve |
 | It helps the builder first | I am the first user. ClearDay reads my board email the way my doctors prescribed |
 
@@ -185,6 +187,7 @@ Design rules follow the International Dyslexia Association's guidance and WCAG 2
 - Every section has a **big label + a shape + a color** — never color alone, and never red/green as a meaning pair
 - Dates and numbers are **copied exactly from the source, never invented**
 - The same page order, every time — no surprises to re-learn
+- Page polish — brand top bar, hero headline, numbered path card, pill badges — is modeled on **Solvia**, my parking-permit app. The accessibility rules above never change; only the polish does
 
 ## How it works
 
@@ -207,11 +210,11 @@ Design rules follow the International Dyslexia Association's guidance and WCAG 2
 | Step | What happens |
 |---|---|
 | 1. Paste | A long email or message goes into the form |
-| 2. Transform | ClearDay extracts the facts, actions, dates and numbers (`clearday.py`) |
-| 3. Render | One clear page comes out (`render.py`), same order every time |
+| 2. Transform | **Rules first:** dates and numbers are extracted exactly (`clearday.py`). **Then the model:** a Together AI model (DeepSeek V4.1 Flash, through a Sprites Custom API connector) drafts the summary, actions, and facts — words only, never dates. If the model is slow or down, the rules answer alone |
+| 3. Render | One clear page comes out (`render.py`), same order every time — topped with the pill that says who answered: the model, or the rules |
 | 4. Remember | The follow-up is saved to `memory.json` on the Sprite's persistent disk |
 | 5. Follow up | `/followups` shows what is still waiting for a reply |
-| 6. Connector | `/connected` calls GitHub through the Sprites GitHub connector gateway — no key in the code |
+| 6. Connectors | `/connected` calls GitHub through the Sprites GitHub connector gateway; the model is called through a Sprites Custom API connector — no key in the code, and no key inside the Sprite |
 
 ## Run it
 
@@ -221,7 +224,7 @@ python3 app.py            # serves on port 8080 (or $PORT)
 
 On a Sprite, `app.py` runs as the `http` service on port 8080, which serves the Sprite's own URL. Set `CLEARDAY_GITHUB_GATEWAY` to the connector gateway URL copied from the connector's page in the Fly dashboard, and grant the connector access by Sprite name in its access policy.
 
-Optional: set `CLEARDAY_MODEL_URL` to a Sprites Connector gateway URL for a model provider (Anthropic / OpenRouter) for LLM-quality extraction. Without it, ClearDay uses its built-in exact-extraction fallback — dates and numbers still come only from the source text.
+The model is on in production: `CLEARDAY_MODEL_URL` points at a Sprites Custom API connector for Together AI and `CLEARDAY_MODEL` is `deepseek-ai/DeepSeek-V4.1-Flash-1017`. The model drafts words only — dates and numbers always come from the built-in rules, and if the model does not answer, the rules answer alone. Cost per email at Together's prices: about a tenth of a cent.
 
 ## Files
 
