@@ -2,6 +2,8 @@
 
 **Long message in. One clear page out.**
 
+**1 in 5 people has dyslexia** (Yale Center for Dyslexia & Creativity). A 40-line email goes in. **3 actions, a fact table, and the dates in big type** come out.
+
 ClearDay is a personal agent built for people with dyslexia. It takes a long, hard-to-read email or document and turns it into one clear page, in the same order every time:
 
 1. **WHAT THIS IS** — in one sentence
@@ -98,7 +100,9 @@ Sources:
 
 ---
 
-## My story — why I built this
+## Inspiration — my story, why I built this
+
+It starts the way it always starts: one long email. The meeting moved. Confirm by Friday. Bring your photo ID. Send a proxy if you cannot come. For most people, 30 seconds. For me, that email is a wall — and somewhere in the wall is a date I cannot afford to miss.
 
 My name is **Jose Luis Pacheco**. I live with severe dyslexia. It is personal to me.
 
@@ -144,6 +148,29 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 | **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned | **21 of 21 PASS** — script, log, and screenshots in `tests/` |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
+
+## Challenges we ran into
+
+| Challenge | What happened |
+|---|---|
+| A public demo can be misused | Anyone can paste anything into a public form — so all output is escaped, entries are capped, and every result page is labeled as visitor-made. A red-team check found this; it was fixed before submission |
+| My own design rule, broken quietly | The Playwright test caught the page body at 16px — under the 21–22px rule — even though every visible element looked right. One line of CSS fixed it; the re-run passed 21 of 21 |
+| Three languages, three date systems | Spanish writes *martes 24 de noviembre, 5:15 p. m.*; Vietnamese writes *ngày 24 tháng 11, 17 giờ 15*. Each needed its own date finder — and a translation checker caught 6 wording fixes before launch |
+| A Sprite is a real little computer | Services, restarts, and persistent memory all had to be learned and verified live — nothing was assumed from the docs alone |
+
+## Accomplishments I am proud of
+
+| Accomplishment | Proof |
+|---|---|
+| Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
+| The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
+| Tested like it matters | Smoke test 6/6 · Playwright 21/21 · the failure in between, shown honestly in Testing |
+| Three languages at launch | English · Español · Tiếng Việt — the languages of the families I serve |
+| It helps the builder first | I am the first user. ClearDay reads my board email the way my doctors prescribed |
+
+## What I learned
+
+A demo is not done when it works for the builder. It is done when it survives strangers, tests, and a tired judge at midnight — in their language, at their pace. And the test you almost skip is the one that finds the 16px.
 
 ## How ClearDay is designed for dyslexic readers
 
@@ -207,4 +234,6 @@ Optional: set `CLEARDAY_MODEL_URL` to a Sprites Connector gateway URL for a mode
 
 ClearDay — a persistent accessibility agent on a Fly Sprite that turns long, hard-to-read messages into one clear page for people with dyslexia, then remembers and follows up. Built by Jose Luis Pacheco, who lives with severe dyslexia, during Hacksgiving week.
 
-**What's next:** real readers. The next step is putting ClearDay in front of dyslexic readers in my own communities — my college district and the Latinas Contra Cancer network — and letting their feedback set the next version. A tool for readers should be judged by readers.
+## What's next
+
+Real readers. The next step is putting ClearDay in front of dyslexic readers in my own communities — my college district and the Latinas Contra Cancer network — and letting their feedback set the next version. A tool for readers should be judged by readers.
