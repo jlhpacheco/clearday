@@ -67,7 +67,7 @@ I built it for people who suffer from dyslexia. If it helps one person catch the
 
 - [SDAC, October 24, 2024 — Jose Luis Pacheco, speaking to board members during his first term on the CalPERS Board of Administration (2022–2026)](https://www.youtube.com/watch?v=S0sxcC-EQrg)
 
-ClearDay is my personal project, built on my personal accounts. It is not a District project.
+ClearDay is my personal project. I worked on it on my own breaks, on my personal accounts. It is not a District project.
 
 From that talk: I am an IT professional at the San Jose Evergreen Community College District, where I have worked since 2015. I am a past president of CSEA Chapter 363 and a former South Bay Labor Council delegate. I serve on the board of Latinas Contra Cancer. I hold two bachelor's degrees — economics, and biological sciences. I did all of that reading the way I read: slowly, carefully, and with tables and charts doing the heavy lifting. That is the reader ClearDay is built for.
 
