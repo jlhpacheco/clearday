@@ -18,7 +18,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **29/29** · Playwright browser test **36/36** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **31/31** · Playwright browser test **36/36** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -147,7 +147,7 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 | Test | What it proves | Result |
 |---|---|---|
-| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow in 3 languages** · bogus message id falls back safely · delete-all → inbox re-seeds itself · raw Mailpit through the proxy · **fake-data probes: a dateless email invents no date · a one-date email shows exactly that date · numbers copied to the cent · Spanish dates exact** · **reply loop: sent, addressed, real date inside, follow-up resolved** | **29 of 29 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow in 3 languages** · bogus message id falls back safely · delete-all → inbox re-seeds itself · raw Mailpit through the proxy · **fake-data probes: a dateless email invents no date · a one-date email shows exactly that date · numbers copied to the cent · Spanish dates exact** · **reply loop: sent, addressed, real date inside, follow-up resolved** · **write-block probes: send/delete through the public proxy → 403, inbox intact** | **31 of 31 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
 | **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** · **the inbox path: nav → Inbox → Make it clear** · **the reply walk: draft → thinking banner → sent** · **the blinking “AI is thinking” banner, checked on both waits** · inbox in Spanish · seed button adds a real email | **36 of 36 PASS** — script, log, and screenshots in `tests/` |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
@@ -172,7 +172,7 @@ Third honest note (Nov 24): the rule paid for itself the same day. The first smo
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 29/29 · Playwright 36/36 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 31/31 · Playwright 36/36 · the failures in between, shown honestly in Testing |
 | A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | It answers back | One button drafts and sends a real reply through the inbox — and closes the follow-up |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
@@ -217,6 +217,8 @@ ClearDay also has a **real inbox**, and you can watch email arrive in it:
 
 1. **[Open the Inbox page](https://clearday-bnjwz.sprites.app/inbox)** — ClearDay's clear-style list of what is sitting in the inbox right now. Press **Make it clear** on any message.
 2. **[Open the raw inbox — Mailpit](https://clearday-bnjwz.sprites.app/mailpit/)** — the same inbox in Mailpit's own screen: small, dense, gray text.
+
+One safety line, found by a red-team probe and fixed the same day: the public Mailpit door is **look-only** — anyone can read the demo inbox, but sending or deleting through it is closed (403). Nobody can plant mail in this inbox.
 
 The Mailpit screen is **not dyslexia-friendly — and that is the point.** That cramped gray list is what every inbox looks like to a dyslexic reader. ClearDay is the layer that fixes it. Mailpit is a real mail service (real SMTP, real storage) running as a second service on the same Sprite; the sample board email was really sent into it, and the Inbox page re-sends it if the box is ever empty. *(The GIF above shows the paste path; the inbox is a second door to the same clear page.)*
 
