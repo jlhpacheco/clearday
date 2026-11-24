@@ -16,6 +16,17 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
+## Try it in 60 seconds
+
+1. Open the **live demo**: https://clearday-bnjwz.sprites.app/
+2. In **From**, type: `Maria Lopez`
+3. In **Subject**, type: `Board meeting moved`
+4. Copy the sample email below into **Paste the long message**, and press **Make it clear**.
+
+> Hi everyone, I hope you are all doing well. I am writing with several updates about our board meeting and a few related items that have come up since last week. First, please note that the meeting originally scheduled for Monday November 23 has been moved, after a long discussion with the venue and several board members who had conflicts, to Tuesday November 24 at 5:15 PM. The meeting will be held in Room 4 and also on Zoom for those who cannot attend in person. Second, please reply to this email to confirm whether you can attend in person or on Zoom, and please do that before Friday November 27 so we can order the right number of chairs and print the right number of packets. Third, please bring your photo ID, because the building has changed its check-in rules. The agenda includes the budget, the gala report, and a vote. If you cannot attend, please send your proxy to the chair before the meeting. Thank you so much for everything you do, and I look forward to seeing you there. Warm regards, Maria
+
+What comes out: one clear page — the meeting moved to **Tuesday November 24, 5:15 PM**, 3 things to do, the facts in a table, and every date in big type. Then check **Follow-ups**: ClearDay remembered it.
+
 ---
 
 ## Why this matters: dyslexia, in numbers
