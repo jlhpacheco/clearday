@@ -27,8 +27,9 @@ STRINGS = {
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
-           "sample_title": "Fastest way to test", "sample_btn": "Try the sample email",
-           "sample_line": "No email handy? One press loads a real sample board email and makes it clear.",
+           "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
+           "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
+           "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
            "trust1": "Dates copied exactly — never invented", "trust2": "Same order, every time",
            "trust3": "Cream page + big type — the research, not fashion",
            "why_title": "Why the cream page? For judges",
@@ -55,8 +56,9 @@ STRINGS = {
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
-           "sample_title": "La forma más rápida de probar", "sample_btn": "Probar el correo de ejemplo",
-           "sample_line": "¿Sin un correo a mano? Un botón carga un correo real de ejemplo de la junta y lo aclara.",
+           "sample_title": "La forma más rápida de probar", "sample_btn": "Cargar el correo de ejemplo",
+           "sample_line": "¿Sin un correo a mano? Un botón llena el formulario con un correo real de ejemplo de la junta. Lo ves primero — luego pulsa Hazlo claro.",
+           "sample_loaded": "Ejemplo cargado en el formulario — léelo y pulsa Hazlo claro.",
            "trust1": "Fechas copiadas exactas — nunca inventadas", "trust2": "El mismo orden, siempre",
            "trust3": "Página crema y letra grande — la investigación, no la moda",
            "why_title": "¿Por qué la página crema? Para los jueces",
@@ -83,8 +85,9 @@ STRINGS = {
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
-           "sample_title": "Cách thử nhanh nhất", "sample_btn": "Thử email mẫu",
-           "sample_line": "Không có email sẵn? Một lần nhấn sẽ nạp một email mẫu thật của ban và làm rõ nó.",
+           "sample_title": "Cách thử nhanh nhất", "sample_btn": "Nạp email mẫu",
+           "sample_line": "Không có email sẵn? Một lần nhấn sẽ điền email mẫu thật của ban vào biểu mẫu bên dưới. Bạn xem trước — rồi nhấn Làm rõ.",
+           "sample_loaded": "Đã nạp mẫu vào biểu mẫu — xem lại rồi nhấn Làm rõ.",
            "trust1": "Ngày tháng sao chép chính xác — không bao giờ bịa ra", "trust2": "Cùng thứ tự, mọi lần",
            "trust3": "Trang màu kem + chữ lớn — theo nghiên cứu, không theo thời trang",
            "why_title": "Vì sao trang màu kem? Dành cho giám khảo",
@@ -161,9 +164,14 @@ def _why_card(s):
     items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
     return f"<div class='card why'><div class='cardtitle'>&#9670; {s['why_title']}</div>{items}</div>"
 
-def render_form(extra="", lang="en"):
+def render_form(extra="", lang="en", prefill=None):
     s = S(lang)
     checked = {code: ("checked" if code == lang else "") for code in STRINGS}
+    pf = prefill or {}
+    pf_sender = esc(pf.get("sender", ""))
+    pf_subject = esc(pf.get("subject", ""))
+    pf_text = esc(pf.get("text", ""))
+    loaded = f"<p class='big'><b>&#10003; {s['sample_loaded']}</b></p>" if pf else ""
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
 <div class='layout'><div>
 <div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
@@ -171,16 +179,17 @@ def render_form(extra="", lang="en"):
 {extra}
 <div class='card'><div class='cardtitle'>&#9654; {s['sample_title']}</div>
 <div>{s['sample_line']}</div>
-<p><a class='btn' href='/sample?lang={lang}'>{s['sample_btn']}</a></p></div>
+<p><a class='btn' href='/?sample=1&lang={lang}'>{s['sample_btn']}</a></p></div>
+{loaded}
 <div class='card'><form method='post'>
 <p class='big'><b>{s['language']}</b></p>
 <p class='langrow'>
 <label><input type='radio' name='lang' value='en' {checked['en']}> EN</label>
 <label><input type='radio' name='lang' value='es' {checked['es']}> ES</label>
 <label><input type='radio' name='lang' value='vi' {checked['vi']}> VI</label></p>
-<p><label class='big'><b>{s['from']}</b></label><input name='sender' placeholder='Maria Lopez'></p>
-<p><label class='big'><b>{s['subject']}</b></label><input name='subject' placeholder='Meeting moved'></p>
-<p><label class='big'><b>{s['paste']}</b></label><textarea name='text' rows='10'></textarea></p>
+<p><label class='big'><b>{s['from']}</b></label><input name='sender' placeholder='Maria Lopez' value='{pf_sender}'></p>
+<p><label class='big'><b>{s['subject']}</b></label><input name='subject' placeholder='Meeting moved' value='{pf_subject}'></p>
+<p><label class='big'><b>{s['paste']}</b></label><textarea name='text' rows='10'>{pf_text}</textarea></p>
 <p class='big'><b>{s['demo_warn']}</b></p>
 <button type='submit'>{s['button']}</button></form></div>
 {_why_card(s)}
