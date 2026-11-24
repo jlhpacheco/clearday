@@ -9,8 +9,8 @@ import json, os, html, http.client, smtplib, urllib.request
 from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
-from clearday import transform
-from render import render_page, render_form, render_inbox, S
+from clearday import transform, draft_reply
+from render import render_page, render_form, render_inbox, render_reply_sent, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
@@ -107,9 +107,14 @@ class H(BaseHTTPRequestHandler):
                 frm = msg.get("From") or {}
                 sender = frm.get("Name") or frm.get("Address") or ""
                 result = transform(msg.get("Text") or "", sender, msg.get("Subject") or "", lang)
+                result["_text"] = msg.get("Text") or ""
+                result["_mid"] = mid
+                result["_addr"] = frm.get("Address") or ""
+                result["_subject"] = msg.get("Subject") or ""
                 items = load_memory()
                 items.append({"what": result["what"], "sender": result["sender"],
-                              "lang": result.get("lang", lang)})
+                              "lang": result.get("lang", lang), "mid": mid,
+                              "addr": frm.get("Address") or ""})
                 save_memory(items[-20:])
                 self._send(render_page(result))
             except Exception:
@@ -138,13 +143,20 @@ class H(BaseHTTPRequestHandler):
             except Exception:
                 text = ""
             page = transform(text, "Maria Lopez", "Board meeting moved", lang)
+            page["_text"] = text; page["_mid"] = ""; page["_addr"] = ""; page["_subject"] = "Board meeting moved"
             items = load_memory(); items.append({"what": page["what"], "sender": page["sender"], "lang": page.get("lang", lang)}); save_memory(items[-20:])
             self._send(render_page(page))
         elif self.path.startswith("/followups"):
             items = load_memory()
             def row(i):
                 s = S(i.get("lang", "en"))
-                return f"<div style='font-size:22px;padding:10px;'>&#9679; {html.escape(str(i['what']))} — {s['nudge']} {html.escape(str(i['sender']))}</div>"
+                btn = ""
+                if i.get("mid"):
+                    btn = (f" <form method='post' action='/reply' style='display:inline'>"
+                           f"<input type='hidden' name='mid' value='{html.escape(str(i['mid']))}'>"
+                           f"<input type='hidden' name='lang' value='{html.escape(str(i.get('lang', 'en')))}'>"
+                           f"<button type='submit'>{s['followups_reply']}</button></form>")
+                return f"<div style='font-size:22px;padding:10px;'>&#9679; {html.escape(str(i['what']))} — {s['nudge']} {html.escape(str(i['sender']))}{btn}</div>"
             en = S("en")
             rows = "".join(row(i) for i in items) or f"<div style='font-size:22px;padding:10px;'>{en['no_followups']}</div>"
             self._send(render_form(f"<h2 style='font-size:28px;'>{en['followups_title']}</h2><p class='big'><b>{en['demo_entries']}</b></p>{rows}"))
@@ -163,6 +175,51 @@ class H(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path.startswith("/mailpit"):
             self._proxy_mailpit()
+            return
+        if self.path.startswith("/reply"):
+            length = int(self.headers.get("Content-Length") or 0)
+            if length > 60000:
+                self._send(render_form("<p class='big'><b>That message is too long. Please paste a shorter one.</b></p>"))
+                return
+            f = parse_qs(self.rfile.read(length).decode(errors="replace")) if length else {}
+            def one(k):
+                return (f.get(k) or [""])[0]
+            lang = one("lang") or "en"
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            mid, sender, subject, text = one("mid"), one("sender"), one("subject"), one("text")
+            addr = ""
+            if mid:
+                try:
+                    msg = mp_api("/api/v1/message/" + mid)
+                    frm = msg.get("From") or {}
+                    sender = frm.get("Name") or frm.get("Address") or sender
+                    addr = frm.get("Address") or ""
+                    subject = msg.get("Subject") or subject
+                    text = msg.get("Text") or text
+                except Exception:
+                    pass
+            dates = transform(text, sender, subject, lang)["dates_numbers"] if text else []
+            draft = draft_reply(text, sender, subject, lang, dates)
+            rsubject = subject if subject.lower().startswith("re:") else "Re: " + subject
+            sent = False
+            if addr:
+                try:
+                    m = EmailMessage()
+                    m["From"] = "Jose Luis (ClearDay) <you@clearday.demo>"
+                    m["To"] = addr
+                    m["Subject"] = rsubject
+                    m.set_content(draft)
+                    s2 = smtplib.SMTP("127.0.0.1", 1025, timeout=10)
+                    s2.send_message(m)
+                    s2.quit()
+                    sent = True
+                    if mid:
+                        items = [i for i in load_memory() if i.get("mid") != mid]
+                        save_memory(items)
+                except Exception:
+                    sent = False
+            self._send(render_reply_sent(addr or sender, rsubject, draft, sent, lang))
             return
         if self.path.startswith("/inbox/seed"):
             q = parse_qs(urlparse(self.path).query)
@@ -188,6 +245,7 @@ class H(BaseHTTPRequestHandler):
         if not text.strip():
             self._send(render_form("<p style='font-size:22px;'><b>Paste a message first.</b></p>", lang)); return
         page = transform(text, sender, subject, lang)
+        page["_text"] = text; page["_mid"] = ""; page["_addr"] = ""; page["_subject"] = subject
         items = load_memory(); items.append({"what": page["what"], "sender": page["sender"], "lang": page.get("lang", lang)}); save_memory(items[-20:])
         self._send(render_page(page))
 
