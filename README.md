@@ -18,7 +18,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **7/7** · Playwright browser test **21/21** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **8/8** · Playwright browser test **26/26** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -147,10 +147,12 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 | Test | What it proves | Result |
 |---|---|---|
-| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · follow-ups labeled | **7 of 7 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
-| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned | **21 of 21 PASS** — script, log, and screenshots in `tests/` |
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · follow-ups labeled | **8 of 8 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
+| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** | **26 of 26 PASS** — script, log, and screenshots in `tests/` |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
+
+Second honest note (Nov 24): the green sample button first shipped **untested** — it jumped straight to the result and never showed the email in the form. The builder found it himself, in one press. The button now **fills the form first**, where the reader can see it, and the button path is inside both test suites (smoke check 8; five Playwright checks). A feature is not tested until the test touches it.
 
 ## Challenges we ran into
 
@@ -168,7 +170,7 @@ One honest note: the Playwright test first caught a real miss — the page body 
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 7/7 · Playwright 21/21 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 8/8 · Playwright 26/26 · the failures in between, shown honestly in Testing |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
 | Three languages at launch | English · Español · Tiếng Việt — the languages of the families I serve |
 | It helps the builder first | I am the first user. ClearDay reads my board email the way I have always needed it read |
