@@ -158,6 +158,19 @@ async function main() {
   await page.fill('input[name="sender"]', "Maria Lopez");
   await page.fill('input[name="subject"]', "Board meeting moved");
   await page.fill('textarea[name="text"]', SAMPLE);
+  // Thinking banner: dispatch a held submit (navigation paused by the test)
+  // and confirm the banner appears - the same wiring a real click uses.
+  await page.evaluate(() => {
+    const f = document.querySelector("form") as HTMLFormElement;
+    f.addEventListener("submit", (e) => e.preventDefault(), { once: true });
+    f.requestSubmit();
+  });
+  let thinkShown = true;
+  try {
+    await page.locator("#thinking").waitFor({ state: "visible", timeout: 3_000 });
+  } catch { thinkShown = false; }
+  check("Thinking: blinking 'AI is thinking' banner shows while the model works", thinkShown);
+  await page.evaluate(() => { document.querySelectorAll("button[type=submit]").forEach((b) => { (b as HTMLButtonElement).disabled = false; }); });
   await page.click('button[type="submit"]');
   await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
 
@@ -186,6 +199,37 @@ async function main() {
   await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
   const ibRes = await bodyText(page);
   check("Inbox: clear page shows exact date 'Tuesday November 24'", ibRes.includes("Tuesday November 24"));
+
+  // ---------- Step 2c: the reply walk (added Nov 24) ----------
+  // From the inbox clear page: draft + send a reply, thinking banner up while drafting.
+  await page.evaluate(() => {
+    const f = document.querySelector('form[action="/reply"]') as HTMLFormElement;
+    f.addEventListener("submit", (e) => e.preventDefault(), { once: true });
+    f.requestSubmit();
+  });
+  let draftThink = true;
+  try {
+    await page.locator("#thinking").waitFor({ state: "visible", timeout: 3_000 });
+  } catch { draftThink = false; }
+  check("Reply: thinking banner shows while the AI drafts the reply", draftThink);
+  await page.evaluate(() => { document.querySelectorAll("button[type=submit]").forEach((b) => { (b as HTMLButtonElement).disabled = false; }); });
+  await page.click("text=Draft and send a reply");
+  await page.waitForSelector("text=REPLY SENT", { timeout: 90_000 });
+  const rp = await bodyText(page);
+  check("Reply: sent page shows the sender's real address", rp.includes("maria.lopez@example.org"));
+  check("Reply: sent page shows subject 'Re: Board meeting moved'", rp.includes("Re: Board meeting moved"));
+
+  // ---------- Step 2d: inbox in Spanish + the seed button (added Nov 24) ----------
+  await page.goto(BASE + "/inbox?lang=es", { waitUntil: "load", timeout: 90_000 });
+  const ibes = await bodyText(page);
+  check("Inbox ES: 'LA BANDEJA' title shown", ibes.includes("LA BANDEJA"));
+  check("Inbox ES: 'Hazlo claro' button shown", ibes.includes("Hazlo claro"));
+  await page.goto(BASE + "/inbox?lang=en", { waitUntil: "load", timeout: 90_000 });
+  const beforeCount = await page.locator('a.btn[href*="/inbox/clear"]').count();
+  await page.click('form[action*="/inbox/seed"] button[type="submit"]');
+  await page.waitForSelector("text=THE INBOX", { timeout: 30_000 });
+  const afterCount = await page.locator('a.btn[href*="/inbox/clear"]').count();
+  check("Inbox: seed button adds one more real email", afterCount === beforeCount + 1, `${beforeCount} -> ${afterCount}`);
 
   // ---------- Step 4: accessibility spot checks (on the result page) ----------
   const style = await page.evaluate(() => {
