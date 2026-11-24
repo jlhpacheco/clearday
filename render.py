@@ -27,8 +27,10 @@ STRINGS = {
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
+           "sample_title": "Fastest way to test", "sample_btn": "Try the sample email",
+           "sample_line": "No email handy? One press loads a real sample board email and makes it clear.",
            "trust1": "Dates copied exactly — never invented", "trust2": "Same order, every time",
-           "trust3": "Cream page + big type — by prescription, not fashion",
+           "trust3": "Cream page + big type — the research, not fashion",
            "why_title": "Why the cream page? For judges",
            "why1": "Cream, not white — warm backgrounds tested best for dyslexic readers; pure white glares (Rello & Baeza-Yates)",
            "why2": "Arial, bold, no italics — eye-tracking, 48 dyslexic readers: italics were the slowest (ACM ASSETS 2013)",
@@ -53,8 +55,10 @@ STRINGS = {
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
+           "sample_title": "La forma más rápida de probar", "sample_btn": "Probar el correo de ejemplo",
+           "sample_line": "¿Sin un correo a mano? Un botón carga un correo real de ejemplo de la junta y lo aclara.",
            "trust1": "Fechas copiadas exactas — nunca inventadas", "trust2": "El mismo orden, siempre",
-           "trust3": "Página crema y letra grande — por prescripción, no por moda",
+           "trust3": "Página crema y letra grande — la investigación, no la moda",
            "why_title": "¿Por qué la página crema? Para los jueces",
            "why1": "Crema, no blanco — los fondos cálidos fueron los mejores para lectores con dislexia; el blanco puro deslumbra (Rello y Baeza-Yates)",
            "why2": "Arial, negrita, sin cursiva — seguimiento ocular en 48 lectores con dislexia: la cursiva fue lo más lento (ACM ASSETS 2013)",
@@ -79,8 +83,10 @@ STRINGS = {
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
+           "sample_title": "Cách thử nhanh nhất", "sample_btn": "Thử email mẫu",
+           "sample_line": "Không có email sẵn? Một lần nhấn sẽ nạp một email mẫu thật của ban và làm rõ nó.",
            "trust1": "Ngày tháng sao chép chính xác — không bao giờ bịa ra", "trust2": "Cùng thứ tự, mọi lần",
-           "trust3": "Trang màu kem + chữ lớn — theo chỉ định, không theo thời trang",
+           "trust3": "Trang màu kem + chữ lớn — theo nghiên cứu, không theo thời trang",
            "why_title": "Vì sao trang màu kem? Dành cho giám khảo",
            "why1": "Màu kem, không phải trắng — nền ấm cho kết quả tốt nhất với người khó đọc; trắng tinh gây chói (Rello & Baeza-Yates)",
            "why2": "Arial, chữ đậm, không nghiêng — theo dõi mắt 48 người khó đọc: chữ nghiêng chậm nhất (ACM ASSETS 2013)",
@@ -133,6 +139,8 @@ font-weight:bold;background:#FFFDF4;cursor:pointer;margin-right:8px;font-size:20
 .langrow label:has(input:checked){background:#123A7A;color:#FFF6D6}
 .langrow input{width:auto}
 a{color:#123A7A;font-weight:bold}
+a.btn{display:inline-block;background:#0E7A5F;color:#FFF6D6;border:3px solid #0E7A5F;border-radius:12px;
+padding:12px 22px;font-size:22px;font-weight:bold;text-decoration:none;box-shadow:0 4px 0 rgba(32,36,46,.25);margin-top:10px}
 .navrow{display:flex;gap:26px;flex-wrap:wrap;border-bottom:3px solid rgba(32,36,46,.15);padding:8px 0 12px;margin-bottom:6px}
 .navrow a{text-decoration:none;color:#20242E}
 .layout{display:block}
@@ -161,6 +169,9 @@ def render_form(extra="", lang="en"):
 <div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
 <div class='big'>{s['hero_sub']}</div>
 {extra}
+<div class='card'><div class='cardtitle'>&#9654; {s['sample_title']}</div>
+<div>{s['sample_line']}</div>
+<p><a class='btn' href='/sample?lang={lang}'>{s['sample_btn']}</a></p></div>
 <div class='card'><form method='post'>
 <p class='big'><b>{s['language']}</b></p>
 <p class='langrow'>
