@@ -1,4 +1,4 @@
-ClearDay Playwright test — 2026-11-25T00:09:24.654Z
+ClearDay Playwright test — 2026-11-25T00:23:13.360Z
 Target: https://clearday-bnjwz.sprites.app/
 
 PASS  Home: page title is 'ClearDay' — title="ClearDay"
@@ -27,6 +27,7 @@ PASS  Inbox: 'Make it clear' button shown
 PASS  Inbox: clear page shows exact date 'Tuesday November 24'
 PASS  Reply: thinking banner shows while the AI drafts the reply
 PASS  Reply: draft page shows BEFORE anything is sent (Send button waits for the reader)
+PASS  Reply: draft page says who wrote it (AI pill or Rules pill)
 PASS  Reply: sent page shows the sender's real address
 PASS  Reply: sent page shows subject 'Re: Board meeting moved'
 PASS  Inbox ES: 'LA BANDEJA' title shown
@@ -39,4 +40,4 @@ PASS  Follow-ups: 'Demo entries' label visible
 PASS  Follow-ups: test entry for Maria Lopez was remembered
 PASS  Follow-ups: screenshot saved — followups.png
 
-TOTAL: 37/37 passed
+TOTAL: 38/38 passed
