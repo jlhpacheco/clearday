@@ -213,7 +213,12 @@ async function main() {
   } catch { draftThink = false; }
   check("Reply: thinking banner shows while the AI drafts the reply", draftThink);
   await page.evaluate(() => { document.querySelectorAll("button[type=submit]").forEach((b) => { (b as HTMLButtonElement).disabled = false; }); });
-  await page.click("text=Draft and send a reply");
+  await page.click("text=Draft a reply");
+  await page.waitForSelector("text=YOUR REPLY DRAFT", { timeout: 90_000 });
+  const dp = await bodyText(page);
+  check("Reply: draft page shows BEFORE anything is sent (Send button waits for the reader)", dp.includes("Send this reply") && dp.includes("Nothing is sent until you press Send"));
+  await page.fill('textarea[name="body"]', "Hello Maria,\n\nI will attend on Tuesday November 24 at 5:15 PM and bring my photo ID.\n\nThank you,\nJose Luis");
+  await page.click("text=Send this reply");
   await page.waitForSelector("text=REPLY SENT", { timeout: 90_000 });
   const rp = await bodyText(page);
   check("Reply: sent page shows the sender's real address", rp.includes("maria.lopez@example.org"));
