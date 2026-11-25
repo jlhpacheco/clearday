@@ -122,7 +122,7 @@ def llm_transform(text, sender="", subject="", lang="en"):
     if lang not in LANG_NAMES:
         lang = "en"
     prompt = (
-        f"Write every value in {LANG_NAMES[lang]}. "
+        f"Write every value in {LANG_NAMES[lang]}. Be brief - answer directly, do not reason at length. "
         "Turn this message into JSON only with keys: what (<=8 words), "
         "actions (max 3, each <=7 words, verb first), facts (object, max 4 short key/value pairs), "
         "steps (max 5, each <=6 words), risk (<=8 words or empty string). "
@@ -130,13 +130,13 @@ def llm_transform(text, sender="", subject="", lang="en"):
         f"Sender: {sender}\nSubject: {subject}\nText: {text[:6000]}"
     )
     body = json.dumps({"model": os.environ.get("CLEARDAY_MODEL", "unused"),
-                       "temperature": 0.2, "max_tokens": 1500,
+                       "temperature": 0.2, "max_tokens": 2500,
                        "messages": [{"role": "user", "content": prompt}]}).encode()
     req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=body,
                                  headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                           "User-Agent": "ClearDay/1.0"})
     try:
-        with urllib.request.urlopen(req, timeout=20) as r:
+        with urllib.request.urlopen(req, timeout=30) as r:
             data = json.loads(r.read())
         content = data["choices"][0]["message"]["content"]
         raw = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
@@ -174,7 +174,7 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
     base = os.environ.get("CLEARDAY_MODEL_URL")
     if base:
         prompt = (
-            f"Write in {LANG_NAMES[lang]}. Draft a short, polite email reply (3-5 lines) "
+            f"Write in {LANG_NAMES[lang]}. Be brief - answer directly, do not reason at length. Draft a short, polite email reply (3-5 lines) "
             "to the sender of this message, confirming what they asked. "
             "You may ONLY use these exact dates/times, copied word for word, and no others: "
             f"{dates if dates else 'NONE - do not mention any date or time'}. "
@@ -183,13 +183,13 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
             f"Sender: {sender}\nSubject: {subject}\nMessage: {text[:4000]}"
         )
         body = json.dumps({"model": os.environ.get("CLEARDAY_MODEL", "unused"),
-                           "temperature": 0.2, "max_tokens": 1500,
+                           "temperature": 0.2, "max_tokens": 2500,
                            "messages": [{"role": "user", "content": prompt}]}).encode()
         req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=body,
                                      headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                               "User-Agent": "ClearDay/1.0"})
         try:
-            with urllib.request.urlopen(req, timeout=20) as r:
+            with urllib.request.urlopen(req, timeout=30) as r:
                 data = json.loads(r.read())
             content = (data["choices"][0]["message"]["content"] or "").strip()
             if content and len(content) > 20:
