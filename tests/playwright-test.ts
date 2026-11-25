@@ -126,6 +126,10 @@ async function main() {
   check("Home: From field visible", await page.locator('input[name="sender"]').isVisible());
   const homeBody = await page.locator("body").innerText();
   check("Home: narrative card at the top of the clear page - 'feel what I feel'", homeBody.includes("Before you judge this app, feel what I feel"));
+  await page.locator("a.rawbtn").first().click();
+  const dlgOpen = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return !!d && d.open; });
+  check("Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)", dlgOpen);
+  if (dlgOpen) { await page.locator("#rawclose").click(); }
   check("Home: Subject field visible", await page.locator('input[name="subject"]').isVisible());
   check("Home: 'Paste the long message' box visible", await page.locator('textarea[name="text"]').isVisible());
 
@@ -140,7 +144,7 @@ async function main() {
 
   // ---------- Step 1b: the green sample button path (added Nov 24) ----------
   // The button must FILL the form where the reader can see it - never skip it.
-  await page.click("a.btn");
+  await page.click("a.btn[href*='sample=1']");
   await page.waitForSelector('input[name="sender"][value="Maria Lopez"]', { timeout: 30_000 });
   const sFrom = await page.inputValue('input[name="sender"]');
   check("Sample button: From filled with 'Maria Lopez'", sFrom === "Maria Lopez", `from="${sFrom}"`);
