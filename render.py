@@ -34,7 +34,7 @@ STRINGS = {
            "reply_draft_only": "Draft only here - sending works from the Inbox, where the sender's real address lives.",
            "reply_sent_title": "REPLY SENT", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
-           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.",
+           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "This draft came from the paste box. We have the name, but not the real email address. To send a reply: open the email from the Inbox, then press Draft a reply - the Send button is there.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
            "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
            "inbox_seed": "Send the sample email into this inbox",
@@ -77,7 +77,7 @@ STRINGS = {
            "reply_draft_only": "Aquí solo el borrador - el envío funciona desde la Bandeja, donde está la dirección real del remitente.",
            "reply_sent_title": "RESPUESTA ENVIADA", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
-           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.",
+           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Este borrador vino del cuadro de pegar. Tenemos el nombre, pero no la dirección real. Para enviar una respuesta: abre el correo desde la Bandeja y presiona Redactar una respuesta - allí está el botón Enviar.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
            "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
@@ -120,7 +120,7 @@ STRINGS = {
            "reply_draft_only": "Ở đây chỉ là bản nháp - gửi được từ Hộp thư, nơi có địa chỉ thật của người gửi.",
            "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
-           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.",
+           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Bản nháp này đến từ khung dán. Chúng ta có tên, nhưng không có địa chỉ email thật. Để gửi thư trả lời: mở email từ Hộp thư, rồi nhấn Soạn thư trả lời - nút Gửi ở đó.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
            "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
@@ -333,7 +333,8 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr=""):
 <p><button type='submit'>{s['send_btn']}</button></p></form>
 <p class='big'><a href='/inbox'>{s['dont_send']}</a></p>"""
     else:
-        send_form = f"""<div>{s['edit_hint']}</div>
+        send_form = f"""<div class='box amber'><span class='lbl'>&#9650; {s['no_send_here']}</span><div class='big'>{s['no_send_why']}</div></div>
+<div>{s['edit_hint']}</div>
 <textarea rows='9' style='{box}'>{esc(body_text)}</textarea>
 <p class='big'>{s['reply_draft_only']}</p>"""
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
