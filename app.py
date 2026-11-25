@@ -21,6 +21,16 @@ def mp_api(path):
     with urllib.request.urlopen(req, timeout=10) as r:
         return json.loads(r.read())
 
+def mp_seed_if_missing():
+    try:
+        msgs, up = mp_messages()
+        if up and not any(m.get("Subject") == "Board meeting moved" for m in msgs):
+            mp_seed()
+            return True
+    except Exception:
+        pass
+    return False
+
 def mp_seed():
     """Send the sample board email into the Mailpit inbox by real SMTP."""
     text = open(os.path.join(os.path.dirname(__file__), "sample_email.txt")).read()
@@ -177,18 +187,14 @@ class H(BaseHTTPRequestHandler):
             # Parallel workflow (Jose Luis's spec, Nov 24): loading the sample
             # ALSO puts the same email into the Mailpit inbox - if it is not
             # already there. The form fills at the same time, below.
-            try:
-                msgs0, up0 = mp_messages()
-                if up0 and not any(m.get("Subject") == "Board meeting moved" for m in msgs0):
-                    mp_seed()
-            except Exception:
-                pass
+            mp_seed_if_missing()
             try:
                 text = open(os.path.join(os.path.dirname(__file__), "sample_email.txt")).read()
             except Exception:
                 text = ""
             self._send(render_form("", lang, {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": text}))
         else:
+            mp_seed_if_missing()
             self._send(render_form())
     def _other_method(self):
         if self.path.startswith("/mailpit"):
