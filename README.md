@@ -18,7 +18,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **33/33** · Playwright browser test **37/37** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **34/34** · Playwright browser test **38/38** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -147,8 +147,8 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 | Test | What it proves | Result |
 |---|---|---|
-| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow in 3 languages** · bogus message id falls back safely · delete-all → inbox re-seeds itself · raw Mailpit through the proxy · **fake-data probes: a dateless email invents no date · a one-date email shows exactly that date · numbers copied to the cent · Spanish dates exact** · **reply loop: draft first (nothing sent) → reader edits the box → Send press delivers the edited words → follow-up closes** · **a send addressed to anyone but the real sender is refused** · **write-block probes: send/delete through the public proxy → 403, inbox intact** | **33 of 33 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
-| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** · **the inbox path: nav → Inbox → Make it clear** · **the reply walk: draft → thinking banner → draft page → edit the words → send** · **the blinking “AI is thinking” banner, checked on both waits** · inbox in Spanish · seed button adds a real email | **37 of 37 PASS** — script, log, and screenshots in `tests/` |
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow in 3 languages** · bogus message id falls back safely · delete-all → inbox re-seeds itself · raw Mailpit through the proxy · **fake-data probes: a dateless email invents no date · a one-date email shows exactly that date · numbers copied to the cent · Spanish dates exact** · **reply loop: draft first (nothing sent) → reader edits the box → Send press delivers the edited words → follow-up closes** · **a send addressed to anyone but the real sender is refused** · **write-block probes: send/delete through the public proxy → 403, inbox intact** | **34 of 34 PASS** — log in `tests/smoke-test-2026-11-24.log` (Nov 23 run: 6 of 6, `tests/smoke-test-2026-11-23.log`) |
+| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** · **the inbox path: nav → Inbox → Make it clear** · **the reply walk: draft → thinking banner → draft page → edit the words → send** · **the blinking “AI is thinking” banner, checked on both waits** · inbox in Spanish · seed button adds a real email | **38 of 38 PASS** — script, log, and screenshots in `tests/` |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
 
@@ -172,7 +172,7 @@ Third honest note (Nov 24): the rule paid for itself the same day. The first smo
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 33/33 · Playwright 37/37 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 34/34 · Playwright 38/38 · the failures in between, shown honestly in Testing |
 | A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | It answers back — with permission | The AI drafts the reply, you read and edit it, and only your Send press sends it — then the follow-up closes |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
