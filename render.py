@@ -40,7 +40,7 @@ STRINGS = {
            "inbox_seed": "Send the sample email into this inbox",
            "inbox_down": "The inbox is resting right now. The paste form still works.",
            "inbox_raw": "See the raw inbox (Mailpit)",
-           "inbox_raw_note": "As a dyslexia person, it is so hard for me to read emails in the format that they are currently presented, especially long and confusing. Click the link below and see for yourself. Small, dense, gray text. It is not dyslexia-friendly. That is why I created ClearDay and it really helps and maybe it will others like me. Happy Thanksgiving!",
+           "inbox_raw_note": "Before you judge this app, feel what I feel. I live with dyslexia. An email like this one - long, tangled, small dense gray text - can take me three reads before it gives up its meaning. The dates hide. The one thing I must do hides. And sometimes the important part almost slips past me. Below is a link to the raw inbox - Mailpit. Click it and see for yourself: that cramped gray screen is not dyslexia-friendly. It is the wall I run into every single day. That is why I built ClearDay. It takes that same email and hands it back clear - and it really helps me. My hope is simple: that it helps others like me, too. Happy Thanksgiving! - Jose Luis",
            "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
            "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
            "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
@@ -240,7 +240,7 @@ def render_inbox(messages, lang="en", down=False):
 {_raw_card(s)}""", s)
 
 def _raw_card(s):
-    return f"""<div class='card'><div class='cardtitle'>&#9632; {s['inbox_raw']}</div>
+    return f"""<div class='card'>
 <div>{s['inbox_raw_note']}</div>
 <p><a href='/mailpit/'>Mailpit</a></p></div>"""
 
