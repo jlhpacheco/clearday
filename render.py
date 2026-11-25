@@ -31,8 +31,8 @@ STRINGS = {
            "thinking": "AI is thinking - reading your message...",
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
-           "reply_draft_only": "Draft only here - sending works from the Inbox, where the sender's real address lives.",
-           "reply_sent_title": "REPLY SENT", "reply_draft_title": "YOUR REPLY DRAFT",
+           "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
+           "reply_sent_title": "REPLY SENT", "found_addr": "Good news - we found the real address in your Inbox:", "sent_see": "Your email was sent. It is now in the Inbox - go see it:", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
            "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "This draft came from the paste box. We have the name, but not the real email address. To send a reply: open the email from the Inbox, then press Draft a reply - the Send button is there.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
@@ -74,8 +74,8 @@ STRINGS = {
            "thinking": "La IA está pensando - leyendo tu mensaje...",
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
-           "reply_draft_only": "Aquí solo el borrador - el envío funciona desde la Bandeja, donde está la dirección real del remitente.",
-           "reply_sent_title": "RESPUESTA ENVIADA", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
+           "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
+           "reply_sent_title": "RESPUESTA ENVIADA", "found_addr": "Buenas noticias: encontramos la dirección real en tu Bandeja:", "sent_see": "Tu correo fue enviado. Ya está en la Bandeja - ve a verlo:", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
            "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Este borrador vino del cuadro de pegar. Tenemos el nombre, pero no la dirección real. Para enviar una respuesta: abre el correo desde la Bandeja y presiona Redactar una respuesta - allí está el botón Enviar.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
@@ -117,8 +117,8 @@ STRINGS = {
            "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
-           "reply_draft_only": "Ở đây chỉ là bản nháp - gửi được từ Hộp thư, nơi có địa chỉ thật của người gửi.",
-           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
+           "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
+           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong Hộp thư của bạn:", "sent_see": "Thư của bạn đã được gửi. Nó đang ở trong Hộp thư - hãy xem:", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
            "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Bản nháp này đến từ khung dán. Chúng ta có tên, nhưng không có địa chỉ email thật. Để gửi thư trả lời: mở email từ Hộp thư, rồi nhấn Soạn thư trả lời - nút Gửi ở đó.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
@@ -324,7 +324,7 @@ def render_page(p):
 </div></div>
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
 
-def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", source="rules", model_name=""):
+def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", source="rules", model_name="", found=False):
     s = S(lang)
     if source == "model":
         short_model = esc(str(model_name or "").split("/")[-1])
@@ -334,7 +334,8 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
     box = "width:100%;font-size:21px;line-height:1.7;font-family:Arial,Verdana,sans-serif;padding:12px;margin-top:12px;box-sizing:border-box;"
     send_form = ""
     if addr:
-        send_form = f"""<form method='post' action='/reply/send'>
+        found_box = f"<div class='box plain' style='border-color:#0E7A5F;background:#EFFAF4'><div class='big'><b>&#10003; {s['found_addr']} {esc(addr)}</b></div></div>" if found else ""
+        send_form = found_box + f"""<form method='post' action='/reply/send'>
 <input type='hidden' name='mid' value='{esc(mid)}'>
 <input type='hidden' name='to' value='{esc(addr)}'>
 <input type='hidden' name='subject' value='{esc(subject)}'>
@@ -364,4 +365,5 @@ def render_reply_sent(to, subject, body_text, sent, lang="en"):
 <div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
 <div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
 <div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div></div>
-<p class='big'><a href='/inbox'>{s['nav_inbox']}</a> &middot; <a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
+{("<p class='big'><b>" + s['sent_see'] + "</b></p>") if sent else ""}
+<p class='big'><a href='/inbox'>{s['nav_inbox']}</a> &middot; <a href='/mailpit/' target='_blank'>{s['sent_mailpit']}</a> &middot; <a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
