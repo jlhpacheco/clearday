@@ -237,9 +237,12 @@ def render_inbox(messages, lang="en", down=False):
 <div class='card'><p>{s['inbox_line']}</p></div>
 {body}
 <div class='card'><form method='post' action='/inbox/seed?lang={lang}'><button type='submit'>{s['inbox_seed']}</button></form></div>
-<div class='card'><div class='cardtitle'>&#9632; {s['inbox_raw']}</div>
+{_raw_card(s)}""", s)
+
+def _raw_card(s):
+    return f"""<div class='card'><div class='cardtitle'>&#9632; {s['inbox_raw']}</div>
 <div>{s['inbox_raw_note']}</div>
-<p><a href='/mailpit/'>Mailpit</a></p></div>""", s)
+<p><a href='/mailpit/'>Mailpit</a></p></div>"""
 
 def render_form(extra="", lang="en", prefill=None):
     s = S(lang)
@@ -278,6 +281,7 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
 </div></div>
+{_raw_card(s)}
 <p class='big'><a href='/followups'>{s['see_followups']}</a></p>""", s)
 
 def render_page(p):
