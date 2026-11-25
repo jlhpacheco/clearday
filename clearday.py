@@ -193,12 +193,12 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
                 data = json.loads(r.read())
             content = (data["choices"][0]["message"]["content"] or "").strip()
             if content and len(content) > 20:
-                return content[:2000]
+                return content[:2000], "model"
         except Exception:
             pass
     name = (sender or "").split("<")[0].strip() or sender or "there"
     dates_line = REPLY_DATES_LINE[lang].format(dates=", ".join(dates[:3])) if dates else ""
-    return REPLY_TEMPLATES[lang].format(name=name, dates_line=dates_line)
+    return REPLY_TEMPLATES[lang].format(name=name, dates_line=dates_line), "rules"
 
 def transform(text, sender="", subject="", lang="en"):
     """Hybrid: rules first (they own dates + numbers, copied exactly).
