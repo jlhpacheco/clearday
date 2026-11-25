@@ -125,11 +125,15 @@ async function main() {
 
   check("Home: From field visible", await page.locator('input[name="sender"]').isVisible());
   const homeBody = await page.locator("body").innerText();
-  check("Home: narrative card at the top of the clear page - 'feel what I feel'", homeBody.includes("Before you judge this app, feel what I feel"));
+  check("Home: HIS narrative at the top of the clear page - 'what it is like to be dyslexic'", homeBody.includes("Before you judge this app, please take a moment to experience what it is like to be dyslexic"));
   await page.locator("a.rawbtn").first().click();
   const dlgOpen = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return !!d && d.open; });
   check("Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)", dlgOpen);
   if (dlgOpen) { await page.locator("#rawclose").click(); }
+  await page.locator("#storybtn").click();
+  const story = await page.evaluate(() => { const d = document.getElementById("storybox") as HTMLDialogElement | null; return { open: !!d && d.open, text: d ? d.textContent || "" : "" }; });
+  check("Home: 'Read my story' opens his full story in a dialog (slim strip, full heart)", story.open && story.text.includes("three tries"), "");
+  if (story.open) { await page.locator("#storyclose").click(); }
   check("Home: Subject field visible", await page.locator('input[name="subject"]').isVisible());
   check("Home: 'Paste the long message' box visible", await page.locator('textarea[name="text"]').isVisible());
 
