@@ -40,7 +40,7 @@ STRINGS = {
            "inbox_seed": "Send the sample email into this inbox",
            "inbox_down": "The inbox is resting right now. The paste form still works.",
            "inbox_raw": "See the raw inbox (Mailpit)",
-           "inbox_raw_note": "Small, dense, gray text - not dyslexia-friendly. Shown on purpose: that is what ClearDay replaces.",
+           "inbox_raw_note": "As a dyslexia person, it is so hard for me to read emails in the format that they are currently presented, especially long and confusing. Click the link below and see for yourself. Small, dense, gray text. It is not dyslexia-friendly. That is why I created ClearDay and it really helps and maybe it will others like me. Happy Thanksgiving!",
            "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
            "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
            "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
@@ -253,6 +253,7 @@ def render_form(extra="", lang="en", prefill=None):
     pf_text = esc(pf.get("text", ""))
     loaded = f"<p class='big'><b>&#10003; {s['sample_loaded']}</b></p>" if pf else ""
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+{_raw_card(s)}
 <div class='layout'><div>
 <div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
 <div class='big'>{s['hero_sub']}</div>
@@ -281,7 +282,6 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
 </div></div>
-{_raw_card(s)}
 <p class='big'><a href='/followups'>{s['see_followups']}</a></p>""", s)
 
 def render_page(p):
