@@ -19,7 +19,7 @@ STRINGS = {
            "see_followups": "See follow-ups I remember",
            "demo_page": "Demo page — made from text pasted by a visitor.",
            "what": "WHAT THIS IS", "do": "YOU MUST DO", "facts": "KEY FACTS", "dates": "DATES + NUMBERS",
-           "no_dates": "No dates found", "risk": "IF YOU DO NOTHING", "steps": "Steps", "source": "Source",
+           "no_dates": "No dates found", "risk": "IF YOU DO NOTHING", "risk_none": "No deadline or danger found in this message.", "steps": "Steps", "source": "Source",
            "ai_live": "AI: live model response", "ai_rules": "Rules: instant answer — no model used",
            "hero1": "Long message in.", "hero2": "One clear page out.",
            "hero_sub": "Built for people with dyslexia. Paste a wall of text — get the facts, the actions, and the dates in big type.",
@@ -62,7 +62,7 @@ STRINGS = {
            "see_followups": "Ver los seguimientos que recuerdo",
            "demo_page": "Página de demostración: creada con el texto que pegó un visitante.",
            "what": "QUÉ ES ESTO", "do": "LO QUE DEBES HACER", "facts": "DATOS CLAVE", "dates": "FECHAS Y NÚMEROS",
-           "no_dates": "No se encontraron fechas", "risk": "SI NO HACES NADA", "steps": "Pasos", "source": "Fuente",
+           "no_dates": "No se encontraron fechas", "risk": "SI NO HACES NADA", "risk_none": "No se encontró fecha límite ni peligro en este mensaje.", "steps": "Pasos", "source": "Fuente",
            "ai_live": "IA: respuesta en vivo del modelo", "ai_rules": "Reglas: respuesta instantánea — sin modelo",
            "hero1": "Mensaje largo entra.", "hero2": "Una página clara sale.",
            "hero_sub": "Hecho para personas con dislexia. Pega un muro de texto y recibe los datos, las acciones y las fechas en letra grande.",
@@ -105,7 +105,7 @@ STRINGS = {
            "see_followups": "Xem những việc tôi ghi nhớ",
            "demo_page": "Trang demo — được tạo từ văn bản do khách truy cập dán vào.",
            "what": "ĐÂY LÀ GÌ", "do": "VIỆC BẠN PHẢI LÀM", "facts": "THÔNG TIN CHÍNH", "dates": "NGÀY VÀ CON SỐ",
-           "no_dates": "Không tìm thấy ngày nào", "risk": "NẾU BẠN KHÔNG LÀM GÌ", "steps": "Các bước", "source": "Nguồn",
+           "no_dates": "Không tìm thấy ngày nào", "risk": "NẾU BẠN KHÔNG LÀM GÌ", "risk_none": "Không tìm thấy hạn chót hay nguy hiểm nào trong tin nhắn này.", "steps": "Các bước", "source": "Nguồn",
            "ai_live": "AI: phản hồi trực tiếp từ mô hình", "ai_rules": "Quy tắc: trả lời ngay — không dùng mô hình",
            "hero1": "Đưa vào tin nhắn dài.", "hero2": "Nhận lại một trang rõ ràng.",
            "hero_sub": "Làm cho người mắc chứng khó đọc. Dán một bức tường chữ — nhận lại thông tin, việc phải làm và ngày tháng bằng chữ lớn.",
@@ -285,7 +285,8 @@ def render_page(p):
     facts = "".join(f"<tr><td style='width:32%'><b>{esc(k)}</b></td><td>{esc(v)}</td></tr>" for k, v in (p.get("facts") or {}).items())
     dates = "".join(f"<div style='font-size:26px'><b>{esc(d)}</b></div>" for d in p.get("dates_numbers", [])) or f"<div class='big'>{s['no_dates']}</div>"
     steps = " &rarr; ".join(esc(x) for x in p.get("steps", []))
-    risk = f"<div class='box plain'><span class='lbl'>&#9650; {s['risk']}</span><div class='big'>{esc(p['risk'])}</div></div>" if p.get("risk") else ""
+    risk_text = esc(p["risk"]) if p.get("risk") else s["risk_none"]
+    risk = f"<div class='box plain'><span class='lbl'>&#9650; {s['risk']}</span><div class='big'>{risk_text}</div></div>"
     if p.get("source") == "model":
         short_model = esc(str(p.get("model_name", "")).split("/")[-1])
         pill = f"<span class='pill pill-ai'>&#9679; {s['ai_live']}" + (f" &middot; {short_model}" if short_model else "") + "</span>"
@@ -307,15 +308,18 @@ def render_page(p):
 <p><button type='submit'>{btn}</button></p></form></div>"""
     return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
+<div class='layout'><div>
 <div class='box blue'><span class='lbl'>&#9632; {s['what']}</span><div class='big'>{esc(p.get('what',''))}</div></div>
 <div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{actions}</div>
 <div class='box purple'><span class='lbl'>&#9679; {s['facts']}</span><table>{facts}</table></div>
 <div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
-{risk}
 <p class='big' style='margin-top:16px;'>{s['steps']}: {steps}</p>
 <p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
+</div><div>
+{risk}
 {reply_card}
 {_why_card(s)}
+</div></div>
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
 
 def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", source="rules", model_name=""):
