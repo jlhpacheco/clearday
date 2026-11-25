@@ -29,7 +29,7 @@ STRINGS = {
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
            "nav_inbox": "Inbox", "inbox_title": "THE INBOX - the before picture",
            "thinking": "AI is thinking - reading your message...",
-           "reply_title": "REPLY", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
+           "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
            "reply_draft_only": "Draft only here - sending works from the Inbox, where the sender's real address lives.",
            "reply_sent_title": "REPLY SENT", "reply_draft_title": "YOUR REPLY DRAFT",
@@ -72,7 +72,7 @@ STRINGS = {
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
            "nav_inbox": "Bandeja", "inbox_title": "LA BANDEJA - la foto del antes",
            "thinking": "La IA está pensando - leyendo tu mensaje...",
-           "reply_title": "RESPUESTA", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
+           "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
            "reply_draft_only": "Aquí solo el borrador - el envío funciona desde la Bandeja, donde está la dirección real del remitente.",
            "reply_sent_title": "RESPUESTA ENVIADA", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
@@ -115,7 +115,7 @@ STRINGS = {
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
            "nav_inbox": "Hộp thư", "inbox_title": "HỘP THƯ - hình ảnh trước",
            "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
-           "reply_title": "TRẢ LỜI", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
+           "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_draft_only": "Ở đây chỉ là bản nháp - gửi được từ Hộp thư, nơi có địa chỉ thật của người gửi.",
            "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
@@ -163,8 +163,9 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 .pill-ai{border-color:#1E7A34;background:#DFF5D8}
 .hero{font-size:40px;line-height:1.25;font-weight:bold;margin:14px 0 6px}
 .hero .accent{color:#0E7A5F}
-.card{background:#FFFDF4;border:3px solid #20242E;border-radius:16px;padding:16px;margin-top:14px;
-box-shadow:0 4px 0 rgba(32,36,46,.12)}
+.card{background:#FFFDF4;border:3px solid #20242E;border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 0 rgba(32,36,46,.12)}
+.replycard{border:4px solid #0E7A5F;background:#EFFAF4}
+.bigbtn{width:100%;font-size:25px;padding:18px 20px;margin-top:10px;cursor:pointer;box-shadow:0 4px 0 rgba(32,36,46,.12)}
 .cardtitle{font-size:24px;font-weight:bold}
 .step{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
 .num{background:#DCEBFF;color:#123A7A;border-radius:10px;font-weight:bold;padding:2px 10px;font-size:20px}
@@ -297,15 +298,16 @@ def render_page(p):
         can_send = bool(p.get("_addr"))
         btn = s['reply_btn'] if can_send else s['reply_btn_draft']
         note = s['reply_note'] if can_send else s['reply_draft_only']
-        reply_card = f"""<div class='card'><div class='cardtitle'>&#9993; {s['reply_title']}</div>
-<div>{note}</div>
+        reply_card = f"""<div class='card replycard'><div class='cardtitle'>&#9993; {s['reply_title']}</div>
+<div class='big'><b>{s['reply_next']}</b></div>
 <form method='post' action='/reply'>
 <input type='hidden' name='mid' value='{esc(p.get("_mid", ""))}'>
 <input type='hidden' name='sender' value='{esc(p.get("sender", ""))}'>
 <input type='hidden' name='subject' value='{esc(p.get("_subject", ""))}'>
 <input type='hidden' name='lang' value='{esc(p.get("lang", "en"))}'>
 <textarea name='text' style='display:none'>{esc(p.get("_text", ""))}</textarea>
-<p><button type='submit'>{btn}</button></p></form></div>"""
+<p><button type='submit' class='bigbtn'>&#9993; {btn}</button></p></form>
+<div style='margin-top:10px;'>{note}</div></div>"""
     return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
 <div class='layout'><div>
@@ -339,7 +341,7 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
 <input type='hidden' name='lang' value='{esc(lang)}'>
 <div>{s['edit_hint']}</div>
 <textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea>
-<p><button type='submit'>{s['send_btn']}</button></p></form>
+<p><button type='submit' class='bigbtn'>{s['send_btn']}</button></p></form>
 <p class='big'><a href='/inbox'>{s['dont_send']}</a></p>"""
     else:
         send_form = f"""<div class='box amber'><span class='lbl'>&#9650; {s['no_send_here']}</span><div class='big'>{s['no_send_why']}</div></div>
