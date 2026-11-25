@@ -32,7 +32,7 @@ STRINGS = {
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
            "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
-           "reply_sent_title": "REPLY SENT", "found_addr": "Good news - we found the real address in your Inbox:", "sent_see": "Your email was sent. It is now in the Inbox - go see it:", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
+           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in your Inbox:", "sent_see": "Your email was sent. It is now in the Inbox - go see it:", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
            "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "This draft came from the paste box. We have the name, but not the real email address. To send a reply: open the email from the Inbox, then press Draft a reply - the Send button is there.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
@@ -40,7 +40,7 @@ STRINGS = {
            "inbox_seed": "Send the sample email into this inbox",
            "inbox_down": "The inbox is resting right now. The paste form still works.",
            "inbox_raw": "See the raw inbox (Mailpit)",
-           "inbox_raw_note": "Before you judge this app, feel what I feel. I live with dyslexia. An email like this one - long, tangled, small dense gray text - can take me three reads before it gives up its meaning. The dates hide. The one thing I must do hides. And sometimes the important part almost slips past me. Below is a link to the raw inbox - Mailpit. Click it and see for yourself: that cramped gray screen is not dyslexia-friendly. It is the wall I run into every single day. That is why I built ClearDay. It takes that same email and hands it back clear - and it really helps me. My hope is simple: that it helps others like me, too. Happy Thanksgiving! - Jose Luis",
+           "inbox_raw_note": "Before you judge this app, feel what I feel. I live with dyslexia. An email like this one - long, tangled, small dense gray text - can take me three reads before it gives up its meaning. The dates hide. The one thing I must do hides. And sometimes the important part almost slips past me. Below is a link to the raw inbox - [[MAILPIT]]. Click it and see for yourself: that cramped gray screen is not dyslexia-friendly. It is the wall I run into every single day. That is why I built ClearDay. It takes that same email and hands it back clear - and it really helps me. My hope is simple: that it helps others like me, too. Happy Thanksgiving! - Jose Luis",
            "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
            "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
            "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
@@ -75,7 +75,7 @@ STRINGS = {
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
            "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
-           "reply_sent_title": "RESPUESTA ENVIADA", "found_addr": "Buenas noticias: encontramos la dirección real en tu Bandeja:", "sent_see": "Tu correo fue enviado. Ya está en la Bandeja - ve a verlo:", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
+           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en tu Bandeja:", "sent_see": "Tu correo fue enviado. Ya está en la Bandeja - ve a verlo:", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
            "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Este borrador vino del cuadro de pegar. Tenemos el nombre, pero no la dirección real. Para enviar una respuesta: abre el correo desde la Bandeja y presiona Redactar una respuesta - allí está el botón Enviar.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
@@ -83,7 +83,7 @@ STRINGS = {
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
            "inbox_down": "La bandeja está descansando ahora. El formulario para pegar sigue funcionando.",
            "inbox_raw": "Ver la bandeja sin procesar (Mailpit)",
-           "inbox_raw_note": "Texto pequeño, denso y gris - no apto para dislexia. Se muestra a propósito: eso es lo que ClearDay reemplaza.",
+           "inbox_raw_note": "Texto pequeño, denso y gris - no apto para dislexia. [[MAILPIT]] Se muestra a propósito: eso es lo que ClearDay reemplaza.",
            "sample_title": "La forma más rápida de probar", "sample_btn": "Cargar el correo de ejemplo",
            "sample_line": "¿Sin un correo a mano? Un botón llena el formulario con un correo real de ejemplo de la junta. Lo ves primero — luego pulsa Hazlo claro.",
            "sample_loaded": "Ejemplo cargado en el formulario — léelo y pulsa Hazlo claro.",
@@ -118,7 +118,7 @@ STRINGS = {
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
-           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong Hộp thư của bạn:", "sent_see": "Thư của bạn đã được gửi. Nó đang ở trong Hộp thư - hãy xem:", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
+           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong Hộp thư của bạn:", "sent_see": "Thư của bạn đã được gửi. Nó đang ở trong Hộp thư - hãy xem:", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
            "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Bản nháp này đến từ khung dán. Chúng ta có tên, nhưng không có địa chỉ email thật. Để gửi thư trả lời: mở email từ Hộp thư, rồi nhấn Soạn thư trả lời - nút Gửi ở đó.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
@@ -126,7 +126,7 @@ STRINGS = {
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
            "inbox_down": "Hộp thư đang nghỉ. Biểu mẫu dán vẫn hoạt động.",
            "inbox_raw": "Xem hộp thư thô (Mailpit)",
-           "inbox_raw_note": "Chữ nhỏ, dày, xám - không thân thiện với chứng khó đọc. Cố ý hiển thị: đó là thứ ClearDay thay thế.",
+           "inbox_raw_note": "Chữ nhỏ, dày, xám - không thân thiện với chứng khó đọc. [[MAILPIT]] Cố ý hiển thị: đó là thứ ClearDay thay thế.",
            "sample_title": "Cách thử nhanh nhất", "sample_btn": "Nạp email mẫu",
            "sample_line": "Không có email sẵn? Một lần nhấn sẽ điền email mẫu thật của ban vào biểu mẫu bên dưới. Bạn xem trước — rồi nhấn Làm rõ.",
            "sample_loaded": "Đã nạp mẫu vào biểu mẫu — xem lại rồi nhấn Làm rõ.",
@@ -166,6 +166,10 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 .card{background:#FFFDF4;border:3px solid #20242E;border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 0 rgba(32,36,46,.12)}
 .replycard{border:4px solid #0E7A5F;background:#EFFAF4}
 .bigbtn{width:100%;font-size:25px;padding:18px 20px;margin-top:10px;cursor:pointer;box-shadow:0 4px 0 rgba(32,36,46,.12)}
+.rawbtn{padding:2px 16px;font-size:20px;vertical-align:baseline}
+dialog#rawbox{border:3px solid #20242E;border-radius:16px;padding:18px;width:min(940px,94vw);background:#FFFDF4;color:#20242E}
+dialog#rawbox::backdrop{background:rgba(32,36,46,.55)}
+#rawbox iframe{width:100%;height:62vh;border:2px solid #20242E;border-radius:8px;background:#FFFFFF;margin-top:10px}
 .cardtitle{font-size:24px;font-weight:bold}
 .step{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
 .num{background:#DCEBFF;color:#123A7A;border-radius:10px;font-weight:bold;padding:2px 10px;font-size:20px}
@@ -240,9 +244,19 @@ def render_inbox(messages, lang="en", down=False):
 {_raw_card(s)}""", s)
 
 def _raw_card(s):
+    btn = "<a class='btn rawbtn' href='/mailpit/' target='_blank' rel='noopener'>Mailpit</a>"
+    parts = s['inbox_raw_note'].split("[[MAILPIT]]")
+    note = esc(parts[0]) + btn + (esc(parts[1]) if len(parts) > 1 else "")
     return f"""<div class='card'>
-<div>{s['inbox_raw_note']}</div>
-<p><a href='/mailpit/'>Mailpit</a></p></div>"""
+<div>{note}</div></div>
+<dialog id='rawbox' aria-label="{esc(s['raw_dialog_title'])}">
+<div class='cardtitle'>{s['raw_dialog_title']}</div>
+<iframe src='/mailpit/' title='Mailpit' loading='lazy'></iframe>
+<p><button type='button' id='rawclose'>{s['raw_close']}</button></p>
+</dialog>
+<script>
+document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();}}else{{window.open(a.href,'_blank');}}}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}}});
+</script>"""
 
 def render_form(extra="", lang="en", prefill=None):
     s = S(lang)
