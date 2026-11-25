@@ -217,6 +217,7 @@ async function main() {
   await page.waitForSelector("text=YOUR REPLY DRAFT", { timeout: 90_000 });
   const dp = await bodyText(page);
   check("Reply: draft page shows BEFORE anything is sent (Send button waits for the reader)", dp.includes("Send this reply") && dp.includes("Nothing is sent until you press Send"));
+  check("Reply: draft page says who wrote it (AI pill or Rules pill)", dp.includes("AI: live model response") || dp.includes("Rules: instant answer"));
   await page.fill('textarea[name="body"]', "Hello Maria,\n\nI will attend on Tuesday November 24 at 5:15 PM and bring my photo ID.\n\nThank you,\nJose Luis");
   await page.click("text=Send this reply");
   await page.waitForSelector("text=REPLY SENT", { timeout: 90_000 });
