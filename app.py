@@ -226,13 +226,33 @@ class H(BaseHTTPRequestHandler):
                     text = msg.get("Text") or text
                 except Exception:
                     pass
+            found = False
+            if not addr:
+                # Paste path: the form gave a NAME, not an address. Jose Luis's
+                # rule (Nov 24): if this sender's REAL address is sitting in
+                # the demo inbox, the draft page gets a Send button too - and
+                # says where the address came from. No match, no button.
+                try:
+                    msgs3, up3 = mp_messages()
+                    if up3:
+                        for m3 in msgs3:
+                            frm3 = m3.get("From") or {}
+                            if (m3.get("Subject") or "") == subject and frm3.get("Address"):
+                                mid = m3.get("ID") or mid
+                                addr = frm3["Address"]
+                                sender = frm3.get("Name") or sender
+                                found = True
+                                break
+                except Exception:
+                    pass
             dates = transform(text, sender, subject, lang)["dates_numbers"] if text else []
             draft, dsrc = draft_reply(text, sender, subject, lang, dates)
             rsubject = subject if subject.lower().startswith("re:") else "Re: " + subject
             # DRAFT ONLY. Nothing is sent here - the reader sees the draft
             # first and sends it with a separate, explicit press (/reply/send).
             self._send(render_reply_draft(addr or sender, rsubject, draft, lang, mid=mid, addr=addr,
-                                          source=dsrc, model_name=os.environ.get("CLEARDAY_MODEL", "") if dsrc == "model" else ""))
+                                          source=dsrc, model_name=os.environ.get("CLEARDAY_MODEL", "") if dsrc == "model" else "",
+                                          found=found))
             return
         if self.path.startswith("/reply/send"):
             length = int(self.headers.get("Content-Length") or 0)
