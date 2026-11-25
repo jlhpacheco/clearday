@@ -10,7 +10,7 @@ from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 from clearday import transform, draft_reply
-from render import render_page, render_form, render_inbox, render_reply_sent, S
+from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
@@ -194,7 +194,7 @@ class H(BaseHTTPRequestHandler):
         if self.path.startswith("/mailpit"):
             self._proxy_mailpit()
             return
-        if self.path.startswith("/reply"):
+        if self.path.startswith("/reply") and not self.path.startswith("/reply/send"):
             length = int(self.headers.get("Content-Length") or 0)
             if length > 60000:
                 self._send(render_form("<p class='big'><b>That message is too long. Please paste a shorter one.</b></p>"))
@@ -220,24 +220,40 @@ class H(BaseHTTPRequestHandler):
             dates = transform(text, sender, subject, lang)["dates_numbers"] if text else []
             draft = draft_reply(text, sender, subject, lang, dates)
             rsubject = subject if subject.lower().startswith("re:") else "Re: " + subject
+            # DRAFT ONLY. Nothing is sent here - the reader sees the draft
+            # first and sends it with a separate, explicit press (/reply/send).
+            self._send(render_reply_draft(addr or sender, rsubject, draft, lang, mid=mid, addr=addr))
+            return
+        if self.path.startswith("/reply/send"):
+            length = int(self.headers.get("Content-Length") or 0)
+            f = parse_qs(self.rfile.read(length).decode(errors="replace")) if length else {}
+            def one2(k):
+                return (f.get(k) or [""])[0]
+            lang = one2("lang") or "en"
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            mid, to, rsubject, draft = one2("mid"), one2("to"), one2("subject"), one2("body")
             sent = False
-            if addr:
+            if mid and to and draft:
                 try:
-                    m = EmailMessage()
-                    m["From"] = "Jose Luis (ClearDay) <you@clearday.demo>"
-                    m["To"] = addr
-                    m["Subject"] = rsubject
-                    m.set_content(draft)
-                    s2 = smtplib.SMTP("127.0.0.1", 1025, timeout=10)
-                    s2.send_message(m)
-                    s2.quit()
-                    sent = True
-                    if mid:
+                    # Gate: the To must be the real sender of that inbox message.
+                    msg = mp_api("/api/v1/message/" + mid)
+                    real_addr = (msg.get("From") or {}).get("Address") or ""
+                    if real_addr and real_addr == to:
+                        m = EmailMessage()
+                        m["From"] = "Jose Luis (ClearDay) <you@clearday.demo>"
+                        m["To"] = to
+                        m["Subject"] = rsubject
+                        m.set_content(draft)
+                        s2 = smtplib.SMTP("127.0.0.1", 1025, timeout=10)
+                        s2.send_message(m)
+                        s2.quit()
+                        sent = True
                         items = [i for i in load_memory() if i.get("mid") != mid]
                         save_memory(items)
                 except Exception:
                     sent = False
-            self._send(render_reply_sent(addr or sender, rsubject, draft, sent, lang))
+            self._send(render_reply_sent(to, rsubject, draft, sent, lang))
             return
         if self.path.startswith("/inbox/seed"):
             q = parse_qs(urlparse(self.path).query)
