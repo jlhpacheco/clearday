@@ -174,6 +174,15 @@ class H(BaseHTTPRequestHandler):
             lang = (q.get("lang") or ["en"])[0]
             if lang not in ("en", "es", "vi"):
                 lang = "en"
+            # Parallel workflow (Jose Luis's spec, Nov 24): loading the sample
+            # ALSO puts the same email into the Mailpit inbox - if it is not
+            # already there. The form fills at the same time, below.
+            try:
+                msgs0, up0 = mp_messages()
+                if up0 and not any(m.get("Subject") == "Board meeting moved" for m in msgs0):
+                    mp_seed()
+            except Exception:
+                pass
             try:
                 text = open(os.path.join(os.path.dirname(__file__), "sample_email.txt")).read()
             except Exception:
