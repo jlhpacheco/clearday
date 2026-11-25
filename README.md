@@ -215,7 +215,7 @@ And the authority behind the whole design: **Yale**. Dr. Sally Shaywitz, co-dire
 
 ClearDay also has a **real inbox**, and you can watch email arrive in it:
 
-The **home page itself** carries the contrast card — **“See the raw inbox (Mailpit)”** — so a judge can open the ugly original first, feel how hard it is to read, and then watch ClearDay fix the same email. Maria's email is guaranteed to be in Mailpit: the demo puts it there itself, whichever page a judge opens first.
+The **home page itself** carries the contrast card at the very top — **“See the raw inbox (Mailpit)”** — with Jose Luis's own note on it, in his words: *“As a dyslexia person, it is so hard for me to read emails in the format that they are currently presented, especially long and confusing… That is why I created ClearDay.”* A judge opens the ugly original first, feels how hard it is to read, and then watches ClearDay fix the same email. Maria's email is guaranteed to be in Mailpit: the demo puts it there itself, whichever page a judge opens first.
 
 1. **[Open the Inbox page](https://clearday-bnjwz.sprites.app/inbox)** — ClearDay's clear-style list of what is sitting in the inbox right now. Press **Make it clear** on any message.
 2. **[Open the raw inbox — Mailpit](https://clearday-bnjwz.sprites.app/mailpit/)** — the same inbox in Mailpit's own screen: small, dense, gray text.
