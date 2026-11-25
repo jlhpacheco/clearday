@@ -1,4 +1,4 @@
-ClearDay Playwright test — 2026-11-25T00:23:13.360Z
+ClearDay Playwright test — 2026-11-25T05:51:22.041Z
 Target: https://clearday-bnjwz.sprites.app/
 
 PASS  Home: page title is 'ClearDay' — title="ClearDay"
@@ -20,6 +20,7 @@ PASS  Result: section 'KEY FACTS' shown
 PASS  Result: section 'DATES + NUMBERS' shown
 PASS  Result: 'Demo page — made from text pasted by a visitor' label shown
 PASS  Result: exact date 'Tuesday November 24' shown
+PASS  Result: right column present - 'IF YOU DO NOTHING' + 'Why the cream page'
 PASS  Result: exact time '5:15 PM' shown
 PASS  Result: screenshot saved — result.png
 PASS  Inbox: real email from 'Maria Lopez' listed
@@ -40,4 +41,4 @@ PASS  Follow-ups: 'Demo entries' label visible
 PASS  Follow-ups: test entry for Maria Lopez was remembered
 PASS  Follow-ups: screenshot saved — followups.png
 
-TOTAL: 38/38 passed
+TOTAL: 39/39 passed
