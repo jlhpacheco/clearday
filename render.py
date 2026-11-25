@@ -318,8 +318,13 @@ def render_page(p):
 {_why_card(s)}
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
 
-def render_reply_draft(to, subject, body_text, lang="en", mid="", addr=""):
+def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", source="rules", model_name=""):
     s = S(lang)
+    if source == "model":
+        short_model = esc(str(model_name or "").split("/")[-1])
+        pill = f"<span class='pill pill-ai'>&#9679; {s['ai_live']}" + (f" &middot; {short_model}" if short_model else "") + "</span>"
+    else:
+        pill = f"<span class='pill'>&#9670; {s['ai_rules']}</span>"
     box = "width:100%;font-size:21px;line-height:1.7;font-family:Arial,Verdana,sans-serif;padding:12px;margin-top:12px;box-sizing:border-box;"
     send_form = ""
     if addr:
@@ -337,7 +342,7 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr=""):
 <div>{s['edit_hint']}</div>
 <textarea rows='9' style='{box}'>{esc(body_text)}</textarea>
 <p class='big'>{s['reply_draft_only']}</p>"""
-    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+    return _shell(f"""{_bar(pill, s)}
 <h1>{s['reply_draft_title']}</h1>
 <p class='big'><b>{s['draft_check']}</b></p>
 <div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
