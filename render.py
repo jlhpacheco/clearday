@@ -29,11 +29,12 @@ STRINGS = {
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
            "nav_inbox": "Inbox", "inbox_title": "THE INBOX - the before picture",
            "thinking": "AI is thinking - reading your message...",
-           "reply_title": "REPLY", "reply_btn": "Draft and send a reply", "reply_btn_draft": "Draft a reply",
-           "reply_note": "ClearDay drafts the reply with the AI and sends it back to the sender through the inbox (Mailpit). You will see the email it made.",
+           "reply_title": "REPLY", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
+           "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
            "reply_draft_only": "Draft only here - sending works from the Inbox, where the sender's real address lives.",
            "reply_sent_title": "REPLY SENT", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
+           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
            "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
            "inbox_seed": "Send the sample email into this inbox",
@@ -72,10 +73,11 @@ STRINGS = {
            "nav_inbox": "Bandeja", "inbox_title": "LA BANDEJA - la foto del antes",
            "thinking": "La IA está pensando - leyendo tu mensaje...",
            "reply_title": "RESPUESTA", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
-           "reply_note": "ClearDay redacta la respuesta con la IA y la envía al remitente por la bandeja (Mailpit). Verás el correo que creó.",
+           "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
            "reply_draft_only": "Aquí solo el borrador - el envío funciona desde la Bandeja, donde está la dirección real del remitente.",
            "reply_sent_title": "RESPUESTA ENVIADA", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
+           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
            "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
@@ -114,10 +116,11 @@ STRINGS = {
            "nav_inbox": "Hộp thư", "inbox_title": "HỘP THƯ - hình ảnh trước",
            "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
            "reply_title": "TRẢ LỜI", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
-           "reply_note": "ClearDay soạn thư trả lời bằng AI và gửi lại cho người gửi qua hộp thư (Mailpit). Bạn sẽ thấy email nó đã tạo.",
+           "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_draft_only": "Ở đây chỉ là bản nháp - gửi được từ Hộp thư, nơi có địa chỉ thật của người gửi.",
            "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
+           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
            "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
@@ -314,6 +317,32 @@ def render_page(p):
 {reply_card}
 {_why_card(s)}
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
+
+def render_reply_draft(to, subject, body_text, lang="en", mid="", addr=""):
+    s = S(lang)
+    box = "width:100%;font-size:21px;line-height:1.7;font-family:Arial,Verdana,sans-serif;padding:12px;margin-top:12px;box-sizing:border-box;"
+    send_form = ""
+    if addr:
+        send_form = f"""<form method='post' action='/reply/send'>
+<input type='hidden' name='mid' value='{esc(mid)}'>
+<input type='hidden' name='to' value='{esc(addr)}'>
+<input type='hidden' name='subject' value='{esc(subject)}'>
+<input type='hidden' name='lang' value='{esc(lang)}'>
+<div>{s['edit_hint']}</div>
+<textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea>
+<p><button type='submit'>{s['send_btn']}</button></p></form>
+<p class='big'><a href='/inbox'>{s['dont_send']}</a></p>"""
+    else:
+        send_form = f"""<div>{s['edit_hint']}</div>
+<textarea rows='9' style='{box}'>{esc(body_text)}</textarea>
+<p class='big'>{s['reply_draft_only']}</p>"""
+    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+<h1>{s['reply_draft_title']}</h1>
+<p class='big'><b>{s['draft_check']}</b></p>
+<div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
+<div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
+{send_form}</div>
+<p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
 
 def render_reply_sent(to, subject, body_text, sent, lang="en"):
     s = S(lang)
