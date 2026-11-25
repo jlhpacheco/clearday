@@ -218,11 +218,12 @@ class H(BaseHTTPRequestHandler):
                 except Exception:
                     pass
             dates = transform(text, sender, subject, lang)["dates_numbers"] if text else []
-            draft = draft_reply(text, sender, subject, lang, dates)
+            draft, dsrc = draft_reply(text, sender, subject, lang, dates)
             rsubject = subject if subject.lower().startswith("re:") else "Re: " + subject
             # DRAFT ONLY. Nothing is sent here - the reader sees the draft
             # first and sends it with a separate, explicit press (/reply/send).
-            self._send(render_reply_draft(addr or sender, rsubject, draft, lang, mid=mid, addr=addr))
+            self._send(render_reply_draft(addr or sender, rsubject, draft, lang, mid=mid, addr=addr,
+                                          source=dsrc, model_name=os.environ.get("CLEARDAY_MODEL", "") if dsrc == "model" else ""))
             return
         if self.path.startswith("/reply/send"):
             length = int(self.headers.get("Content-Length") or 0)
