@@ -183,6 +183,7 @@ async function main() {
     res.includes("Demo page — made from text pasted by a visitor")
   );
   check("Result: exact date 'Tuesday November 24' shown", res.includes("Tuesday November 24"));
+  check("Result: right column present - 'IF YOU DO NOTHING' + 'Why the cream page'", res.includes("IF YOU DO NOTHING") && res.includes("Why the cream page"));
   check("Result: exact time '5:15 PM' shown", res.includes("5:15 PM"));
 
   await page.screenshot({ path: path.join(HERE, "result.png"), fullPage: true });
