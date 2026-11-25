@@ -125,7 +125,7 @@ async function main() {
 
   check("Home: From field visible", await page.locator('input[name="sender"]').isVisible());
   const homeBody = await page.locator("body").innerText();
-  check("Home: raw-inbox (Mailpit) card on the clear page - the judges' ugly-before door", homeBody.includes("See the raw inbox (Mailpit)"));
+  check("Home: narrative card at the top of the clear page - 'feel what I feel'", homeBody.includes("Before you judge this app, feel what I feel"));
   check("Home: Subject field visible", await page.locator('input[name="subject"]').isVisible());
   check("Home: 'Paste the long message' box visible", await page.locator('textarea[name="text"]').isVisible());
 
