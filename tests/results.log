@@ -1,10 +1,10 @@
-ClearDay Playwright test — 2026-11-25T23:06:24.735Z
+ClearDay Playwright test — 2026-11-25T23:11:15.537Z
 Target: https://clearday-bnjwz.sprites.app/
 
 PASS  Home: page title is 'ClearDay' — title="ClearDay"
 PASS  Home: heading 'ClearDay' visible
 PASS  Home: From field visible
-PASS  Home: raw-inbox (Mailpit) card on the clear page - the judges' ugly-before door
+PASS  Home: narrative card at the top of the clear page - 'feel what I feel'
 PASS  Home: Subject field visible
 PASS  Home: 'Paste the long message' box visible
 PASS  Home: 'Public demo — please paste sample text only' line visible
