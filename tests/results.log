@@ -1,11 +1,12 @@
-ClearDay Playwright test — 2026-11-25T23:19:50.765Z
+ClearDay Playwright test — 2026-11-25T23:33:35.525Z
 Target: https://clearday-bnjwz.sprites.app/
 
 PASS  Home: page title is 'ClearDay' — title="ClearDay"
 PASS  Home: heading 'ClearDay' visible
 PASS  Home: From field visible
-PASS  Home: narrative card at the top of the clear page - 'feel what I feel'
+PASS  Home: HIS narrative at the top of the clear page - 'what it is like to be dyslexic'
 PASS  Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)
+PASS  Home: 'Read my story' opens his full story in a dialog (slim strip, full heart)
 PASS  Home: Subject field visible
 PASS  Home: 'Paste the long message' box visible
 PASS  Home: 'Public demo — please paste sample text only' line visible
@@ -44,4 +45,4 @@ PASS  Follow-ups: 'Demo entries' label visible
 PASS  Follow-ups: test entry for Maria Lopez was remembered
 PASS  Follow-ups: screenshot saved — followups.png
 
-TOTAL: 42/42 passed
+TOTAL: 43/43 passed
