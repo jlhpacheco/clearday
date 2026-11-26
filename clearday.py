@@ -10,7 +10,10 @@ Design rules (International Dyslexia Association (IDA, USA) + US WCAG 2.2 AA (AD
 import re, json, os, urllib.request
 from datetime import datetime
 
-DATE_RE = re.compile(r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:,?\s+\d{4})?\b|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:,?\s+\d{4})?\b|\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b", re.I)
+DATE_RE = re.compile(r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b|\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b|\b(?:[01]?\d|2[0-3]):[0-5]\d\b", re.I)
+# Numbers finder: money, comma-grouped, decimals, plain integers (2+ digits).
+# Only ever applied OUTSIDE date/time spans, so a day or year inside a date is never double-counted.
+NUMBER_RE = re.compile(r"\$\s?\d[\d,]*\.?\d*|(?<![\d/-])\d{1,3}(?:,\d{3})+(?:\.\d+)?(?![\d/-])|(?<![\d/-])\d+\.\d+(?![\d/-])|(?<![\d/-])\d{2,}(?![\d/-])")
 # Spanish dates: "martes 24 de noviembre", "24 de noviembre de 2026", "5:15 p. m."
 DATE_RE_ES = re.compile(r"\b(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo)\s+\d{1,2}\s+de\s+(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\s+de\s+\d{4})?\b|\b\d{1,2}\s+de\s+(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\s+de\s+\d{4})?\b|\b\d{1,2}:\d{2}\s*(?:a\.\s*m\.|p\.\s*m\.|AM|PM)", re.I)
 # Vietnamese dates: "ngày 24 tháng 11", "ngày 24 tháng 11 năm 2026", "17 giờ 15", "5:15"
@@ -44,11 +47,20 @@ def heuristic_transform(text, sender="", subject="", lang="en"):
     hints = ACTION_HINTS[lang]
     sents = _sentences(text)
     dates = []
+    spans = []
     for rx in (DATE_RES[lang], DATE_RE):
         for m in rx.finditer(text):
+            spans.append(m.span())
             if m.group(0) not in dates:
                 dates.append(m.group(0))
     dates = [d for d in dates if not any(d != o and o.startswith(d) for o in dates)]
+    nums = []
+    for m in NUMBER_RE.finditer(text):
+        if any(m.start() < e and s < m.end() for s, e in spans):
+            continue
+        if m.group(0) not in dates and m.group(0) not in nums:
+            nums.append(m.group(0))
+    dates = (dates + nums)[:6]
     actions = []
     for s in sents:
         low = s.lower()
@@ -68,7 +80,7 @@ def heuristic_transform(text, sender="", subject="", lang="en"):
         "sender": sender or core["unknown_sender"],
         "actions": actions[:3],
         "facts": {core["who"]: sender or core["see_original"], core["what"]: title},
-        "dates_numbers": dates[:4],
+        "dates_numbers": dates,
         "steps": core["steps"],
         "risk": "",
         "source_date": datetime.now().strftime("%a %b %d"),
@@ -106,6 +118,46 @@ def _clean_facts(v):
         if len(out) >= 4:
             break
     return out
+
+def _norm_token(t):
+    t = t.lower().strip().strip(".,;:")
+    t = t.replace(",", "").replace("$", "").strip()
+    t = re.sub(r"(\d)(st|nd|rd|th)\b", r"\1", t)
+    return re.sub(r"\s+", " ", t)
+
+def _allowed_tokens(text, lang="en"):
+    """The exact date/time/number tokens a model may use: the ones the rules
+    themselves find in the source (dates first, numbers outside date spans)."""
+    if lang not in DATE_RES:
+        lang = "en"
+    allowed = set()
+    spans = []
+    for rx in (DATE_RES[lang], DATE_RE):
+        for m in rx.finditer(text or ""):
+            spans.append(m.span())
+            allowed.add(_norm_token(m.group(0)))
+    for m in NUMBER_RE.finditer(text or ""):
+        if any(m.start() < e and s < m.end() for s, e in spans):
+            continue
+        allowed.add(_norm_token(m.group(0)))
+    return allowed
+
+def _strip_ungrounded(s, allowed, lang="en"):
+    """Remove any date/time/number token in model text that is NOT in the source.
+    This is the no-fake-data rule enforced in code, not just asked in a prompt."""
+    if not s:
+        return s
+    if lang not in DATE_RES:
+        lang = "en"
+    def repl(m):
+        return m.group(0) if _norm_token(m.group(0)) in allowed else ""
+    for rx in (DATE_RES[lang], DATE_RE, NUMBER_RE):
+        s = rx.sub(repl, s)
+    s = re.sub(r"\s+([,.;:])", r"\1", s)
+    s = re.sub(r"\(\s*\)", "", s)
+    s = re.sub(r"\s{2,}", " ", s)
+    return s.strip(" ,;")
+
 
 def llm_transform(text, sender="", subject="", lang="en"):
     """Optional model pass, through a Sprites Connector gateway (Together AI).
@@ -149,6 +201,12 @@ def llm_transform(text, sender="", subject="", lang="en"):
         "steps": _clean_str_list(raw.get("steps"), 5, 8),
         "risk": _clean_str(raw.get("risk"), 10),
     }
+    allowed = _allowed_tokens(f"{subject} {text}", lang)
+    out["what"] = _strip_ungrounded(out["what"], allowed, lang)
+    out["risk"] = _strip_ungrounded(out["risk"], allowed, lang)
+    out["actions"] = [a for a in (_strip_ungrounded(x, allowed, lang) for x in out["actions"]) if a]
+    out["steps"] = [a for a in (_strip_ungrounded(x, allowed, lang) for x in out["steps"]) if a]
+    out["facts"] = {k: v for k, v in ((k, _strip_ungrounded(v, allowed, lang)) for k, v in out["facts"].items()) if v}
     if not out["what"] and not out["actions"]:
         return None
     return out
@@ -193,7 +251,9 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
                 data = json.loads(r.read())
             content = (data["choices"][0]["message"]["content"] or "").strip()
             if content and len(content) > 20:
-                return content[:2000], "model"
+                content = _strip_ungrounded(content, _allowed_tokens(f"{subject} {text}", lang), lang)
+                if len(content) > 20:
+                    return content[:2000], "model"
         except Exception:
             pass
     name = (sender or "").split("<")[0].strip() or sender or "there"
