@@ -130,6 +130,19 @@ async function main() {
   const dlgOpen = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return !!d && d.open; });
   check("Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)", dlgOpen);
   if (dlgOpen) { await page.locator("#rawclose").click(); }
+  await page.locator("a.rawbtn").first().click();
+  let landedText = "";
+  for (let i = 0; i < 25 && !landedText.includes("Hi everyone"); i++) {
+    await page.waitForTimeout(1000);
+    for (const f of page.frames()) {
+      if (f.url().includes("/view/")) {
+        try { landedText = await f.evaluate(() => document.body ? document.body.innerText : ""); } catch {}
+        if (landedText.includes("Hi everyone")) break;
+      }
+    }
+  }
+  check("Home: raw-inbox dialog LANDS on Maria's email already open - body visible, NO click on the message needed", landedText.includes("Hi everyone") && landedText.includes("5:15"), "");
+  await page.locator("#rawclose").click();
   await page.locator("#storybtn").click();
   const story = await page.evaluate(() => { const d = document.getElementById("storybox") as HTMLDialogElement | null; return { open: !!d && d.open, text: d ? d.textContent || "" : "" }; });
   check("Home: 'Read my story' opens his full story in a dialog (slim strip, full heart)", story.open && story.text.includes("three tries"), "");
