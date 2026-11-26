@@ -1,0 +1,76 @@
+PASS - form 200 + labels + demo line
+PASS - clear page: HERO first, then HIS story strip with ONE button - 'Read my story' (no Mailpit button, no See-for-yourself lead-in)
+PASS - ONE DIALOG: his full story sits ON TOP, the raw inbox lands BELOW it (story first, email under)
+PASS - DIALOG (build C): NO auto-jump - fresh() never scrolls on its own; a 'See the email' button waits for the reader's own tap
+PASS - clear page: 'Why the cream page' is now a TAB - link in the nav, card body OFF the home page
+PASS - WHY TAB: /why page carries the full research card (title + all five reasons)
+PASS - sample -> sections + exact 4 dates
+PASS - green pill: live model answered
+PASS - result page: two columns - IF YOU DO NOTHING + Why the cream page on the right
+PASS - result page: REPLY is an action card with the BIG button
+PASS - PROOF PAGE: GitHub side LIVE with real metadata (login, newest commit, rate left)
+PASS - PROOF PAGE: Together side LIVE with a real test call (model answer + tokens + call id)
+PASS - pasted HTML never raw (escaped or paraphrased)
+PASS - 60,000-char paste refused politely
+PASS - sample button fills the form (From + banner + body)
+PASS - PARALLEL: sample click also puts the email into Mailpit (no inbox visit)
+PASS - inbox page lists the real email (Maria Lopez + Make it clear)
+PASS - inbox clear flow -> clear page + exact date
+PASS - /followups demo label
+PASS - mailpit API: message fields real (From/Subject/Text)
+PASS - seed endpoint adds a real email via SMTP
+PASS - inbox in Spanish (LA BANDEJA + Hazlo claro)
+PASS - inbox clear in Spanish -> Spanish page, source dates copied exactly
+PASS - inbox in Vietnamese (HOP THU + Lam ro)
+PASS - bogus message id -> 200 fallback, no crash
+PASS - delete-all -> inbox re-seeds itself (Maria Lopez back)
+PASS - raw Mailpit UI through ClearDay proxy -> 200
+PASS - Mailpit API through ClearDay proxy -> JSON total >= 1
+PASS - Maria's email carries BOTH parts: text body + HTML version (reading pane can never open blank)
+PASS - FRESH: pressing Mailpit sends a BRAND-NEW Maria email (POST /inbox/fresh -> id, box holds exactly 1)
+PASS - FRESH: the new email really is new (arrived under 2 minutes ago)
+PASS - websocket upgrade -> 501 fast, server not stuck
+PASS - server still healthy after all probes
+PASS - FAKE-DATA: dateless email -> no month, no year invented
+PASS - FAKE-DATA: one-date email -> exactly that date, no sample bleed
+PASS - FAKE-DATA: numbers copied exactly ($1,250.50 in, no $1,250.51)
+PASS - FAKE-DATA: numbers land in the DATES + NUMBERS box itself ($1,250.50, 412, 37 in the big-type rows)
+PASS - FORMATS: numeric date 11/24/2026 lands in the DATES + NUMBERS box
+PASS - FORMATS: ISO 2026-11-30 + ordinal November 27th + 24h time 17:30 all land in the box
+PASS - GROUNDING: model-invented $999 / January 40 / 41 / 9:99 PM are stripped in code; real March 3 / 40 stay
+PASS - GROUNDING: a real 2-digit-day date keeps its day (November 24 stays whole; invented November 25 is cut)
+Traceback (most recent call last):
+  File "/home/sprite/clearday/smoke_test.py", line 160, in <module>
+    code, ppage = get("/inbox/clear?id=" + pid + "&lang=es")
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sprite/clearday/smoke_test.py", line 12, in get
+    with urllib.request.urlopen(base + path, timeout=180) as r:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/urllib/request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/urllib/request.py", line 489, in open
+    response = self._open(req, data)
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/urllib/request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/urllib/request.py", line 1360, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/urllib/request.py", line 1335, in do_open
+    r = h.getresponse()
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/http/client.py", line 1478, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/http/client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/http/client.py", line 304, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/.sprite/languages/python/pyenv/versions/3.13.17/lib/python3.13/socket.py", line 723, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+TimeoutError: timed out
