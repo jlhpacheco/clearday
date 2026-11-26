@@ -1,0 +1,209 @@
+import urllib.request, urllib.parse, urllib.error, json, sys, smtplib, socket
+from email.message import EmailMessage
+BASE = "http://localhost:8080"
+MP = "http://127.0.0.1:8025/mailpit"
+fails = []
+count = [0]
+def check(name, cond):
+    count[0] += 1
+    print(("PASS" if cond else "FAIL"), "-", name)
+    if not cond: fails.append(name)
+def get(path, base=BASE):
+    with urllib.request.urlopen(base + path, timeout=180) as r:
+        return r.status, r.read().decode(errors="replace")
+def post(path, data, base=BASE):
+    body = urllib.parse.urlencode(data).encode()
+    req = urllib.request.Request(base + path, data=body)
+    with urllib.request.urlopen(req, timeout=180) as r:
+        return r.status, r.read().decode(errors="replace")
+def mp_get(url):
+    # Mailpit's API occasionally stalls for a few seconds on the Sprite;
+    # retry the READ (never the thing being checked) so a stall cannot kill the run
+    import time as _t
+    last = None
+    for _ in range(4):
+        try:
+            return urllib.request.urlopen(url, timeout=20).read()
+        except Exception as e:
+            last = e; _t.sleep(3)
+    raise last
+def mp_list():
+    return json.loads(mp_get(MP + "/api/v1/messages?limit=50"))
+def mp_delete_all():
+    import time as _t
+    req = urllib.request.Request(MP + "/api/v1/messages", method="DELETE")
+    last = None
+    for _ in range(4):
+        try:
+            urllib.request.urlopen(req, timeout=20).read(); return
+        except Exception as e:
+            last = e; _t.sleep(3)
+    raise last
+def find_id(subject):
+    for m in mp_list()["messages"]:
+        if m["Subject"] == subject:
+            return m["ID"]
+    return ""
+def send_mail(frm, subject, body):
+    m = EmailMessage(); m["From"] = frm; m["To"] = "you@clearday.demo"; m["Subject"] = subject; m.set_content(body)
+    s = smtplib.SMTP("127.0.0.1", 1025, timeout=10); s.send_message(m); s.quit()
+
+code, form = get("/")
+check("form 200 + labels + demo line", code == 200 and "Make it clear" in form and "Public demo" in form)
+check("clear page: HERO first, then HIS story strip with ONE button - 'Read my story' (no Mailpit button, no See-for-yourself lead-in)", "what it is like to be dyslexic" in form and "three tries" in form and "thankgiving" not in form and "[[MAILPIT]]" not in form and form.count("class='btn rawbtn'") == 1 and ">Read my story</a>" in form and ">Mailpit</a>" not in form and form.index("Long message in") < form.index("Before you judge this app") < form.index("Load the sample email"))
+check("ONE DIALOG: his full story sits ON TOP, the raw inbox lands BELOW it (story first, email under)", form.count("<dialog") == 1 and "storybox" not in form and "<br><br>" in form and "src='/mailpit/'" in form and form.index("thankful this Thanksgiving") < form.index("src='/mailpit/'"))
+check("clear page: 'Why the cream page' is now a TAB - link in the nav, card body OFF the home page", "href='/why'" in form and "warm backgrounds tested best" not in form)
+code, whypage = get("/why?lang=en")
+check("WHY TAB: /why page carries the full research card (title + all five reasons)", code == 200 and "Why the cream page? For judges" in whypage and "warm backgrounds tested best" in whypage and "WCAG 2.2 AA" in whypage)
+sample = open("/home/sprite/clearday/sample_email.txt").read()
+code, page = post("/", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
+if "Rules: instant answer" in page:
+    # one retry: a single slow gateway call falls back to rules BY DESIGN;
+    # two in a row would mean the model path is really down
+    code, page = post("/", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
+dates = ["Monday November 23", "Tuesday November 24", "5:15 PM", "Friday November 27"]
+check("sample -> sections + exact 4 dates", code == 200 and "YOU MUST DO" in page and "KEY FACTS" in page and all(d in page for d in dates))
+check("green pill: live model answered", "AI: live model response" in page and "DeepSeek" in page)
+check("result page: two columns - IF YOU DO NOTHING + Why the cream page on the right", "IF YOU DO NOTHING" in page and "Why the cream page" in page and "class='layout'" in page)
+check("result page: REPLY is an action card with the BIG button", "replycard" in page and "bigbtn" in page and "Done reading? Answer it:" in page)
+code, conn = get("/connected")
+check("PROOF PAGE: GitHub side LIVE with real metadata (login, newest commit, rate left)", code == 200 and "jlhpacheco" in conn and "Newest commit" in conn and "API calls left" in conn)
+check("PROOF PAGE: Together side LIVE with a real test call (model answer + tokens + call id)", "DeepSeek-V4.1-Flash-1017" in conn and "Tokens in the test call" in conn and "The model answered" in conn and conn.count("LIVE - working now") >= 2 and "No typed-in numbers" in conn)
+code, esc = post("/", {"sender": "Test", "subject": "Esc", "text": "Hello <b>ZZTEST</b> world. Please reply to confirm.", "lang": "en"})
+check("pasted HTML never raw (escaped or paraphrased)", "<b>ZZTEST</b>" not in esc)
+try:
+    code, big = post("/", {"sender": "Test", "subject": "Big", "text": "x" * 60000, "lang": "en"})
+    refused = code == 200 and ("too long" in big.lower() or "shorter" in big.lower() or "50,000" in big or "50000" in big)
+except Exception:
+    refused = True
+check("60,000-char paste refused politely", refused)
+code, filled = get("/?sample=1&lang=en")
+check("sample button fills the form (From + banner + body)", code == 200 and "value='Maria Lopez'" in filled and "Sample loaded in the form" in filled and "Room 4" in filled)
+mp_delete_all()
+code, filled2 = get("/?sample=1&lang=en")
+check("PARALLEL: sample click also puts the email into Mailpit (no inbox visit)", mp_list()["total"] == 1 and find_id("Board meeting moved") != "")
+code, ib = get("/inbox?lang=en")
+check("inbox page lists the real email (Maria Lopez + Make it clear)", code == 200 and "Maria Lopez" in ib and "Make it clear" in ib)
+_mid = find_id("Board meeting moved")
+code, cl = get("/inbox/clear?id=" + _mid + "&lang=en")
+check("inbox clear flow -> clear page + exact date", code == 200 and "WHAT THIS IS" in cl and "Tuesday November 24" in cl)
+code, fol = get("/followups")
+check("/followups demo label", code == 200 and "Demo entries" in fol)
+one = json.loads(mp_get(MP + "/api/v1/message/" + _mid))
+check("mailpit API: message fields real (From/Subject/Text)", one["From"]["Name"] == "Maria Lopez" and one["Subject"] == "Board meeting moved" and "Room 4" in one["Text"])
+before = mp_list()["total"]
+post("/inbox/seed?lang=en", {})
+check("seed endpoint adds a real email via SMTP", mp_list()["total"] == before + 1)
+code, ibes = get("/inbox?lang=es")
+check("inbox in Spanish (LA BANDEJA + Hazlo claro)", code == 200 and "LA BANDEJA" in ibes and "Hazlo claro" in ibes)
+code, cles = get("/inbox/clear?id=" + _mid + "&lang=es")
+check("inbox clear in Spanish -> Spanish page, source dates copied exactly", code == 200 and "FECHAS Y NÚMEROS" in cles and "Tuesday November 24" in cles and "5:15 PM" in cles)
+code, ibvi = get("/inbox?lang=vi")
+check("inbox in Vietnamese (HOP THU + Lam ro)", code == 200 and "HỘP THƯ" in ibvi and "Làm rõ" in ibvi)
+code, bogus = get("/inbox/clear?id=DOESNOTEXIST&lang=en")
+check("bogus message id -> 200 fallback, no crash", code == 200 and "THE INBOX" in bogus)
+mp_delete_all()
+code, ib2 = get("/inbox?lang=en")
+check("delete-all -> inbox re-seeds itself (Maria Lopez back)", code == 200 and "Maria Lopez" in ib2 and mp_list()["total"] >= 1)
+code, mpui = get("/mailpit/")
+check("raw Mailpit UI through ClearDay proxy -> 200", code == 200 and "mailpit" in mpui.lower())
+code, mpapi = get("/mailpit/api/v1/messages")
+check("Mailpit API through ClearDay proxy -> JSON total >= 1", code == 200 and json.loads(mpapi)["total"] >= 1)
+_mid = json.loads(mpapi)["messages"][0]["ID"]
+code, mdet = get("/mailpit/api/v1/message/" + _mid)
+_md = json.loads(mdet) if code == 200 else {}
+check("Maria's email carries BOTH parts: text body + HTML version (reading pane can never open blank)", bool(_md.get("Text", "").find("Hi everyone") >= 0 and len(_md.get("HTML", "")) > 100))
+code, fresh = post("/inbox/fresh", {})
+_fj = json.loads(fresh) if code == 200 else {}
+check("FRESH: pressing Mailpit sends a BRAND-NEW Maria email (POST /inbox/fresh -> id, box holds exactly 1)", code == 200 and bool(_fj.get("id")) and mp_list()["total"] == 1)
+import datetime as _dt
+_cr = mp_list()["messages"][0].get("Created", "")
+_age = (_dt.datetime.now(_dt.timezone.utc) - _dt.datetime.fromisoformat(_cr.replace("Z", "+00:00"))).total_seconds() if _cr else 9999
+check("FRESH: the new email really is new (arrived under 2 minutes ago)", _age < 120)
+s = socket.create_connection(("127.0.0.1", 8080), timeout=10)
+s.sendall(b"GET /mailpit/api/events HTTP/1.1\r\nHost: localhost\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n")
+s.settimeout(10); resp = s.recv(200).decode(errors="replace"); s.close()
+check("websocket upgrade -> 501 fast, server not stuck", "501" in resp)
+code, home2 = get("/")
+check("server still healthy after all probes", code == 200 and "Make it clear" in home2)
+# ---- fake-data block: dates/numbers are copied, NEVER invented ----
+send_mail("Sam Ortiz <sam@example.org>", "Parking lot update", "Hi team, thanks for the update about the parking lot painting. The crew did a great job and the lines look fresh. Please confirm you got this note.")
+pid = find_id("Parking lot update")
+code, ppage = get("/inbox/clear?id=" + pid + "&lang=en")
+MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+check("FAKE-DATA: dateless email -> no month, no year invented", code == 200 and not any(mo in ppage for mo in MONTHS) and "2026" not in ppage)
+send_mail("Dana Ruiz <dana@example.org>", "Dentist", "The dentist appointment is on Friday December 11. Please reply to confirm.")
+pid = find_id("Dentist")
+code, ppage = get("/inbox/clear?id=" + pid + "&lang=en")
+check("FAKE-DATA: one-date email -> exactly that date, no sample bleed", code == 200 and "Friday December 11" in ppage and "Tuesday November 24" not in ppage and "5:15 PM" not in ppage)
+send_mail("Pat Lee <pat@example.org>", "Room booking", "Room 412 costs $1,250.50 for 37 people. Please reply to confirm the booking.")
+pid = find_id("Room booking")
+code, ppage = get("/inbox/clear?id=" + pid + "&lang=en")
+check("FAKE-DATA: numbers copied exactly ($1,250.50 in, no $1,250.51)", code == 200 and "$1,250.50" in ppage and "412" in ppage and "$1,250.51" not in ppage)
+check("FAKE-DATA: numbers land in the DATES + NUMBERS box itself ($1,250.50, 412, 37 in the big-type rows)", "font-size:26px'><b>$1,250.50</b>" in ppage and "font-size:26px'><b>412</b>" in ppage and "font-size:26px'><b>37</b>" in ppage)
+send_mail("Pat Lee <pat@example.org>", "Form due date", "The form is due 11/24/2026. Please reply to confirm the form.")
+pid = find_id("Form due date")
+code, ppage = get("/inbox/clear?id=" + pid + "&lang=en")
+check("FORMATS: numeric date 11/24/2026 lands in the DATES + NUMBERS box", code == 200 and "font-size:26px'><b>11/24/2026</b>" in ppage)
+send_mail("Pat Lee <pat@example.org>", "Deadline formats", "The deadline is 2026-11-30. See you November 27th at 17:30. Please reply.")
+pid = find_id("Deadline formats")
+code, ppage = get("/inbox/clear?id=" + pid + "&lang=en")
+check("FORMATS: ISO 2026-11-30 + ordinal November 27th + 24h time 17:30 all land in the box", code == 200 and "font-size:26px'><b>2026-11-30</b>" in ppage and "font-size:26px'><b>November 27th</b>" in ppage and "font-size:26px'><b>17:30</b>" in ppage)
+import clearday as _cd
+_allowed = _cd._allowed_tokens("Lunch is on March 3. The room holds 40 people.", "en")
+_cleaned = _cd._strip_ungrounded("Pay $999 by January 40, or confirm March 3 for 40 people, not 41, at 9:99 PM", _allowed, "en")
+check("GROUNDING: model-invented $999 / January 40 / 41 / 9:99 PM are stripped in code; real March 3 / 40 stay", "$999" not in _cleaned and "January 40" not in _cleaned and "41" not in _cleaned and "9:99" not in _cleaned and "March 3" in _cleaned and "40 people" in _cleaned)
+send_mail("María López <maria.lopez@example.org>", "Reunión del martes", "La reunión es el martes 24 de noviembre a las 5:15 p. m. en la Sala 4. Por favor confirme su asistencia.")
+pid = find_id("Reunión del martes")
+code, ppage = get("/inbox/clear?id=" + pid + "&lang=es")
+check("FAKE-DATA: Spanish email -> exact Spanish dates (martes 24 de noviembre, 5:15 p. m.)", code == 200 and "martes 24 de noviembre" in ppage and "5:15 p. m." in ppage and "FECHAS Y NÚMEROS" in ppage)
+# ---- reply block: DRAFT first, reader edits, reader sends ----
+_mid = find_id("Board meeting moved")
+get("/inbox/clear?id=" + _mid + "&lang=en")  # the real path: reply starts from a clear page (adds the follow-up)
+before = mp_list()["total"]
+code, rp = post("/reply", {"mid": _mid, "lang": "en"})
+check("REPLY: draft page first - editable box + Send button, NOTHING sent yet", code == 200 and "YOUR REPLY DRAFT" in rp and "Send this reply" in rp and "name='body'" in rp and mp_list()["total"] == before)
+check("REPLY: draft page says who wrote it (AI pill or Rules pill)", "AI: live model response" in rp or "Rules: instant answer" in rp)
+mem = json.load(open("/home/sprite/clearday/memory.json"))
+check("REPLY: follow-up still waiting after the draft (not closed yet)", any(i.get("mid") == _mid for i in mem))
+edited = "Hello Maria,\n\nEDITED-BY-READER: I will attend on Tuesday November 24 at 5:15 PM and bring my photo ID.\n\nThank you,\nJose Luis"
+code, rp2 = post("/reply/send", {"mid": _mid, "to": "maria.lopez@example.org", "subject": "Re: Board meeting moved", "body": edited, "lang": "en"})
+newest = mp_list()["messages"][0]
+rtext = json.loads(mp_get(MP + "/api/v1/message/" + newest["ID"]))["Text"]
+mem = json.load(open("/home/sprite/clearday/memory.json"))
+check("REPLY SEND: sent only on Send press - edited words delivered, follow-up closed", code == 200 and "REPLY SENT" in rp2 and mp_list()["total"] == before + 1 and newest["To"][0]["Address"] == "maria.lopez@example.org" and newest["Subject"] == "Re: Board meeting moved" and "EDITED-BY-READER" in rtext and not any(i.get("mid") == _mid for i in mem))
+before = mp_list()["total"]
+code, rp3 = post("/reply", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
+check("REPLY (paste path): real address found in the Inbox - Send button IS here, banner says where it came from, nothing sent yet", code == 200 and "YOUR REPLY DRAFT" in rp3 and "/reply/send" in rp3 and "found the real address in the raw inbox" in rp3 and "maria.lopez@example.org" in rp3 and mp_list()["total"] == before)
+code, rp3b = post("/reply", {"sender": "Nobody Here", "subject": "Unmatched subject zzz", "text": "Hello, a short note with no inbox match.", "lang": "en"})
+check("REPLY (paste path, NO inbox match): no Send button, big notice says why", code == 200 and "/reply/send" not in rp3b and "NO SEND BUTTON ON THIS PAGE" in rp3b and mp_list()["total"] == before)
+code, homenav = get("/")
+check("NAV: Inbox tab is GONE from the top nav (route stays, tab goes)", code == 200 and "href='/inbox'" not in homenav)
+before = mp_list()["total"]
+code, rp5 = post("/reply", {"sender": "", "subject": "", "text": sample, "lang": "en"})
+check("REPLY (paste path, BLANK name+subject): Maria's real address still found - Send button IS here", code == 200 and "/reply/send" in rp5 and "maria.lopez@example.org" in rp5 and "found the real address in the raw inbox" in rp5 and mp_list()["total"] == before)
+_mid5 = rp5.split("name='mid' value='")[1].split("'")[0] if "name='mid' value='" in rp5 else ""
+code, rp6 = post("/reply/send", {"mid": _mid5, "to": "maria.lopez@example.org", "subject": "Re: Board meeting moved", "body": "BLANKPATH REPLY WORDS", "lang": "en"})
+_msgs6 = mp_list()["messages"]
+check("REPLY (blank path) SENT: reply lands in Mailpit NEXT TO Maria's - box holds both, sent page has the BIG both-emails button", code == 200 and "See both emails in Mailpit" in rp6 and "bigbtn" in rp6 and mp_list()["total"] == before + 1 and _msgs6[0]["To"][0]["Address"] == "maria.lopez@example.org")
+before = mp_list()["total"]
+code, rp4 = post("/reply/send", {"mid": _mid, "to": "stranger@example.org", "subject": "Re: Board meeting moved", "body": "planted words", "lang": "en"})
+check("REPLY GATE: send to a wrong address is refused (nothing sent)", mp_list()["total"] == before)
+import http.client as _hc
+def raw_req(method, path, body=None):
+    c = _hc.HTTPConnection("127.0.0.1", 8080, timeout=15)
+    c.request(method, path, body=body, headers={"Content-Type": "application/json"})
+    r = c.getresponse(); r.read(); c.close()
+    return r.status
+before = mp_list()["total"]
+st = raw_req("POST", "/mailpit/api/v1/send", json.dumps({"From": {"Email": "eve@example.org", "Name": "Eve"}, "To": [{"Email": "you@clearday.demo"}], "Subject": "INJECTED", "Text": "planted"}))
+check("PROXY WRITE-BLOCK: send via public proxy -> 403, nothing planted", st == 403 and mp_list()["total"] == before and find_id("INJECTED") == "")
+st = raw_req("DELETE", "/mailpit/api/v1/messages")
+check("PROXY WRITE-BLOCK: delete-all via public proxy -> 403, inbox intact", st == 403 and mp_list()["total"] == before)
+# ---- cleanup: leave only the sample in the box ----
+mp_delete_all()
+get("/inbox?lang=en")
+d = mp_list()
+check("cleanup: inbox holds only the sample email", d["total"] == 1 and d["messages"][0]["Subject"] == "Board meeting moved")
+print(f"SMOKE TOTAL: {count[0] - len(fails)}/{count[0]}")
+sys.exit(1 if fails else 0)
