@@ -74,6 +74,15 @@ check("form 200 + labels + demo line", code == 200 and "Make it clear" in form a
 check("clear page: HERO first, then HIS story strip with ONE button - 'Read my story' (no Mailpit button, no See-for-yourself lead-in)", "what it is like to be dyslexic" in form and "three tries" in form and "thankgiving" not in form and "[[MAILPIT]]" not in form and form.count("class='btn rawbtn'") == 1 and ">Read my story</a>" in form and ">Mailpit</a>" not in form and form.index("Long message in") < form.index("Before you judge this app") < form.index("Load the sample email"))
 check("ONE DIALOG: his full story sits ON TOP, the raw inbox lands BELOW it (story first, email under)", form.count("<dialog") == 1 and "storybox" not in form and "<br><br>" in form and "src='/mailpit/'" in form and form.index("thankful this Thanksgiving") < form.index("src='/mailpit/'"))
 check("DIALOG (build C): NO auto-jump - fresh() never scrolls on its own; a 'See the email' button waits for the reader's own tap", "id='seeemail'" in form and ">See the email" in form and "scrollIntoView" not in form.split("function fresh()")[1].split("</script>")[0])
+import re as _re, subprocess as _sp, tempfile as _tf, os as _os
+_node = "/.sprite/bin/node" if _os.path.exists("/.sprite/bin/node") else "node"
+_js_ok = True
+for _s in _re.findall(r"<script>(.*?)</script>", form, _re.S):
+    with _tf.NamedTemporaryFile("w", suffix=".js", delete=False) as _f:
+        _f.write(_s); _p = _f.name
+    if _sp.run([_node, "--check", _p]).returncode != 0:
+        _js_ok = False
+check("SCRIPTS: every script block on the home page parses as valid JavaScript (node --check) - a dead script once froze the story dialog's progress bar", _js_ok)
 check("clear page: 'Why the cream page' is now a TAB - link in the nav, card body OFF the home page", "href='/why'" in form and "warm backgrounds tested best" not in form)
 code, whypage = get("/why?lang=en")
 check("WHY TAB: /why page carries the full research card (title + all five reasons)", code == 200 and "Why the cream page? For judges" in whypage and "warm backgrounds tested best" in whypage and "WCAG 2.2 AA" in whypage)
