@@ -267,7 +267,8 @@ def _raw_card(s):
 <p><button type='button' id='rawclose'>{s['raw_close']}</button></p>
 </dialog>
 <script>
-document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();}}else{{window.open(a.href,'_blank');}}}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}var sb=e.target.closest?e.target.closest('#storybtn'):null;if(sb){{var d3=document.getElementById('storybox');if(d3&&d3.showModal){{d3.showModal();}}}}var sc=e.target.closest?e.target.closest('#storyclose'):null;if(sc){{var d4=document.getElementById('storybox');if(d4){{d4.close();}}}}}});
+document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();land();}}else{{window.open(a.href,'_blank');}}}}
+function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f&&f.src.indexOf('/view/')<0){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}var sb=e.target.closest?e.target.closest('#storybtn'):null;if(sb){{var d3=document.getElementById('storybox');if(d3&&d3.showModal){{d3.showModal();}}}}var sc=e.target.closest?e.target.closest('#storyclose'):null;if(sc){{var d4=document.getElementById('storybox');if(d4){{d4.close();}}}}}});
 </script>"""
 
 def render_form(extra="", lang="en", prefill=None):
