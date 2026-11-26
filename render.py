@@ -33,9 +33,9 @@ STRINGS = {
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
            "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
-           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in your Inbox:", "sent_see": "Your email was sent. It is now in the Inbox - go see it:", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
+           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in the raw inbox:", "sent_see": "Your email was sent and landed in Mailpit, right next to Maria's email to you. Go see both:", "sent_both": "See both emails in Mailpit", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
-           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "This draft came from the paste box. We have the name, but not the real email address. To send a reply: open the email from the Inbox, then press Draft a reply - the Send button is there.",
+           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "We have the words, but no real email address to send to - the raw inbox is empty. Go to the clear page and press Mailpit: a fresh email from Maria lands there. Then draft the reply again, and the Send button will be here.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
            "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
            "inbox_seed": "Send the sample email into this inbox",
@@ -76,9 +76,9 @@ STRINGS = {
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
            "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
-           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en tu Bandeja:", "sent_see": "Tu correo fue enviado. Ya está en la Bandeja - ve a verlo:", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
+           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en la bandeja cruda:", "sent_see": "Tu correo fue enviado y llegó a Mailpit, junto al correo de Maria para ti. Ve a ver ambos:", "sent_both": "Ver ambos correos en Mailpit", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
-           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Este borrador vino del cuadro de pegar. Tenemos el nombre, pero no la dirección real. Para enviar una respuesta: abre el correo desde la Bandeja y presiona Redactar una respuesta - allí está el botón Enviar.",
+           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Tenemos las palabras, pero no una dirección real a la que enviar: la bandeja cruda está vacía. Ve a la página clara y presiona Mailpit: un correo nuevo de Maria llega allí. Luego redacta la respuesta otra vez y el botón Enviar estará aquí.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
            "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
@@ -119,9 +119,9 @@ STRINGS = {
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
-           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong Hộp thư của bạn:", "sent_see": "Thư của bạn đã được gửi. Nó đang ở trong Hộp thư - hãy xem:", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
+           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong hộp thư thô:", "sent_see": "Thư của bạn đã được gửi và đã đến Mailpit, ngay cạnh email của Maria gửi bạn. Hãy xem cả hai:", "sent_both": "Xem cả hai email trong Mailpit", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
-           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Bản nháp này đến từ khung dán. Chúng ta có tên, nhưng không có địa chỉ email thật. Để gửi thư trả lời: mở email từ Hộp thư, rồi nhấn Soạn thư trả lời - nút Gửi ở đó.",
+           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Chúng ta có nội dung, nhưng không có địa chỉ email thật để gửi: hộp thư thô đang trống. Hãy vào trang rõ ràng và nhấn Mailpit: một email mới từ Maria sẽ đến đó. Rồi soạn thư trả lời lại, nút Gửi sẽ ở đây.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
            "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
@@ -223,7 +223,7 @@ function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getE
 def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
 <div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>
-<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/inbox'>{s['nav_inbox']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
+<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
 
 def _why_card(s):
     items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
@@ -384,7 +384,7 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
 <div>{s['edit_hint']}</div>
 <textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea>
 <p><button type='submit' class='bigbtn'>{s['send_btn']}</button></p></form>
-<p class='big'><a href='/inbox'>{s['dont_send']}</a></p>"""
+<p class='big'><a href='/'>{s['dont_send']}</a></p>"""
     else:
         send_form = f"""<div class='box amber'><span class='lbl'>&#9650; {s['no_send_here']}</span><div class='big'>{s['no_send_why']}</div></div>
 <div>{s['edit_hint']}</div>
@@ -406,5 +406,5 @@ def render_reply_sent(to, subject, body_text, sent, lang="en"):
 <div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
 <div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
 <div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div></div>
-{("<p class='big'><b>" + s['sent_see'] + "</b></p>") if sent else ""}
-<p class='big'><a href='/inbox'>{s['nav_inbox']}</a> &middot; <a href='/mailpit/' target='_blank'>{s['sent_mailpit']}</a> &middot; <a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
+{("<p class='big'><b>" + s['sent_see'] + "</b></p><p><a class='btn bigbtn' href='/mailpit/' target='_blank' rel='noopener'>" + s['sent_both'] + "</a></p>") if sent else ""}
+<p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
