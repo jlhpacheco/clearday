@@ -126,13 +126,14 @@ async function main() {
   check("Home: From field visible", await page.locator('input[name="sender"]').isVisible());
   const homeBody = await page.locator("body").innerText();
   check("Home: HIS narrative on the clear page, right under the hero - 'what it is like to be dyslexic'", homeBody.includes("Before you judge this app, please take a moment to experience what it is like to be dyslexic"));
+  check("Home: the story strip has ONE button - 'Read my story' (no Mailpit button)", (await page.locator("a.rawbtn").count()) === 1 && (await page.locator("a.rawbtn").first().innerText()).includes("Read my story"));
   await page.locator("a.rawbtn").first().click();
   const dlgOpen = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return !!d && d.open; });
-  check("Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)", dlgOpen);
-  if (dlgOpen) { await page.locator("#rawclose").click(); }
-  await page.locator("a.rawbtn").first().click();
+  check("Home: 'Read my story' opens ONE dialog - his story on top, the raw inbox below", dlgOpen);
+  const story = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return d ? d.textContent || "" : ""; });
+  check("Home: the dialog's story is his FULL story ('three tries' + the Thanksgiving close)", story.includes("three tries") && story.includes("thankful this Thanksgiving"), "");
   const freshMsg = page.locator("#freshmsg");
-  check("Home: pressing Mailpit starts the FRESH delivery - progress bar + 'on its way' words", await page.locator("#freshfill").isVisible() && ((await freshMsg.innerText()).includes("on its way") || (await freshMsg.innerText()).includes("just landed")), "");
+  check("Home: the SAME press starts the FRESH delivery - progress bar + 'on its way' words", await page.locator("#freshfill").isVisible() && ((await freshMsg.innerText()).includes("on its way") || (await freshMsg.innerText()).includes("just landed")), "");
   let landedText = "";
   for (let i = 0; i < 25 && !landedText.includes("Hi everyone"); i++) {
     await page.waitForTimeout(1000);
@@ -145,11 +146,15 @@ async function main() {
   }
   check("Home: raw-inbox dialog LANDS on Maria's email already open - body visible, NO click on the message needed", landedText.includes("Hi everyone") && landedText.includes("5:15"), "");
   check("Home: progress bar FINISHES - 'It just landed in the raw inbox' over the opened email", (await freshMsg.innerText()).includes("just landed"), "");
+  // Build C (Nov 26, Jose Luis's pick): the dialog must NOT jump on its own.
+  const dlgScrollTop = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return d ? d.scrollTop : -1; });
+  check("Home (build C): after the email lands, the dialog did NOT scroll itself - his story is still at the top", dlgScrollTop === 0, `scrollTop=${dlgScrollTop}`);
+  check("Home (build C): the landed note is BIG and the 'See the email' button is showing", await page.locator("#seeemail").isVisible() && (await freshMsg.evaluate((e) => parseFloat(getComputedStyle(e).fontSize))) >= 24, "");
+  await page.click("#seeemail");
+  await page.waitForTimeout(600);
+  const dlgScrollAfter = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return d ? d.scrollTop : -1; });
+  check("Home (build C): the button scrolls ONLY when the reader taps it", dlgScrollAfter > 0, `scrollTop=${dlgScrollAfter}`);
   await page.locator("#rawclose").click();
-  await page.locator("#storybtn").click();
-  const story = await page.evaluate(() => { const d = document.getElementById("storybox") as HTMLDialogElement | null; return { open: !!d && d.open, text: d ? d.textContent || "" : "" }; });
-  check("Home: 'Read my story' opens his full story in a dialog (slim strip, full heart)", story.open && story.text.includes("three tries"), "");
-  if (story.open) { await page.locator("#storyclose").click(); }
   check("Home: Subject field visible", await page.locator('input[name="subject"]').isVisible());
   check("Home: 'Paste the long message' box visible", await page.locator('textarea[name="text"]').isVisible());
 
@@ -292,6 +297,25 @@ async function main() {
     style.textAlign === "left" || style.textAlign === "start",
     `actual=${style.textAlign} (start = left for left-to-right text)`
   );
+
+  // ---------- Step 2e: bulk clear + the API (added Nov 26) ----------
+  // The bulk button is CLICKED, never URL-typed - the path a person walks.
+  await page.click('a[href="/bulk"]');
+  await page.waitForLoadState("load");
+  const bulkLand = await bodyText(page);
+  check("Bulk: nav link lands on the bulk page with the big button", bulkLand.includes("CLEAR THE WHOLE INBOX") && (await page.locator('form[action="/bulk/clear"] button[type="submit"]').count()) === 1);
+  await page.click('form[action="/bulk/clear"] button[type="submit"]');
+  await page.waitForSelector("text=EVERYTHING YOU MUST DO", { timeout: 300_000 });
+  const bulkDone = await bodyText(page);
+  check("Bulk: one press clears the inbox - combined list + Maria's card", bulkDone.includes("EVERYTHING YOU MUST DO") && bulkDone.includes("Maria Lopez"));
+  const apiResp = await page.request.post(BASE + "/api/clear", { data: { text: "The form is due 11/24/2026. Please reply.", sender: "Pat Lee", subject: "Form", lang: "en" } });
+  const apiJson = await apiResp.json();
+  check("API: POST /api/clear returns JSON with the exact date", apiResp.status() === 200 && Array.isArray(apiJson.dates_numbers) && apiJson.dates_numbers.includes("11/24/2026"));
+  const apiBad = await page.request.post(BASE + "/api/clear", { data: { sender: "Pat Lee" } });
+  check("API: missing text -> 400 JSON error", apiBad.status() === 400);
+  const apiFol = await page.request.get(BASE + "/api/followups");
+  const folJson = await apiFol.json();
+  check("API: follow-ups JSON never carries an address field", apiFol.status() === 200 && (folJson.followups || []).every((i: any) => !("addr" in i)));
 
   // ---------- Step 3: follow-ups page ----------
   await page.click('a[href="/followups"]');
