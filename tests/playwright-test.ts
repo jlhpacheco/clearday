@@ -131,6 +131,8 @@ async function main() {
   check("Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)", dlgOpen);
   if (dlgOpen) { await page.locator("#rawclose").click(); }
   await page.locator("a.rawbtn").first().click();
+  const freshMsg = page.locator("#freshmsg");
+  check("Home: pressing Mailpit starts the FRESH delivery - progress bar + 'on its way' words", await page.locator("#freshfill").isVisible() && ((await freshMsg.innerText()).includes("on its way") || (await freshMsg.innerText()).includes("just landed")), "");
   let landedText = "";
   for (let i = 0; i < 25 && !landedText.includes("Hi everyone"); i++) {
     await page.waitForTimeout(1000);
@@ -142,6 +144,7 @@ async function main() {
     }
   }
   check("Home: raw-inbox dialog LANDS on Maria's email already open - body visible, NO click on the message needed", landedText.includes("Hi everyone") && landedText.includes("5:15"), "");
+  check("Home: progress bar FINISHES - 'It just landed in the raw inbox' over the opened email", (await freshMsg.innerText()).includes("just landed"), "");
   await page.locator("#rawclose").click();
   await page.locator("#storybtn").click();
   const story = await page.evaluate(() => { const d = document.getElementById("storybox") as HTMLDialogElement | null; return { open: !!d && d.open, text: d ? d.textContent || "" : "" }; });
