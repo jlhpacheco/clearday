@@ -185,6 +185,26 @@ _allowed = _cd._allowed_tokens("Lunch is on March 3. The room holds 40 people. S
 _cleaned = _cd._strip_ungrounded("Pay $999 by January 40, or confirm March 3 for 40 people, not 41, at 9:99 PM. See you November 24, not November 25.", _allowed, "en")
 check("GROUNDING: model-invented $999 / January 40 / 41 / 9:99 PM are stripped in code; real March 3 / 40 stay", "$999" not in _cleaned and "January 40" not in _cleaned and "41" not in _cleaned and "9:99" not in _cleaned and "March 3" in _cleaned and "40 people" in _cleaned)
 check("GROUNDING: a real 2-digit-day date keeps its day (November 24 stays whole; invented November 25 is cut)", "November 24" in _cleaned and "November 25" not in _cleaned)
+# ---- the 45-second cap (Nov 26, Jose Luis's call): a slow-dripping model
+# must never hold an answer hostage; at the cap, the RULES answer instead ----
+import threading as _th, time as _tm
+from http.server import BaseHTTPRequestHandler as _BH, HTTPServer as _HS
+class _SlowH(_BH):
+    def do_POST(self):
+        _tm.sleep(10)
+        b = json.dumps({"choices": [{"message": {"content": "{}"}}]}).encode()
+        self.send_response(200); self.send_header("Content-Type", "application/json"); self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
+    def log_message(self, *a): pass
+_srv = _HS(("127.0.0.1", 0), _SlowH); _th.Thread(target=_srv.serve_forever, daemon=True).start()
+_old_url, _old_dl = _os.environ.get("CLEARDAY_MODEL_URL"), _cd._MODEL_DEADLINE
+_os.environ["CLEARDAY_MODEL_URL"] = f"http://127.0.0.1:{_srv.server_address[1]}"; _cd._MODEL_DEADLINE = 3
+_t0 = _tm.time()
+_cap_out = _cd.transform("The meeting moved to Tuesday November 24 at 5:15 PM. Please reply to confirm.", "Maria Lopez", "Board meeting moved", "en")
+_cap_el = _tm.time() - _t0
+if _old_url: _os.environ["CLEARDAY_MODEL_URL"] = _old_url
+else: _os.environ.pop("CLEARDAY_MODEL_URL", None)
+_cd._MODEL_DEADLINE = _old_dl; _srv.shutdown()
+check("MODEL CAP: a provider that drips past the cap gets cut - the rules answer instead (cap set to 3s for the test, 45s in the app)", _cap_out["source"] == "rules" and _cap_el < 8)
 send_mail("María López <maria.lopez@example.org>", "Reunión del martes", "La reunión es el martes 24 de noviembre a las 5:15 p. m. en la Sala 4. Por favor confirme su asistencia.")
 pid = find_id("Reunión del martes")
 code, ppage = get("/inbox/clear?id=" + pid + "&lang=es")
