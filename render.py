@@ -8,6 +8,7 @@ pill badges. The accessibility rules above never change - only the polish.
 Reader choice: tint + text size are client-side buttons (IDA/WCAG: let the
 reader choose their own background color).
 """
+import json
 import html
 def esc(x):
     return html.escape(str(x))
@@ -32,7 +33,7 @@ STRINGS = {
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
            "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
-           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "story_btn": "Read my story", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in your Inbox:", "sent_see": "Your email was sent. It is now in the Inbox - go see it:", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
+           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in your Inbox:", "sent_see": "Your email was sent. It is now in the Inbox - go see it:", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
            "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "This draft came from the paste box. We have the name, but not the real email address. To send a reply: open the email from the Inbox, then press Draft a reply - the Send button is there.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
@@ -75,7 +76,7 @@ STRINGS = {
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
            "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
-           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "story_btn": "Lee mi historia", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en tu Bandeja:", "sent_see": "Tu correo fue enviado. Ya está en la Bandeja - ve a verlo:", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
+           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en tu Bandeja:", "sent_see": "Tu correo fue enviado. Ya está en la Bandeja - ve a verlo:", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
            "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Este borrador vino del cuadro de pegar. Tenemos el nombre, pero no la dirección real. Para enviar una respuesta: abre el correo desde la Bandeja y presiona Redactar una respuesta - allí está el botón Enviar.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
@@ -118,7 +119,7 @@ STRINGS = {
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
-           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "story_btn": "Đọc câu chuyện của tôi", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong Hộp thư của bạn:", "sent_see": "Thư của bạn đã được gửi. Nó đang ở trong Hộp thư - hãy xem:", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
+           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong Hộp thư của bạn:", "sent_see": "Thư của bạn đã được gửi. Nó đang ở trong Hộp thư - hãy xem:", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
            "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Bản nháp này đến từ khung dán. Chúng ta có tên, nhưng không có địa chỉ email thật. Để gửi thư trả lời: mở email từ Hộp thư, rồi nhấn Soạn thư trả lời - nút Gửi ở đó.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
@@ -167,6 +168,10 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 .replycard{border:4px solid #0E7A5F;background:#EFFAF4}
 .bigbtn{width:100%;font-size:25px;padding:18px 20px;margin-top:10px;cursor:pointer;box-shadow:0 4px 0 rgba(32,36,46,.12)}
 .rawbtn{padding:2px 16px;font-size:20px;vertical-align:baseline}
+.freshtrack{height:20px;border:3px solid #20242E;border-radius:10px;background:#FFF6D6;overflow:hidden;margin:8px 0 12px}
+#freshfill{height:100%;width:0%;background:#0E7A5F;transition:width .3s ease}
+#freshmsg{font-weight:bold}
+@media (prefers-reduced-motion: reduce){#freshfill{transition:none}}
 .story-strip{padding:12px 16px}
 .story-strip .big{margin:0}
 dialog#rawbox,dialog#storybox{border:3px solid #20242E;border-radius:16px;padding:18px;width:min(940px,94vw);background:#FFFDF4;color:#20242E;font-size:21px;line-height:1.7}
@@ -210,6 +215,9 @@ def _shell(inner, s):
 function showThinking(){{var t=document.getElementById('thinking');if(t){{t.style.display='block';window.scrollTo(0,0);}}}}
 document.addEventListener('submit',function(e){{if((e.target.getAttribute('action')||'').indexOf('/inbox/seed')>=0)return;showThinking();var b=e.target.querySelector('button[type=submit]');if(b){{b.disabled=true;}}}});
 document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.btn'):null;if(a){{var h=a.getAttribute('href')||'';if(h.indexOf('/inbox/clear')>=0||h.indexOf('sample=1')>=0||h.indexOf('/sample')>=0){{showThinking();}}}}var b=e.target.closest?e.target.closest('button[type=submit]'):null;if(b&&b.form&&(b.form.getAttribute('action')||'').indexOf('/inbox/seed')<0){{showThinking();}}}});
+
+var STEP1=window.__fresh1, STEP2=window.__fresh2, creep=null;
+function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getElementById('freshfill'),f=document.querySelector('#rawbox iframe');if(!msg||!fill){{land();return;}}var cb=document.getElementById('rawclose');if(cb){{var sb=document.getElementById('storybox');cb.textContent=(sb&&sb.open)?window.__closeStory:window.__closePlain;}}var t0=Date.now();msg.textContent=STEP1;fill.style.width='12%';var pct=12;if(creep){{clearInterval(creep);}}creep=setInterval(function(){{if(pct<72){{pct+=4;fill.style.width=pct+'%';}}}},120);fetch('/inbox/fresh',{{method:'POST'}}).then(function(r){{return r.json();}}).then(function(j){{var wait=Math.max(0,1600-(Date.now()-t0));setTimeout(function(){{if(creep){{clearInterval(creep);}}fill.style.width='88%';var done=function(){{if(f&&f.src.indexOf('/view/')<0){{return;}}fill.style.width='100%';msg.textContent=STEP2;if(f){{f.removeEventListener('load',done);}}}};if(j&&j.id&&f){{f.addEventListener('load',done);f.src='/mailpit/view/'+j.id;setTimeout(done,3000);}}else{{done();}}}},wait);}}).catch(function(){{if(creep){{clearInterval(creep);}}land();fill.style.width='100%';msg.textContent=STEP2;}});}}
 </script></body></html>"""
 
 def _bar(right, s):
@@ -263,12 +271,14 @@ def _raw_card(s):
 </dialog>
 <dialog id='rawbox' aria-label="{esc(s['raw_dialog_title'])}">
 <div class='cardtitle'>{s['raw_dialog_title']}</div>
+<div id='freshmsg'>{s['fresh_step1']}</div><div class='freshtrack'><div id='freshfill'></div></div>
 <iframe src='/mailpit/' title='Mailpit' loading='lazy'></iframe>
 <p><button type='button' id='rawclose'>{s['raw_close']}</button></p>
 </dialog>
 <script>
-document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();land();}}else{{window.open(a.href,'_blank');}}}}
-function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f&&f.src.indexOf('/view/')<0){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}var sb=e.target.closest?e.target.closest('#storybtn'):null;if(sb){{var d3=document.getElementById('storybox');if(d3&&d3.showModal){{d3.showModal();}}}}var sc=e.target.closest?e.target.closest('#storyclose'):null;if(sc){{var d4=document.getElementById('storybox');if(d4){{d4.close();}}}}}});
+window.__fresh1={json.dumps(s['fresh_step1'])};window.__fresh2={json.dumps(s['fresh_step2'])};window.__closeStory={json.dumps(s['raw_close'])};window.__closePlain={json.dumps(s['raw_close_plain'])};
+document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();fresh();}}else{{window.open(a.href,'_blank');}}}}
+function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}var sb=e.target.closest?e.target.closest('#storybtn'):null;if(sb){{var d3=document.getElementById('storybox');if(d3&&d3.showModal){{d3.showModal();}}}}var sc=e.target.closest?e.target.closest('#storyclose'):null;if(sc){{var d4=document.getElementById('storybox');if(d4){{d4.close();}}}}}});
 </script>"""
 
 def render_form(extra="", lang="en", prefill=None):
