@@ -200,8 +200,8 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 @media (prefers-reduced-motion: reduce){#freshfill{transition:none}}
 .story-strip{padding:12px 16px}
 .story-strip .big{margin:0}
-dialog#rawbox,dialog#storybox{border:3px solid #20242E;border-radius:16px;padding:18px;width:min(940px,94vw);background:#FFFDF4;color:#20242E;font-size:21px;line-height:1.7}
-dialog#rawbox::backdrop,dialog#storybox::backdrop{background:rgba(32,36,46,.55)}
+dialog#rawbox{border:3px solid #20242E;border-radius:16px;padding:18px;width:min(940px,94vw);background:#FFFDF4;color:#20242E;font-size:21px;line-height:1.7}
+dialog#rawbox::backdrop{background:rgba(32,36,46,.55)}
 #rawbox iframe{width:100%;height:62vh;border:2px solid #20242E;border-radius:8px;background:#FFFFFF;margin-top:10px}
 .cardtitle{font-size:24px;font-weight:bold}
 .step{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
@@ -243,7 +243,7 @@ document.addEventListener('submit',function(e){{if((e.target.getAttribute('actio
 document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.btn'):null;if(a){{var h=a.getAttribute('href')||'';if(h.indexOf('/inbox/clear')>=0||h.indexOf('sample=1')>=0||h.indexOf('/sample')>=0){{showThinking();}}}}var b=e.target.closest?e.target.closest('button[type=submit]'):null;if(b&&b.form&&(b.form.getAttribute('action')||'').indexOf('/inbox/seed')<0){{showThinking();}}}});
 
 var STEP1=window.__fresh1, STEP2=window.__fresh2, creep=null;
-function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getElementById('freshfill'),f=document.querySelector('#rawbox iframe');if(!msg||!fill){{land();return;}}var cb=document.getElementById('rawclose');if(cb){{var sb=document.getElementById('storybox');cb.textContent=(sb&&sb.open)?window.__closeStory:window.__closePlain;}}var t0=Date.now();msg.textContent=STEP1;fill.style.width='12%';var pct=12;if(creep){{clearInterval(creep);}}creep=setInterval(function(){{if(pct<72){{pct+=4;fill.style.width=pct+'%';}}}},120);fetch('/inbox/fresh',{{method:'POST'}}).then(function(r){{return r.json();}}).then(function(j){{var wait=Math.max(0,1600-(Date.now()-t0));setTimeout(function(){{if(creep){{clearInterval(creep);}}fill.style.width='88%';var done=function(){{if(f&&f.src.indexOf('/view/')<0){{return;}}fill.style.width='100%';msg.textContent=STEP2;if(f){{f.removeEventListener('load',done);}}}};if(j&&j.id&&f){{f.addEventListener('load',done);f.src='/mailpit/view/'+j.id;setTimeout(done,3000);}}else{{done();}}}},wait);}}).catch(function(){{if(creep){{clearInterval(creep);}}land();fill.style.width='100%';msg.textContent=STEP2;}});}}
+function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getElementById('freshfill'),f=document.querySelector('#rawbox iframe');if(!msg||!fill){{land();return;}}var t0=Date.now();msg.textContent=STEP1;fill.style.width='12%';var pct=12;if(creep){{clearInterval(creep);}}creep=setInterval(function(){{if(pct<72){{pct+=4;fill.style.width=pct+'%';}}}},120);fetch('/inbox/fresh',{{method:'POST'}}).then(function(r){{return r.json();}}).then(function(j){{var wait=Math.max(0,1600-(Date.now()-t0));setTimeout(function(){{if(creep){{clearInterval(creep);}}fill.style.width='88%';var done=function(){{if(f&&f.src.indexOf('/view/')<0){{return;}}fill.style.width='100%';msg.textContent=STEP2;if(f){{f.removeEventListener('load',done);try{{f.scrollIntoView({{block:'nearest'}});}}catch(e){{}}}}}};if(j&&j.id&&f){{f.addEventListener('load',done);f.src='/mailpit/view/'+j.id;setTimeout(done,3000);}}else{{done();}}}},wait);}}).catch(function(){{if(creep){{clearInterval(creep);}}land();fill.style.width='100%';msg.textContent=STEP2;}});}}
 </script></body></html>"""
 
 def _bar(right, s):
@@ -286,31 +286,27 @@ def render_inbox(messages, lang="en", down=False):
 {_raw_card(s)}""", s)
 
 def _story_note_html(s):
-    btn = "<a class='btn rawbtn' href='/mailpit/' target='_blank' rel='noopener'>Mailpit</a>"
     parts = s['inbox_raw_note'].split("[[MAILPIT]]")
-    note = esc(parts[0]) + btn + (esc(parts[1]) if len(parts) > 1 else "")
-    return note.replace("\n", "<br><br>")
+    note = esc(parts[0]) + (esc(parts[1]) if len(parts) > 1 else "")
+    return note.replace(" .", ".").replace("\n", "<br><br>")
 
 def _raw_card(s):
-    btn = "<a class='btn rawbtn' href='/mailpit/' target='_blank' rel='noopener'>Mailpit</a>"
+    btn = f"<a class='btn rawbtn' href='/mailpit/' target='_blank' rel='noopener'>{s['story_btn']}</a>"
     lead = esc(s['inbox_raw_note'].split("[[MAILPIT]]")[0].split("\n")[0].strip())
     return f"""<div class='card story-strip'>
 <div class='big'>{lead}</div>
-<div class='big' style='margin-top:8px;'><b>{s['see_line']}</b> {btn} <button type='button' id='storybtn' style='margin-left:10px;'>{s['story_btn']}</button></div></div>
-<dialog id='storybox' aria-label="{esc(s['story_btn'])}">
+<div class='big' style='margin-top:8px;'>{btn}</div></div>
+<dialog id='rawbox' aria-label="{esc(s['story_btn'])}">
 <div>{_story_note_html(s)}</div>
-<p><button type='button' id='storyclose'>{s['story_close']}</button></p>
-</dialog>
-<dialog id='rawbox' aria-label="{esc(s['raw_dialog_title'])}">
-<div class='cardtitle'>{s['raw_dialog_title']}</div>
+<div class='cardtitle' style='margin-top:18px;'>{s['raw_dialog_title']}</div>
 <div id='freshmsg'>{s['fresh_step1']}</div><div class='freshtrack'><div id='freshfill'></div></div>
 <iframe src='/mailpit/' title='Mailpit' loading='lazy'></iframe>
-<p><button type='button' id='rawclose'>{s['raw_close']}</button></p>
+<p><button type='button' id='rawclose'>{s['raw_close_plain']}</button></p>
 </dialog>
 <script>
-window.__fresh1={json.dumps(s['fresh_step1'])};window.__fresh2={json.dumps(s['fresh_step2'])};window.__closeStory={json.dumps(s['raw_close'])};window.__closePlain={json.dumps(s['raw_close_plain'])};
+window.__fresh1={json.dumps(s['fresh_step1'])};window.__fresh2={json.dumps(s['fresh_step2'])};
 document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();fresh();}}else{{window.open(a.href,'_blank');}}}}
-function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}var sb=e.target.closest?e.target.closest('#storybtn'):null;if(sb){{var d3=document.getElementById('storybox');if(d3&&d3.showModal){{d3.showModal();}}}}var sc=e.target.closest?e.target.closest('#storyclose'):null;if(sc){{var d4=document.getElementById('storybox');if(d4){{d4.close();}}}}}});
+function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}}});
 </script>"""
 
 def render_form(extra="", lang="en", prefill=None):
