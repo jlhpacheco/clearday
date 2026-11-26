@@ -1,0 +1,101 @@
+PASS U01 weekday month day
+PASS U02 moved-from pair, in order, nothing else
+PASS U03 reply-before date
+PASS U04 US slash date
+PASS U05 ISO date
+PASS U06 ordinal + 24h time
+PASS U07 month day, year
+PASS U08 US dash date
+PASS U09 AM/PM one token; single-digit room skipped
+PASS U10 midnight AM
+PASS U11 bare time
+PASS U12 impossible date copied verbatim (rules never validate)
+PASS U13 the real sample email
+PASS U14 same date twice -> once (dedupe)
+PASS U15 money with cents
+PASS U16 single-digit money counts
+PASS U17 room + people
+PASS U18 decimal hours
+PASS U19 comma-grouped people
+PASS U20 money then people, source order
+PASS U21 bare year is a plain number
+PASS U22 single digits only -> nothing
+PASS U23 cap of 6, dates first
+PASS U24 two prices, exactly as written
+PASS U25 phone number never extracted
+PASS U26 a range is not a date
+PASS U27 a fraction is not a slash date
+PASS U28 day inside a date is not listed twice
+PASS U29 ISO vs bare year separated by spans
+PASS U30 dash fragment rejected
+PASS U31 day-first form: only the number, no invented date
+PASS U32 long digit run is a number
+PASS U33 dateless hello -> nothing
+PASS U34 empty input -> no dates, no actions (nothing invented)
+PASS U35 no subject -> what falls back to the sentence
+PASS U36 'tomorrow' is never turned into a date
+PASS U37 relative weekday is not a date
+PASS U38 no sender -> Unknown sender
+PASS U39 es weekday date
+PASS U40 es full date with year
+PASS U41 es time with p. m.
+PASS U42 es date, no English phantom
+PASS U43 es dateless
+PASS U44 es facts keys + es steps
+PASS U45 vi date
+PASS U46 vi full date with year
+PASS U47 vi word time
+PASS U48 vi colon time
+PASS U49 vi dateless
+PASS U50 invented $999 / January 40 / 41 / 9:99 cut; real kept
+PASS U51 grounded $25 kept, invented $26 cut
+PASS U52 real 2-digit-day date keeps its day; invented date cut
+PASS U53 a sentence with no tokens passes unchanged
+PASS U54 empty allowed set -> no digits survive
+PASS U55 ordinal normalized in allowed tokens
+PASS U56 $ and comma normalized in allowed tokens
+PASS U57 es: real date keeps its day; invented es date cut
+PASS U58 max 3 actions at rules level
+PASS U59 no hints -> fallback action + fixed steps
+PASS U60 unsupported lang falls back to English, no crash
+PASS L15 followups: empty store -> count 0, empty list
+PASS L18 followups: Content-Type is JSON
+PASS L16 followups: cleared email appears by mid; NO address field is published
+PASS L17 followups: sending the reply closes the follow-up
+PASS L01 api: the sample email, exact 4 dates
+PASS L02 api: slash date
+PASS L03 api: dateless -> empty list
+PASS L04 api: Spanish date + lang es
+PASS L05 api: Vietnamese date + lang vi
+PASS L06 api: no sender/subject -> Unknown sender, all keys present
+PASS L07 api: numbers in text order
+PASS L08 api: phone + range guards hold
+PASS L09 api: no text field -> 400 JSON error
+PASS L10 api: empty text -> 400
+PASS L11 api: non-JSON body -> 400, never a stack page
+PASS L12 api: 60,000 chars -> 4xx, no clear page
+PASS L13 api: GET on the POST door -> 404
+PASS L14 api: unknown lang -> English fallback
+PASS L19 bulk: empty inbox -> 200, 0 cleared, no crash
+PASS L20 bulk: empty inbox landing shows the empty note (no button to press)
+PASS L21 bulk: 1 email -> exactly 1 summary card naming Maria + subject + her date
+PASS L22 bulk: combined list heading + Maria's other dates on her card
+PASS L23 bulk: 3 emails -> 3 cards, each with ONLY its own date
+PASS L24 bulk: combined list aggregates actions from all 3 emails
+PASS L25 bulk: the inbox itself is untouched (nothing deleted, nothing sent)
+PASS L26 bulk: a second press shows the same summary count (idempotent)
+PASS L27 home: one Read-my-story button + the hero
+PASS L28 sample button fills the form (Maria + Room 4)
+PASS L29 paste: HTML is escaped, never rendered
+PASS L30 paste: 60,000 chars -> polite too-long refusal
+PASS L31 why page: research markers
+PASS L32 connected: page shape only (LIVE/DOWN is the provider's, not asserted)
+PASS L33 followups: clean state shows the empty marker
+PASS L34 proxy: a write through the public Mailpit door -> 403, inbox intact
+PASS L35 reply: draft page first - textarea + Send button, NOTHING sent
+PASS L36 reply send: sent page + both-emails button + edited words delivered
+PASS L37 reply gate: a wrong address is refused, nothing sent
+PASS L38 reply paste: unmatched sender -> NO SEND BUTTON, no send form
+PASS L39 reply paste: blank/blank adopts Maria - her address + a send form
+PASS L40 reply: GET on the send door -> 404, nothing sent
+SCENARIOS TOTAL: 100/100
