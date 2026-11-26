@@ -10,7 +10,7 @@ from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 from clearday import transform, draft_reply
-from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, S
+from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
@@ -138,6 +138,12 @@ class H(BaseHTTPRequestHandler):
                 except Exception as e:
                     msg = f"GitHub connector call failed: {e}"
             self._send(render_form(f"<h2 style='font-size:28px;'>Connector check</h2><div style='font-size:22px;padding:10px;'>{msg}</div>"))
+        elif self.path.startswith("/why"):
+            q = parse_qs(urlparse(self.path).query)
+            lang = (q.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            self._send(render_why(lang))
         elif self.path.startswith("/mailpit"):
             self._proxy_mailpit()
         elif self.path.startswith("/inbox/clear"):
