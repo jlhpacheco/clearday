@@ -39,6 +39,12 @@ def mp_seed():
     m["To"] = "you@clearday.demo"
     m["Subject"] = "Board meeting moved"
     m.set_content(text)
+    paras = "".join(
+        f"<p style='margin:0 0 2px 0;'>{html.escape(line) if line.strip() else '&nbsp;'}</p>"
+        for line in text.splitlines())
+    m.add_alternative(
+        "<html><body style='font-family:Arial,sans-serif;font-size:13px;"
+        f"color:#666;line-height:1.35;'>{paras}</body></html>", subtype="html")
     s = smtplib.SMTP("127.0.0.1", 1025, timeout=10)
     s.send_message(m)
     s.quit()
