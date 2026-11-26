@@ -173,6 +173,31 @@ def _strip_ungrounded(s, allowed, lang="en"):
 
 _MODEL_SEM = threading.Semaphore(3)  # max model calls in flight, demo-wide
 
+_MODEL_DEADLINE = 45  # seconds TOTAL per model call, never per socket read
+
+def _call_model(req):
+    """One model HTTP call with a hard total deadline (45 seconds).
+
+    A slow-dripping provider defeats urlopen's per-socket timeout - every
+    drip resets it, and a call can hang for minutes. So the call runs on a
+    daemon thread and the caller stops waiting at the deadline; the rules
+    answer instead. Cap approved by Jose Luis on Nov 26, 2026."""
+    box = {}
+    def run():
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                box["data"] = r.read()
+        except Exception as e:  # handed to the caller below
+            box["error"] = e
+    t = threading.Thread(target=run, daemon=True)
+    t.start()
+    t.join(_MODEL_DEADLINE)
+    if t.is_alive():
+        raise TimeoutError(f"model call passed the {_MODEL_DEADLINE}s cap")
+    if "error" in box:
+        raise box["error"]
+    return box["data"]
+
 def llm_transform(text, sender="", subject="", lang="en"):
     """Optional model pass, through a Sprites Connector gateway (Together AI).
     Env: CLEARDAY_MODEL_URL (connector gateway base, OpenAI-compatible),
@@ -202,8 +227,8 @@ def llm_transform(text, sender="", subject="", lang="en"):
                                  headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                           "User-Agent": "ClearDay/1.0"})
     try:
-        with _MODEL_SEM, urllib.request.urlopen(req, timeout=30) as r:
-            data = json.loads(r.read())
+        with _MODEL_SEM:
+            data = json.loads(_call_model(req))
         content = data["choices"][0]["message"]["content"]
         raw = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
     except Exception:
@@ -261,8 +286,7 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
                                      headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                               "User-Agent": "ClearDay/1.0"})
         try:
-            with urllib.request.urlopen(req, timeout=30) as r:
-                data = json.loads(r.read())
+            data = json.loads(_call_model(req))
             content = (data["choices"][0]["message"]["content"] or "").strip()
             if content and len(content) > 20:
                 content = _strip_ungrounded(content, _allowed_tokens(f"{subject} {text}", lang), lang)
@@ -350,8 +374,7 @@ def connector_proof():
                                          headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                                   "User-Agent": "ClearDay/1.0"})
             t0 = time.time()
-            with urllib.request.urlopen(req, timeout=30) as r:
-                data = json.loads(r.read())
+            data = json.loads(_call_model(req))
             ms2 = int((time.time() - t0) * 1000)
             content = ((((data.get("choices") or [{}])[0].get("message") or {}).get("content")) or "").strip()
             usage = data.get("usage") or {}
