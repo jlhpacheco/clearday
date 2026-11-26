@@ -9,8 +9,8 @@ import json, os, html, http.client, smtplib, urllib.request, threading
 from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
-from clearday import transform, draft_reply
-from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, S
+from clearday import transform, draft_reply, connector_proof
+from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, render_connected, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
@@ -128,16 +128,17 @@ class H(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path.startswith("/connected"):
-            gw = os.environ.get("CLEARDAY_GITHUB_GATEWAY", "")
-            msg = "GitHub connector is not set on this Sprite."
-            if gw:
-                try:
-                    import urllib.request
-                    data = json.load(urllib.request.urlopen(gw + "/user", timeout=10))
-                    msg = f"Connected through the Sprites GitHub connector as GitHub user: {data.get('login')}"
-                except Exception as e:
-                    msg = f"GitHub connector call failed: {e}"
-            self._send(render_form(f"<h2 style='font-size:28px;'>Connector check</h2><div style='font-size:22px;padding:10px;'>{msg}</div>"))
+            q = parse_qs(urlparse(self.path).query)
+            lang = (q.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            from datetime import datetime, timezone
+            try:
+                from zoneinfo import ZoneInfo
+                checked = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%A, %B %d, %Y - %I:%M %p PT")
+            except Exception:
+                checked = datetime.now(timezone.utc).strftime("%A, %B %d, %Y - %I:%M %p UTC")
+            self._send(render_connected(connector_proof(), lang, checked))
         elif self.path.startswith("/why"):
             q = parse_qs(urlparse(self.path).query)
             lang = (q.get("lang") or ["en"])[0]
