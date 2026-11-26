@@ -266,17 +266,40 @@ class H(BaseHTTPRequestHandler):
                 # rule (Nov 24): if this sender's REAL address is sitting in
                 # the demo inbox, the draft page gets a Send button too - and
                 # says where the address came from. No match, no button.
+                # Match order: exact subject, then sender name, then - only
+                # when the paste gave NO name and NO subject at all - the
+                # newest real email in the box (the demo's Maria email).
                 try:
                     msgs3, up3 = mp_messages()
                     if up3:
+                        def usable(m3):
+                            a3 = (m3.get("From") or {}).get("Address") or ""
+                            return bool(a3) and a3 != "you@clearday.demo"
+                        pick = None
                         for m3 in msgs3:
-                            frm3 = m3.get("From") or {}
-                            if (m3.get("Subject") or "") == subject and frm3.get("Address"):
-                                mid = m3.get("ID") or mid
-                                addr = frm3["Address"]
-                                sender = frm3.get("Name") or sender
-                                found = True
-                                break
+                            if usable(m3) and (m3.get("Subject") or "") == subject and subject:
+                                pick = m3; break
+                        if pick is None and sender.strip():
+                            for m3 in msgs3:
+                                nm3 = (m3.get("From") or {}).get("Name") or ""
+                                if usable(m3) and nm3.strip().lower() == sender.strip().lower():
+                                    pick = m3; break
+                        if pick is None and not sender.strip() and not subject.strip():
+                            for m3 in msgs3:
+                                if usable(m3):
+                                    pick = m3; break
+                        if pick is not None:
+                            mid = pick.get("ID") or mid
+                            addr = (pick.get("From") or {}).get("Address") or ""
+                            sender = (pick.get("From") or {}).get("Name") or sender
+                            if not subject.strip():
+                                subject = pick.get("Subject") or subject
+                            if not text.strip():
+                                try:
+                                    text = mp_api("/api/v1/message/" + mid).get("Text") or text
+                                except Exception:
+                                    pass
+                            found = True
                 except Exception:
                     pass
             dates = transform(text, sender, subject, lang)["dates_numbers"] if text else []
