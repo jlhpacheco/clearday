@@ -13,12 +13,12 @@ ClearDay is a personal agent built for people with dyslexia. It takes a long, ha
 3. **KEY FACTS** — who, what, where, in a table
 4. **DATES + NUMBERS** — big type, one per line
 
-Then ClearDay **remembers**. Its follow-up list shows what is still waiting for a reply, so nothing gets lost. It runs on a Fly.io Sprite — a small computer of its own that sleeps when idle, wakes in seconds, and keeps its memory on a persistent disk. It uses the Sprites **GitHub connector** (see the live connector check at `/connected`). Since Nov 24 it also uses a **Together AI model through a Sprites Custom API connector** — the model drafts the words, the rules keep the dates (see How it works).
+Then ClearDay **remembers**. Its follow-up list shows what is still waiting for a reply, so nothing gets lost. It runs on a Fly.io Sprite — a small computer of its own that sleeps when idle, wakes in seconds, and keeps its memory on a persistent disk. It uses the Sprites **GitHub connector** (see the live connector proof at `/connected` — real metadata from both connectors, fetched the moment the page opens). Since Nov 24 it also uses a **Together AI model through a Sprites Custom API connector** — the model drafts the words, the rules keep the dates (see How it works).
 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **47/47** · Playwright browser test **43/43** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **48/48** · Playwright browser test **43/43** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -27,7 +27,7 @@ Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 | Rule | Proof |
 |---|---|
 | Runs on a Fly.io Sprite | The live demo above *is* the Sprite — it sleeps when idle and wakes on your click |
-| Uses at least one Sprites connector | **GitHub** — live proof at [/connected](https://clearday-bnjwz.sprites.app/connected); this repo itself was created through that connector, from inside the Sprite. **Together AI** (Custom API connector) — a live model drafts each page's words; the green pill on every result page proves it answered |
+| Uses at least one Sprites connector | **GitHub** — live proof at [/connected](https://clearday-bnjwz.sprites.app/connected); this repo itself was created through that connector, from inside the Sprite. **Together AI** (Custom API connector) — a live model drafts each page's words; the green pill on every result page proves it answered. The proof page itself is a small live dashboard: GitHub account, repo and rate-limit data, the Together model list, and a real test call with its true token count — all fetched when the page opens, nothing typed in |
 | Built during Hacksgiving week | Built and submitted **Monday, November 23, 2026** — the first day |
 
 ## Try it in 60 seconds
@@ -172,7 +172,7 @@ Third honest note (Nov 24): the rule paid for itself the same day. The first smo
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 47/47 · Playwright 43/43 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 48/48 · Playwright 43/43 · the failures in between, shown honestly in Testing |
 | A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | It answers back — with permission | The AI drafts the reply, you read and edit it, and only your Send press sends it — then the follow-up closes |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
@@ -250,7 +250,7 @@ The Mailpit screen is **not dyslexia-friendly — and that is the point.** That 
 | 3. Render | One clear page comes out (`render.py`), same order every time — topped with the pill that says who answered: the model, or the rules |
 | 4. Remember | The follow-up is saved to `memory.json` on the Sprite's persistent disk |
 | 5. Follow up | `/followups` shows what is still waiting for a reply |
-| 6. Connectors | `/connected` calls GitHub through the Sprites GitHub connector gateway; the model is called through a Sprites Custom API connector — no key in the code, and no key inside the Sprite |
+| 6. Connectors | `/connected` fetches live metadata from both gateways — GitHub account/repo/rate-limit through the Sprites GitHub connector, and the Together model list plus a real test call through the Sprites Custom API connector — no key in the code, and no key inside the Sprite |
 
 ## Run it
 
