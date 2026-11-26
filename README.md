@@ -18,7 +18,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **46/46** · Playwright browser test **43/43** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **47/47** · Playwright browser test **43/43** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -172,7 +172,7 @@ Third honest note (Nov 24): the rule paid for itself the same day. The first smo
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 46/46 · Playwright 43/43 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 47/47 · Playwright 43/43 · the failures in between, shown honestly in Testing |
 | A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | It answers back — with permission | The AI drafts the reply, you read and edit it, and only your Send press sends it — then the follow-up closes |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
