@@ -18,7 +18,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **40/40** · Playwright browser test **43/43** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **42/42** · Playwright browser test **43/43** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -172,7 +172,7 @@ Third honest note (Nov 24): the rule paid for itself the same day. The first smo
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 40/40 · Playwright 43/43 · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 42/42 · Playwright 43/43 · the failures in between, shown honestly in Testing |
 | A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | It answers back — with permission | The AI drafts the reply, you read and edit it, and only your Send press sends it — then the follow-up closes |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
@@ -215,7 +215,7 @@ And the authority behind the whole design: **Yale**. Dr. Sally Shaywitz, co-dire
 
 ClearDay also has a **real inbox**, and you can watch email arrive in it:
 
-The **home page itself** opens with a slim strip carrying Jose Luis's invitation, in his own words: *“Before you judge this app, please take a moment to experience what it is like to be dyslexic.”* Beside it, two doors: **See for yourself — Mailpit**, which opens the raw inbox in a **dialog window over the page — landing on Maria's email already open**, no hunting, no extra click (the judge steps straight inside the ugly original and feels how hard it is to read; the sample now arrives like real email, with both a text and a web-page version, so the reading pane can never open blank), and **Read my story**, which opens his full narrative in a second dialog: *“…can take me three tries to read it slowly before it gives up its meaning to me. Everything hides at first… That is why I created ClearDay.”* The strip stays small on purpose — the page belongs to the solution; the problem is one honest click away. Maria's email is guaranteed to be in Mailpit: the demo puts it there itself, whichever page a judge opens first.
+The **home page itself** opens with a slim strip carrying Jose Luis's invitation, in his own words: *“Before you judge this app, please take a moment to experience what it is like to be dyslexic.”* Beside it, two doors: **See for yourself — Mailpit**, which **sends a brand-new email from Maria on the spot** — a progress bar shows it traveling — and opens the raw inbox in a **dialog window over the page, landing on that fresh email already open**, no hunting, no extra click (the judge steps straight inside the ugly original and feels how hard it is to read; the sample arrives like real email, with both a text and a web-page version, so the reading pane can never open blank). The same Mailpit button inside his story does the same thing, and **Read my story**, which opens his full narrative in a second dialog: *“…can take me three tries to read it slowly before it gives up its meaning to me. Everything hides at first… That is why I created ClearDay.”* The strip stays small on purpose — the page belongs to the solution; the problem is one honest click away. Maria's email is guaranteed to be in Mailpit: the demo puts it there itself, whichever page a judge opens first.
 
 1. **[Open the Inbox page](https://clearday-bnjwz.sprites.app/inbox)** — ClearDay's clear-style list of what is sitting in the inbox right now. Press **Make it clear** on any message.
 2. **[Open the raw inbox — Mailpit](https://clearday-bnjwz.sprites.app/mailpit/)** — the same inbox in Mailpit's own screen: small, dense, gray text.
