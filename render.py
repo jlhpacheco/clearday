@@ -290,10 +290,10 @@ def render_form(extra="", lang="en", prefill=None):
     pf_text = esc(pf.get("text", ""))
     loaded = f"<p class='big'><b>&#10003; {s['sample_loaded']}</b></p>" if pf else ""
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
-{_raw_card(s)}
-<div class='layout'><div>
 <div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
 <div class='big'>{s['hero_sub']}</div>
+<div class='layout'><div>
+{_raw_card(s)}
 {extra}
 <div class='card'><div class='cardtitle'>&#9654; {s['sample_title']}</div>
 <div>{s['sample_line']}</div>
@@ -310,7 +310,6 @@ def render_form(extra="", lang="en", prefill=None):
 <p><label class='big'><b>{s['paste']}</b></label><textarea name='text' rows='10'>{pf_text}</textarea></p>
 <p class='big'><b>{s['demo_warn']}</b></p>
 <button type='submit'>{s['button']}</button></form></div>
-{_why_card(s)}
 </div><div>
 <div class='card'><div class='cardtitle'>&#9632; {s['path_title']}</div>
 <div>{s['path_sub']}</div>
@@ -318,6 +317,7 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>02</div><div><b>{s['step2']}</b></div></div>
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
+{_why_card(s)}
 </div></div>
 <p class='big'><a href='/followups'>{s['see_followups']}</a></p>""", s)
 
