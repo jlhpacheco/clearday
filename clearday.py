@@ -7,7 +7,7 @@ Design rules (International Dyslexia Association (IDA, USA) + US WCAG 2.2 AA (AD
 - Avoid red/green as a meaning pair
 - Bold only, no italics / underline, short phrases, max 3 actions
 """
-import re, json, os, urllib.request
+import re, json, os, urllib.request, threading
 from datetime import datetime
 
 DATE_RE = re.compile(r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b|\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b|\b(?:[01]?\d|2[0-3]):[0-5]\d\b", re.I)
@@ -151,13 +151,27 @@ def _strip_ungrounded(s, allowed, lang="en"):
         lang = "en"
     def repl(m):
         return m.group(0) if _norm_token(m.group(0)) in allowed else ""
-    for rx in (DATE_RES[lang], DATE_RE, NUMBER_RE):
+    for rx in (DATE_RES[lang], DATE_RE):
         s = rx.sub(repl, s)
+    # The number pass must not eat the digits inside a date that survived:
+    # protect the spans of every date token still standing, then judge
+    # only the numbers outside them. (Found by scenario U52/U57: without
+    # this, "November 24" lost its 24 and Spanish dates lost their day.)
+    spans = []
+    for rx in (DATE_RES[lang], DATE_RE):
+        spans += [m.span() for m in rx.finditer(s)]
+    def nrepl(m):
+        if any(m.start() < e and st < m.end() for st, e in spans):
+            return m.group(0)
+        return m.group(0) if _norm_token(m.group(0)) in allowed else ""
+    s = NUMBER_RE.sub(nrepl, s)
     s = re.sub(r"\s+([,.;:])", r"\1", s)
     s = re.sub(r"\(\s*\)", "", s)
     s = re.sub(r"\s{2,}", " ", s)
     return s.strip(" ,;")
 
+
+_MODEL_SEM = threading.Semaphore(3)  # max model calls in flight, demo-wide
 
 def llm_transform(text, sender="", subject="", lang="en"):
     """Optional model pass, through a Sprites Connector gateway (Together AI).
@@ -188,7 +202,7 @@ def llm_transform(text, sender="", subject="", lang="en"):
                                  headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                           "User-Agent": "ClearDay/1.0"})
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
+        with _MODEL_SEM, urllib.request.urlopen(req, timeout=30) as r:
             data = json.loads(r.read())
         content = data["choices"][0]["message"]["content"]
         raw = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
