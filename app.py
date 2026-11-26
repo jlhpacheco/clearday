@@ -49,6 +49,28 @@ def mp_seed():
     s.send_message(m)
     s.quit()
 
+def mp_fresh():
+    """Wipe the box and deliver ONE brand-new Maria email, right now.
+    Returns the new message ID (or '')."""
+    import time
+    with SEED_LOCK:
+        try:
+            req = urllib.request.Request(MP + "/api/v1/messages", method="DELETE")
+            urllib.request.urlopen(req, timeout=10).read()
+        except Exception:
+            pass
+        try:
+            mp_seed()
+        except Exception:
+            return ""
+        for _ in range(12):
+            msgs, up = mp_messages()
+            for m in msgs:
+                if m.get("Subject") == "Board meeting moved":
+                    return m.get("ID", "")
+            time.sleep(0.25)
+    return ""
+
 def mp_messages():
     try:
         data = mp_api("/api/v1/messages?limit=20")
@@ -296,6 +318,15 @@ class H(BaseHTTPRequestHandler):
                 except Exception:
                     sent = False
             self._send(render_reply_sent(to, rsubject, draft, sent, lang))
+            return
+        if self.path.startswith("/inbox/fresh"):
+            mid = mp_fresh()
+            body = json.dumps({"id": mid}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
             return
         if self.path.startswith("/inbox/seed"):
             q = parse_qs(urlparse(self.path).query)
