@@ -218,8 +218,9 @@ async function main() {
   check("Result: screenshot saved", fs.existsSync(path.join(HERE, "result.png")), "result.png");
 
   // ---------- Step 2b: the Mailpit inbox path (added Nov 24) ----------
-  // A judge's walk: nav -> Inbox (real email in a real inbox) -> Make it clear.
-  await page.click('a[href="/inbox"]');
+  // The Inbox ROUTE still works, but its TAB left the nav on Nov 26 (Jose Luis: it confused everyone).
+  check("Nav: NO Inbox tab in the top nav anymore", (await page.locator('.navrow a[href="/inbox"]').count()) === 0, "");
+  await page.goto(BASE + "/inbox", { waitUntil: "load", timeout: 90_000 });
   await page.waitForSelector("text=THE INBOX", { timeout: 30_000 });
   const ib = await bodyText(page);
   check("Inbox: real email from 'Maria Lopez' listed", ib.includes("Maria Lopez"));
@@ -253,6 +254,7 @@ async function main() {
   const rp = await bodyText(page);
   check("Reply: sent page shows the sender's real address", rp.includes("maria.lopez@example.org"));
   check("Reply: sent page shows subject 'Re: Board meeting moved'", rp.includes("Re: Board meeting moved"));
+  check("Reply: sent page has the BIG 'See both emails in Mailpit' button", rp.includes("See both emails in Mailpit") && (await page.locator("a.bigbtn[href='/mailpit/']").isVisible()), "");
 
   // ---------- Step 2d: inbox in Spanish + the seed button (added Nov 24) ----------
   await page.goto(BASE + "/inbox?lang=es", { waitUntil: "load", timeout: 90_000 });
