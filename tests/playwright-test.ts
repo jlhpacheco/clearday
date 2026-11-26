@@ -125,7 +125,7 @@ async function main() {
 
   check("Home: From field visible", await page.locator('input[name="sender"]').isVisible());
   const homeBody = await page.locator("body").innerText();
-  check("Home: HIS narrative at the top of the clear page - 'what it is like to be dyslexic'", homeBody.includes("Before you judge this app, please take a moment to experience what it is like to be dyslexic"));
+  check("Home: HIS narrative on the clear page, right under the hero - 'what it is like to be dyslexic'", homeBody.includes("Before you judge this app, please take a moment to experience what it is like to be dyslexic"));
   await page.locator("a.rawbtn").first().click();
   const dlgOpen = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return !!d && d.open; });
   check("Home: Mailpit button INSIDE the text opens the raw-inbox DIALOG (judges feel it)", dlgOpen);
