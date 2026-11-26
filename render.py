@@ -28,7 +28,14 @@ STRINGS = {
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
-           "nav_inbox": "Inbox", "nav_why": "Why the cream page?", "inbox_title": "THE INBOX - the before picture",
+           "nav_inbox": "Inbox", "nav_why": "Why the cream page?",
+           "proof_title": "CONNECTOR PROOF", "proof_sub": "Every number on this page was fetched live, the moment you opened it. Nothing here is typed in by hand.",
+           "proof_checked": "Checked at", "proof_live": "LIVE - working now", "proof_down": "DOWN",
+           "proof_source": "Source", "proof_ms": "answered in", "proof_ask": "We asked the model", "proof_said": "The model answered",
+           "t_repos": "Public repos", "t_rate": "API calls left", "t_commit": "Newest commit", "t_models": "Models this account can use", "t_tokens": "Tokens in the test call", "t_speed": "Test call took",
+           "r_account": "Account", "r_updated": "Repo last updated", "r_model": "Our model", "r_onlist": "On the list", "r_callid": "Call ID",
+           "proof_note": "No typed-in numbers. If a connector is down, this page says DOWN and shows the real error. It never invents a number.",
+ "inbox_title": "THE INBOX - the before picture",
            "thinking": "AI is thinking - reading your message...",
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
@@ -71,7 +78,14 @@ STRINGS = {
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
-           "nav_inbox": "Bandeja", "nav_why": "¿Por qué la página crema?", "inbox_title": "LA BANDEJA - la foto del antes",
+           "nav_inbox": "Bandeja", "nav_why": "¿Por qué la página crema?",
+           "proof_title": "PRUEBA DE CONEXIÓN", "proof_sub": "Cada número de esta página se obtuvo en vivo, en el momento en que la abriste. Nada aquí está escrito a mano.",
+           "proof_checked": "Comprobado a las", "proof_live": "EN VIVO - funcionando ahora", "proof_down": "CAÍDO",
+           "proof_source": "Fuente", "proof_ms": "respondió en", "proof_ask": "Le preguntamos al modelo", "proof_said": "El modelo respondió",
+           "t_repos": "Repositorios públicos", "t_rate": "Llamadas API restantes", "t_commit": "Confirmación más reciente", "t_models": "Modelos que esta cuenta puede usar", "t_tokens": "Tokens en la llamada de prueba", "t_speed": "La llamada tardó",
+           "r_account": "Cuenta", "r_updated": "Repositorio actualizado", "r_model": "Nuestro modelo", "r_onlist": "En la lista", "r_callid": "ID de la llamada",
+           "proof_note": "Sin números escritos a mano. Si una conexión está caída, esta página dice CAÍDO y muestra el error real. Nunca inventa un número.",
+ "inbox_title": "LA BANDEJA - la foto del antes",
            "thinking": "La IA está pensando - leyendo tu mensaje...",
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
@@ -114,7 +128,14 @@ STRINGS = {
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
-           "nav_inbox": "Hộp thư", "nav_why": "Vì sao trang màu kem?", "inbox_title": "HỘP THƯ - hình ảnh trước",
+           "nav_inbox": "Hộp thư", "nav_why": "Vì sao trang màu kem?",
+           "proof_title": "BẰNG CHỨNG KẾT NỐI", "proof_sub": "Mọi con số trên trang này được lấy trực tiếp, ngay lúc bạn mở trang. Không có gì ở đây được gõ tay.",
+           "proof_checked": "Kiểm tra lúc", "proof_live": "ĐANG HOẠT ĐỘNG", "proof_down": "KHÔNG HOẠT ĐỘNG",
+           "proof_source": "Nguồn", "proof_ms": "trả lời trong", "proof_ask": "Chúng tôi đã hỏi mô hình", "proof_said": "Mô hình đã trả lời",
+           "t_repos": "Kho công khai", "t_rate": "Lượt gọi API còn lại", "t_commit": "Commit mới nhất", "t_models": "Số mô hình tài khoản này dùng được", "t_tokens": "Token trong lần gọi thử", "t_speed": "Lần gọi thử mất",
+           "r_account": "Tài khoản", "r_updated": "Kho cập nhật lần cuối", "r_model": "Mô hình của chúng tôi", "r_onlist": "Có trong danh sách", "r_callid": "ID lần gọi",
+           "proof_note": "Không có con số gõ tay. Nếu một kết nối hỏng, trang này báo KHÔNG HOẠT ĐỘNG và hiện lỗi thật. Nó không bao giờ bịa ra con số.",
+ "inbox_title": "HỘP THƯ - hình ảnh trước",
            "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
@@ -164,6 +185,11 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 .pill-ai{border-color:#1E7A34;background:#DFF5D8}
 .hero{font-size:40px;line-height:1.25;font-weight:bold;margin:14px 0 6px}
 .hero .accent{color:#0E7A5F}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
+.stat{background:#EFFAF4;border:3px solid #20242E;border-radius:16px;padding:14px 10px;text-align:center}
+.stat .n{font-size:36px;font-weight:bold;line-height:1.15}
+.stat .l{font-size:16px;margin-top:4px}
+.prow{font-size:19px;margin-top:8px}
 .card{background:#FFFDF4;border:3px solid #20242E;border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 0 rgba(32,36,46,.12)}
 .replycard{border:4px solid #0E7A5F;background:#EFFAF4}
 .bigbtn{width:100%;font-size:25px;padding:18px 20px;margin-top:10px;cursor:pointer;box-shadow:0 4px 0 rgba(32,36,46,.12)}
@@ -413,3 +439,46 @@ def render_reply_sent(to, subject, body_text, sent, lang="en"):
 <div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div></div>
 {("<p class='big'><b>" + s['sent_see'] + "</b></p><p><a class='btn bigbtn' href='/mailpit/' target='_blank' rel='noopener'>" + s['sent_both'] + "</a></p>") if sent else ""}
 <p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
+
+
+def render_connected(proof, lang="en", checked=""):
+    s = S(lang)
+    gh = proof.get("github") or {}
+    tg = proof.get("together") or {}
+
+    def pill(ok):
+        return (f"<span class='pill pill-ai'>&#9679; {s['proof_live']}</span>" if ok
+                else f"<span class='pill'>&#9670; {s['proof_down']}</span>")
+
+    def stat(n, label):
+        return f"<div class='stat'><div class='n'>{esc(str(n))}</div><div class='l'>{label}</div></div>"
+
+    if gh.get("ok"):
+        gh_html = f"""<div class='card'><div class='cardtitle'>&#9632; GitHub {pill(True)}</div>
+<div class='stats'>{stat(gh.get('repos', '-'), s['t_repos'])}{stat(gh.get('rate_left', '-'), s['t_rate'])}{stat(gh.get('commit_sha', '-'), s['t_commit'])}</div>
+<div class='prow'><b>{s['r_account']}:</b> {esc(gh.get('login', ''))} &middot; clearday</div>
+<div class='prow'><b>{esc(gh.get('commit_msg', ''))}</b> ({esc(gh.get('commit_date', ''))})</div>
+<div class='prow'><b>{s['r_updated']}:</b> {esc(gh.get('repo_updated', ''))}</div>
+<div class='prow'><b>{s['proof_source']}:</b> Sprites GitHub connector &middot; api.sprites.dev &middot; GET /user, /repos, /rate_limit &middot; {s['proof_ms']} {gh.get('ms', '-')} ms</div></div>"""
+    else:
+        gh_html = f"""<div class='card'><div class='cardtitle'>&#9632; GitHub {pill(False)}</div>
+<div class='prow'>{esc(gh.get('error', ''))}</div></div>"""
+    if tg.get("ok"):
+        onlist = "&#10003; " + s['r_onlist'] if tg.get("on_list") else s['proof_down']
+        tg_html = f"""<div class='card'><div class='cardtitle'>&#9654; Together AI {pill(True)}</div>
+<div class='stats'>{stat(tg.get('models_count', '-'), s['t_models'])}{stat(tg.get('tokens_total', '-'), s['t_tokens'])}{stat(str(tg.get('call_ms', '-')) + ' ms', s['t_speed'])}</div>
+<div class='prow'><b>{s['r_model']}:</b> {esc(tg.get('model', ''))} &middot; {onlist}</div>
+<div class='prow'><b>{s['proof_ask']}:</b> &ldquo;Answer in one short sentence: what is 2 + 2?&rdquo;</div>
+<div class='prow'><b>{s['proof_said']}:</b> &ldquo;{esc(tg.get('answer', ''))}&rdquo;</div>
+<div class='prow'><b>{s['r_callid']}:</b> {esc(tg.get('call_id', ''))}</div>
+<div class='prow'><b>{s['proof_source']}:</b> Sprites Custom API connector &middot; api.together.xyz &middot; GET /models + POST /chat/completions</div></div>"""
+    else:
+        tg_html = f"""<div class='card'><div class='cardtitle'>&#9654; Together AI {pill(False)}</div>
+<div class='prow'>{esc(tg.get('error', ''))}</div></div>"""
+    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+<div class='hero' style='font-size:34px'>&#9670; {s['proof_title']}</div>
+<div class='big'>{s['proof_sub']}</div>
+<div class='big'><b>{s['proof_checked']}:</b> {esc(checked)}</div>
+{gh_html}
+{tg_html}
+<div class='card'><div class='big'><b>{s['proof_note']}</b></div></div>""", s)
