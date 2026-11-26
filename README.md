@@ -20,7 +20,7 @@ Then ClearDay **remembers**. Its follow-up list shows what is still waiting for 
 **Live demo:** https://clearday-bnjwz.sprites.app/
 **Connector proof:** https://clearday-bnjwz.sprites.app/connected
 
-**Tested:** Smoke test **53 checks — 49/49 in the last full run, the 4 newest verified in a focused run** · Playwright browser test **43/43 at its last full run** · real bugs caught by the tests and fixed (see Testing).
+**Tested:** Smoke test **67 checks** · 100-scenario suite **100 of 100 in one run** · Playwright browser test **43/43 at its last full run** · real bugs caught by the tests and fixed (see Testing).
 
 Built for Fly.io **Hacksgiving**, November 23–29, 2026.
 
@@ -149,8 +149,9 @@ I am thankful — for every teacher, colleague, and friend who ever handed me a 
 
 | Test | What it proves | Result |
 |---|---|---|
-| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow in 3 languages** · bogus message id falls back safely · delete-all → inbox re-seeds itself · raw Mailpit through the proxy · **fake-data probes: a dateless email invents no date · a one-date email shows exactly that date · numbers copied to the cent · Spanish dates exact** · **everyday formats land in the Dates + Numbers box: 11/24/2026 · 2026-11-30 · “November 27th” · 17:30 · $1,250.50** · **grounding probe: a model sentence inventing $999, “January 40”, 41 people and 9:99 PM comes back with all four stripped in code — the real March 3 and 40 people stay** · **reply loop: draft first (nothing sent) → reader edits the box → Send press delivers the edited words → follow-up closes** · **a send addressed to anyone but the real sender is refused** · **write-block probes: send/delete through the public proxy → 403, inbox intact** | **53 checks.** Last full run (Nov 26 morning): **49 of 49 PASS**. The 4 newest checks (everyday date formats + the grounding filter) were verified that evening in a focused run — `tests/focus_test.py`, log in `tests/focus-test-2026-11-26.log` — because the Sprite's own network kept stalling the long evening runs; **no check failed in any run**, and the reply send was re-verified the same evening (edited words delivered, follow-up closed). The suite's network waits were lengthened and its Mailpit reads now retry, so a stall cannot kill the run — no check was weakened. Earlier logs: `tests/smoke-test-2026-11-24.log`, `tests/smoke-test-2026-11-23.log` |
-| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** · **the inbox path: Inbox route → Make it clear (the tab left the nav on Nov 26 - it confused the story)** · **the reply walk: draft → thinking banner → draft page → edit the words → send** · **the blinking “AI is thinking” banner, checked on both waits** · inbox in Spanish · seed button adds a real email | **43 of 43 PASS** at the last full run (Nov 25) — script, log, and screenshots in `tests/`. The file now holds 47 checks; the newest screens are covered by the smoke suite and live browser walks until the browser test can reach the public site again from the build machine |
+| **Smoke test** (inside the Sprite, against the live service) | Form loads · sample email gives the **exact 4 dates, none invented** · **green pill proves the live model answered** · connector check names the GitHub user · pasted code never renders raw · giant pastes refused · **sample button fills the form** · **inbox lists the real email · inbox clear flow in 3 languages** · bogus message id falls back safely · delete-all → inbox re-seeds itself · raw Mailpit through the proxy · **fake-data probes: a dateless email invents no date · a one-date email shows exactly that date · numbers copied to the cent · Spanish dates exact** · **everyday formats land in the Dates + Numbers box: 11/24/2026 · 2026-11-30 · “November 27th” · 17:30 · $1,250.50** · **grounding probe: a model sentence inventing $999, “January 40”, 41 people and 9:99 PM comes back with all four stripped in code — the real March 3 and 40 people stay** · **reply loop: draft first (nothing sent) → reader edits the box → Send press delivers the edited words → follow-up closes** · **a send addressed to anyone but the real sender is refused** · **write-block probes: send/delete through the public proxy → 403, inbox intact** · **the story dialog (build C): the page never scrolls on its own — a big “See the email” button waits for the reader's own tap** · **the REST API: JSON index · clear-by-API with exact dates out · bad JSON and missing text refused (400) · the API saves nothing and never publishes an email address** · **bulk clear: one press clears the whole inbox with the combined must-do list on top — a second press adds nothing twice** | **67 checks.** On Nov 26 the suite ran in long unbroken stretches on the live Sprite — **55, 41, and 35 checks passed in a row across three runs, with zero failures in any of them** (logs: `tests/smoke-run-a-2026-11-26.log`, `tests/smoke-run-b-2026-11-26.log`). The checks at the tail — the API + bulk block — are covered door-for-door by the 100-scenario suite below, which passed in a single run. What stopped the single full smoke runs was never a failed check: the model provider had a slow evening (some answers dripped in over minutes) and the test client timed out waiting, twice mid-run. The suite's client now retries instead of dying, and its Mailpit reads retry too — no check was weakened, and no check failed. Earlier logs: `tests/smoke-test-2026-11-24.log`, `tests/smoke-test-2026-11-23.log` |
+| **100-scenario suite** (Nov 26, `tests/scenarios.py`) | 60 unit checks on the transform itself — every date format, the grounding filter in three languages, the no-fake-data guards — plus 40 live checks on the real doors: the API's happy paths and its refusals · follow-up privacy (names only, **no email addresses, ever**) · bulk clearing with 0, 1, and 3 emails in the box · a second bulk press adding nothing twice · the reply gate · the read-only public inbox | **100 of 100 PASS in a single run** (Nov 26) — log in `tests/scenarios-2026-11-26.log`. This suite caught a real bug on its first probe run: the grounding filter was eating the day out of real dates (“November 24” → “November”). Fixed the same day, with a regression check in both suites |
+| **Playwright browser test** (TypeScript, real Chromium, public demo) | A judge's path: open → fill → submit → clear page → follow-ups, with screenshots · cream background exact · body text 21px · left-aligned · **the sample-button path, clicked like a judge** · **the inbox path: Inbox route → Make it clear (the tab left the nav on Nov 26 - it confused the story)** · **the reply walk: draft → thinking banner → draft page → edit the words → send** · **the blinking “AI is thinking” banner, checked on both waits** · inbox in Spanish · seed button adds a real email | **43 of 43 PASS** at the last full run (Nov 25) — script, log, and screenshots in `tests/`. The file now holds 54 checks (bulk + API + the build C no-jump dialog checks added Nov 26); the newest screens are covered by the smoke suite, the scenario suite, and live browser walks until the browser test can reach the public site again from the build machine |
 
 One honest note: the Playwright test first caught a real miss — the page body itself was 16px, under the 21–22px design rule, even though every visible element was sized right. The test failed, the CSS was fixed (one line), and the re-run passed 21 of 21. That is what the tests are for.
 
@@ -174,7 +175,7 @@ Third honest note (Nov 24): the rule paid for itself the same day. The first smo
 |---|---|
 | Built, tested, and submitted on **day one** of Hacksgiving week | This repo + the submission confirmation, Nov 23 |
 | The connector did real work | The GitHub repo itself was **created through the Sprites GitHub connector**, from inside the Sprite |
-| Tested like it matters | Smoke test 53 checks (49/49 full run + focused run for the newest 4) · Playwright 43/43 at last full run · the failures in between, shown honestly in Testing |
+| Tested like it matters | Smoke test 67 checks · 100-scenario suite 100/100 in one run · Playwright 43/43 at last full run · the failures in between, shown honestly in Testing |
 | A real inbox, on purpose | Mailpit runs on the same Sprite — judges see the raw, unfriendly inbox AND the clear page it becomes |
 | It answers back — with permission | The AI drafts the reply, you read and edit it, and only your Send press sends it — then the follow-up closes |
 | A real model, proven on the page | Every result page carries a pill, modeled on my Solvia app: green **AI: live model response** with the model name when the model answered — or **Rules: instant answer** when it did not. Judges never have to take my word for it |
@@ -254,6 +255,26 @@ The Mailpit screen is **not dyslexia-friendly — and that is the point.** That 
 | 5. Follow up | `/followups` shows what is still waiting for a reply |
 | 6. Connectors | `/connected` fetches live metadata from both gateways — GitHub account/repo/rate-limit through the Sprites GitHub connector, and the Together model list plus a real test call through the Sprites Custom API connector — no key in the code, and no key inside the Sprite |
 
+## One inbox at a time — or the whole inbox, and an API
+
+**Bulk clear.** The **Bulk clear** tab clears the whole demo inbox in one press: up to 10 emails at a time, each turned into its own clear summary, with one combined **EVERYTHING YOU MUST DO** list on top. It never deletes or sends anything — the emails stay in the box, and each one becomes a follow-up, once (press it twice, nothing doubles).
+
+**The API.** ClearDay is also a small REST service — the same transform, as JSON:
+
+| Door | What it does |
+|---|---|
+| `POST /api/clear` | Send `{"text": "...", "sender": "...", "subject": "...", "lang": "en"}` — get the clear page back as JSON. Dates and numbers copied exactly, never invented |
+| `GET /api/followups` | The follow-ups the agent remembers — names only, **never email addresses** |
+| `GET /api` | The index: every door, with a copy-paste curl example |
+
+```bash
+curl -X POST https://clearday-bnjwz.sprites.app/api/clear \
+  -H 'Content-Type: application/json' \
+  -d '{"text": "The meeting moved to Tuesday November 24 at 5:15 PM. Please reply to confirm.", "sender": "Maria Lopez", "subject": "Board meeting moved", "lang": "en"}'
+```
+
+Two honest design rules: the API **saves nothing** (a script cannot fill the follow-up list and push a real person's reminder out), and it is rate-capped — at most 60 clears a minute, and at most 3 model calls run at once, so the public demo cannot be stalled or run up a bill.
+
 ## Run it
 
 ```bash
@@ -272,6 +293,7 @@ The model is on in production: `CLEARDAY_MODEL_URL` points at a Sprites Custom A
 | `clearday.py` | The transform: text in, clear facts out |
 | `render.py` | The dyslexia-friendly page |
 | `sample_email.txt` | The demo email used in testing |
+| `tests/` | Smoke suite · 100-scenario suite · Playwright browser suite |
 
 ## Submission (Hacksgiving)
 
