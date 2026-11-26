@@ -28,7 +28,7 @@ STRINGS = {
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
-           "nav_inbox": "Inbox", "inbox_title": "THE INBOX - the before picture",
+           "nav_inbox": "Inbox", "nav_why": "Why the cream page?", "inbox_title": "THE INBOX - the before picture",
            "thinking": "AI is thinking - reading your message...",
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
@@ -71,7 +71,7 @@ STRINGS = {
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
-           "nav_inbox": "Bandeja", "inbox_title": "LA BANDEJA - la foto del antes",
+           "nav_inbox": "Bandeja", "nav_why": "¿Por qué la página crema?", "inbox_title": "LA BANDEJA - la foto del antes",
            "thinking": "La IA está pensando - leyendo tu mensaje...",
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
@@ -114,7 +114,7 @@ STRINGS = {
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
-           "nav_inbox": "Hộp thư", "inbox_title": "HỘP THƯ - hình ảnh trước",
+           "nav_inbox": "Hộp thư", "nav_why": "Vì sao trang màu kem?", "inbox_title": "HỘP THƯ - hình ảnh trước",
            "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
@@ -223,11 +223,17 @@ function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getE
 def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
 <div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>
-<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
+<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/why'>{s['nav_why']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
 
 def _why_card(s):
     items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
     return f"<div class='card why'><div class='cardtitle'>&#9670; {s['why_title']}</div>{items}</div>"
+
+def render_why(lang="en"):
+    s = S(lang)
+    return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
+{_why_card(s)}
+<p class='big'><a href='/'>{s['nav_clear']}</a></p>""", s)
 
 def render_inbox(messages, lang="en", down=False):
     s = S(lang)
@@ -317,7 +323,6 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>02</div><div><b>{s['step2']}</b></div></div>
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
-{_why_card(s)}
 </div></div>
 <p class='big'><a href='/followups'>{s['see_followups']}</a></p>""", s)
 
