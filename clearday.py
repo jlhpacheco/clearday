@@ -218,3 +218,76 @@ def transform(text, sender="", subject="", lang="en"):
         out["model_name"] = ""
     out["lang"] = lang if lang in CORE else "en"
     return out
+
+
+def _get_json(url, headers=None, timeout=10):
+    import time
+    req = urllib.request.Request(url, headers=headers or {"User-Agent": "ClearDay/1.0"})
+    t0 = time.time()
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read()), int((time.time() - t0) * 1000)
+
+
+def connector_proof():
+    """Live metadata for the Connector proof page. Real calls, made now.
+    GitHub through the Sprites GitHub connector gateway; Together AI through
+    the Sprites Custom API connector gateway. Each side reports ok=False and
+    the real error when it is down - this function never invents a number."""
+    out = {"github": {"ok": False}, "together": {"ok": False}}
+    gw = os.environ.get("CLEARDAY_GITHUB_GATEWAY", "")
+    if gw:
+        try:
+            g = out["github"]
+            user, ms1 = _get_json(gw.rstrip("/") + "/user")
+            login = user.get("login", "")
+            repo, _ = _get_json(gw.rstrip("/") + f"/repos/{login}/clearday")
+            commits, _ = _get_json(gw.rstrip("/") + f"/repos/{login}/clearday/commits?per_page=1")
+            rate, _ = _get_json(gw.rstrip("/") + "/rate_limit")
+            c0 = (commits or [{}])[0]
+            g.update({
+                "ok": True, "ms": ms1, "login": login,
+                "name": user.get("name") or "",
+                "repos": user.get("public_repos"),
+                "repo_desc": repo.get("description") or "",
+                "repo_updated": (repo.get("pushed_at") or "")[:10],
+                "commit_sha": (c0.get("sha") or "")[:7],
+                "commit_msg": ((c0.get("commit") or {}).get("message") or "").split("\n")[0][:90],
+                "commit_date": (((c0.get("commit") or {}).get("author") or {}).get("date") or "")[:10],
+                "rate_left": ((rate.get("rate") or {}).get("remaining")),
+                "rate_limit": ((rate.get("rate") or {}).get("limit")),
+            })
+        except Exception as e:
+            out["github"] = {"ok": False, "error": str(e)[:160]}
+    else:
+        out["github"] = {"ok": False, "error": "GitHub connector is not set on this Sprite."}
+    base = os.environ.get("CLEARDAY_MODEL_URL", "")
+    model = os.environ.get("CLEARDAY_MODEL", "")
+    if base:
+        try:
+            import time
+            t = out["together"]
+            models, ms1 = _get_json(base.rstrip("/") + "/models",
+                                    headers={"Authorization": "Bearer unused", "User-Agent": "ClearDay/1.0"})
+            raw_models = models.get("data") if isinstance(models, dict) else models
+            ids = [m.get("id", "") for m in (raw_models or []) if isinstance(m, dict)]
+            body = json.dumps({"model": model, "temperature": 0, "max_tokens": 400,
+                               "messages": [{"role": "user", "content": "Answer in one short sentence: what is 2 + 2? Be brief - answer directly, do not reason at length."}]}).encode()
+            req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=body,
+                                         headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
+                                                  "User-Agent": "ClearDay/1.0"})
+            t0 = time.time()
+            with urllib.request.urlopen(req, timeout=30) as r:
+                data = json.loads(r.read())
+            ms2 = int((time.time() - t0) * 1000)
+            content = ((((data.get("choices") or [{}])[0].get("message") or {}).get("content")) or "").strip()
+            usage = data.get("usage") or {}
+            t.update({"ok": True, "ms": ms1, "call_ms": ms2, "models_count": len(ids),
+                      "model": model, "on_list": model in ids,
+                      "answer": content[:200], "call_id": data.get("id", ""),
+                      "tokens_in": usage.get("prompt_tokens"), "tokens_out": usage.get("completion_tokens"),
+                      "tokens_total": usage.get("total_tokens")})
+        except Exception as e:
+            out["together"] = {"ok": False, "error": str(e)[:160]}
+    else:
+        out["together"] = {"ok": False, "error": "Together AI connector is not set on this Sprite."}
+    return out
