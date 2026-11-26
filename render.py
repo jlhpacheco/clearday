@@ -29,6 +29,11 @@ STRINGS = {
            "brand_pill": "Built for dyslexic readers",
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
            "nav_inbox": "Inbox", "nav_why": "Why the cream page?",
+           "nav_bulk": "Bulk clear", "bulk_title": "CLEAR THE WHOLE INBOX", "bulk_intro": "One press clears every email waiting in the demo inbox. You get one page: everything you must do first, then each email on its own card.",
+           "bulk_btn": "Clear the whole inbox", "bulk_waiting": "emails waiting", "bulk_cleared": "emails cleared", "bulk_all": "EVERYTHING YOU MUST DO",
+           "bulk_from": "from", "bulk_empty": "The inbox is empty. Nothing to clear.", "bulk_down": "The inbox is resting. Try again in a moment.",
+           "bulk_cap": "Bulk clear takes up to 10 emails at a time. It can take a minute - the AI reads each one.", "bulk_open": "Open the clear page",
+           "bulk_skip_own": "of your own replies, skipped", "bulk_skip_dupe": "already waiting as follow-ups, skipped", "bulk_failed": "could not be read",
            "proof_title": "CONNECTOR PROOF", "proof_sub": "Every number on this page was fetched live, the moment you opened it. Nothing here is typed in by hand.",
            "proof_checked": "Checked at", "proof_live": "LIVE - working now", "proof_down": "DOWN",
            "proof_source": "Source", "proof_ms": "answered in", "proof_ask": "We asked the model", "proof_said": "The model answered",
@@ -40,7 +45,7 @@ STRINGS = {
            "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
            "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
            "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
-           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in the raw inbox:", "sent_see": "Your email was sent and landed in Mailpit, right next to Maria's email to you. Go see both:", "sent_both": "See both emails in Mailpit", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
+           "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "see_email": "See the email", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in the raw inbox:", "sent_see": "Your email was sent and landed in Mailpit, right next to Maria's email to you. Go see both:", "sent_both": "See both emails in Mailpit", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
            "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "We have the words, but no real email address to send to - the raw inbox is empty. Go to the clear page and press Mailpit: a fresh email from Maria lands there. Then draft the reply again, and the Send button will be here.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
@@ -79,6 +84,11 @@ STRINGS = {
            "brand_pill": "Hecho para lectores con dislexia",
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
            "nav_inbox": "Bandeja", "nav_why": "¿Por qué la página crema?",
+           "nav_bulk": "Limpiar todo", "bulk_title": "HAZ CLARA TODA LA BANDEJA", "bulk_intro": "Un toque hace claras todas las cartas de la bandeja. Recibes una página: primero todo lo que debes hacer, y luego cada carta en su propia tarjeta.",
+           "bulk_btn": "Hacer clara toda la bandeja", "bulk_waiting": "cartas esperando", "bulk_cleared": "cartas claras", "bulk_all": "TODO LO QUE DEBES HACER",
+           "bulk_from": "de", "bulk_empty": "La bandeja está vacía. Nada que limpiar.", "bulk_down": "La bandeja está descansando. Inténtalo en un momento.",
+           "bulk_cap": "Se limpian hasta 10 cartas por vez. Puede tardar un minuto: la IA lee cada una.", "bulk_open": "Abrir la página clara",
+           "bulk_skip_own": "respuestas tuyas, saltadas", "bulk_skip_dupe": "ya en seguimiento, saltadas", "bulk_failed": "no se pudieron leer",
            "proof_title": "PRUEBA DE CONEXIÓN", "proof_sub": "Cada número de esta página se obtuvo en vivo, en el momento en que la abriste. Nada aquí está escrito a mano.",
            "proof_checked": "Comprobado a las", "proof_live": "EN VIVO - funcionando ahora", "proof_down": "CAÍDO",
            "proof_source": "Fuente", "proof_ms": "respondió en", "proof_ask": "Le preguntamos al modelo", "proof_said": "El modelo respondió",
@@ -90,7 +100,7 @@ STRINGS = {
            "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
            "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
            "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
-           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en la bandeja cruda:", "sent_see": "Tu correo fue enviado y llegó a Mailpit, junto al correo de Maria para ti. Ve a ver ambos:", "sent_both": "Ver ambos correos en Mailpit", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
+           "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "see_email": "Ver el correo", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en la bandeja cruda:", "sent_see": "Tu correo fue enviado y llegó a Mailpit, junto al correo de Maria para ti. Ve a ver ambos:", "sent_both": "Ver ambos correos en Mailpit", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
            "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Tenemos las palabras, pero no una dirección real a la que enviar: la bandeja cruda está vacía. Ve a la página clara y presiona Mailpit: un correo nuevo de Maria llega allí. Luego redacta la respuesta otra vez y el botón Enviar estará aquí.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
@@ -129,6 +139,11 @@ STRINGS = {
            "brand_pill": "Làm cho người đọc khó đọc",
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
            "nav_inbox": "Hộp thư", "nav_why": "Vì sao trang màu kem?",
+           "nav_bulk": "Làm rõ hết", "bulk_title": "LÀM RÕ CẢ HỘP THƯ", "bulk_intro": "Một lần nhấn làm rõ mọi thư đang chờ trong hộp thư. Bạn nhận một trang: trước hết là mọi việc phải làm, rồi mỗi thư một thẻ riêng.",
+           "bulk_btn": "Làm rõ cả hộp thư", "bulk_waiting": "thư đang chờ", "bulk_cleared": "thư đã làm rõ", "bulk_all": "MỌI VIỆC BẠN PHẢI LÀM",
+           "bulk_from": "từ", "bulk_empty": "Hộp thư trống. Không có gì để làm rõ.", "bulk_down": "Hộp thư đang nghỉ. Thử lại sau một lát.",
+           "bulk_cap": "Mỗi lần làm rõ tối đa 10 thư. Có thể mất một phút — AI đọc từng thư.", "bulk_open": "Mở trang rõ ràng",
+           "bulk_skip_own": "thư trả lời của bạn, đã bỏ qua", "bulk_skip_dupe": "đã có trong danh sách theo dõi, đã bỏ qua", "bulk_failed": "không đọc được",
            "proof_title": "BẰNG CHỨNG KẾT NỐI", "proof_sub": "Mọi con số trên trang này được lấy trực tiếp, ngay lúc bạn mở trang. Không có gì ở đây được gõ tay.",
            "proof_checked": "Kiểm tra lúc", "proof_live": "ĐANG HOẠT ĐỘNG", "proof_down": "KHÔNG HOẠT ĐỘNG",
            "proof_source": "Nguồn", "proof_ms": "trả lời trong", "proof_ask": "Chúng tôi đã hỏi mô hình", "proof_said": "Mô hình đã trả lời",
@@ -140,7 +155,7 @@ STRINGS = {
            "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
            "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
-           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong hộp thư thô:", "sent_see": "Thư của bạn đã được gửi và đã đến Mailpit, ngay cạnh email của Maria gửi bạn. Hãy xem cả hai:", "sent_both": "Xem cả hai email trong Mailpit", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
+           "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "see_email": "Xem thư", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong hộp thư thô:", "sent_see": "Thư của bạn đã được gửi và đã đến Mailpit, ngay cạnh email của Maria gửi bạn. Hãy xem cả hai:", "sent_both": "Xem cả hai email trong Mailpit", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
            "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Chúng ta có nội dung, nhưng không có địa chỉ email thật để gửi: hộp thư thô đang trống. Hãy vào trang rõ ràng và nhấn Mailpit: một email mới từ Maria sẽ đến đó. Rồi soạn thư trả lời lại, nút Gửi sẽ ở đây.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
@@ -197,6 +212,8 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 .freshtrack{height:20px;border:3px solid #20242E;border-radius:10px;background:#FFF6D6;overflow:hidden;margin:8px 0 12px}
 #freshfill{height:100%;width:0%;background:#0E7A5F;transition:width .3s ease}
 #freshmsg{font-weight:bold}
+#freshmsg.landed{font-size:26px;line-height:1.5}
+#seeemail{margin:10px 0 4px}
 @media (prefers-reduced-motion: reduce){#freshfill{transition:none}}
 .story-strip{padding:12px 16px}
 .story-strip .big{margin:0}
@@ -243,13 +260,13 @@ document.addEventListener('submit',function(e){{if((e.target.getAttribute('actio
 document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.btn'):null;if(a){{var h=a.getAttribute('href')||'';if(h.indexOf('/inbox/clear')>=0||h.indexOf('sample=1')>=0||h.indexOf('/sample')>=0){{showThinking();}}}}var b=e.target.closest?e.target.closest('button[type=submit]'):null;if(b&&b.form&&(b.form.getAttribute('action')||'').indexOf('/inbox/seed')<0){{showThinking();}}}});
 
 var STEP1=window.__fresh1, STEP2=window.__fresh2, creep=null;
-function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getElementById('freshfill'),f=document.querySelector('#rawbox iframe');if(!msg||!fill){{land();return;}}var t0=Date.now();msg.textContent=STEP1;fill.style.width='12%';var pct=12;if(creep){{clearInterval(creep);}}creep=setInterval(function(){{if(pct<72){{pct+=4;fill.style.width=pct+'%';}}}},120);fetch('/inbox/fresh',{{method:'POST'}}).then(function(r){{return r.json();}}).then(function(j){{var wait=Math.max(0,1600-(Date.now()-t0));setTimeout(function(){{if(creep){{clearInterval(creep);}}fill.style.width='88%';var done=function(){{if(f&&f.src.indexOf('/view/')<0){{return;}}fill.style.width='100%';msg.textContent=STEP2;if(f){{f.removeEventListener('load',done);try{{f.scrollIntoView({{block:'nearest'}});}}catch(e){{}}}}}};if(j&&j.id&&f){{f.addEventListener('load',done);f.src='/mailpit/view/'+j.id;setTimeout(done,3000);}}else{{done();}}}},wait);}}).catch(function(){{if(creep){{clearInterval(creep);}}land();fill.style.width='100%';msg.textContent=STEP2;}});}}
+function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getElementById('freshfill'),f=document.querySelector('#rawbox iframe');if(!msg||!fill){{land();return;}}var t0=Date.now();msg.textContent=STEP1;msg.classList.remove('landed');var se0=document.getElementById('seeemail');if(se0){{se0.style.display='none';}}fill.style.width='12%';var pct=12;if(creep){{clearInterval(creep);}}creep=setInterval(function(){{if(pct<72){{pct+=4;fill.style.width=pct+'%';}}}},120);fetch('/inbox/fresh',{{method:'POST'}}).then(function(r){{return r.json();}}).then(function(j){{var wait=Math.max(0,1600-(Date.now()-t0));setTimeout(function(){{if(creep){{clearInterval(creep);}}fill.style.width='88%';var done=function(){{if(f&&f.src.indexOf('/view/')<0){{return;}}fill.style.width='100%';msg.textContent=STEP2;msg.classList.add('landed');var se=document.getElementById('seeemail');if(se){{se.style.display='inline-block';}}if(f){{f.removeEventListener('load',done);}}}};if(j&&j.id&&f){{f.addEventListener('load',done);f.src='/mailpit/view/'+j.id;setTimeout(done,3000);}}else{{done();}}}},wait);}}).catch(function(){{if(creep){{clearInterval(creep);}}land();fill.style.width='100%';msg.textContent=STEP2;msg.classList.add('landed');var se2=document.getElementById('seeemail');if(se2){{se2.style.display='inline-block';}}}});}};}}
 </script></body></html>"""
 
 def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
 <div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>
-<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/why'>{s['nav_why']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
+<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/bulk'>{s['nav_bulk']}</a><a href='/why'>{s['nav_why']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
 
 def _why_card(s):
     items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
@@ -260,6 +277,61 @@ def render_why(lang="en"):
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
 {_why_card(s)}
 <p class='big'><a href='/'>{s['nav_clear']}</a></p>""", s)
+
+def render_bulk(lang="en", waiting=0, results=None, counts=None, up=True):
+    s = S(lang)
+    bar = _bar("", s)
+    if not up:
+        return _shell(f"""{bar}
+<div class='box plain'><span class='lbl'>&#9670; {s['bulk_title']}</span><div class='big'>{s['bulk_down']}</div></div>
+<p class='big'><a href='/'>{s['nav_clear']}</a></p>""", s)
+    if results is None:
+        if waiting == 0:
+            body = f"<div class='big'>{s['bulk_empty']}</div>"
+        else:
+            body = f"""<div class='big'><b>{waiting}</b> {s['bulk_waiting']}</div>
+<form method='post' action='/bulk/clear'>
+<input type='hidden' name='lang' value='{esc(lang)}'>
+<p><button type='submit' class='bigbtn'>&#9993; {s['bulk_btn']}</button></p></form>
+<p style='font-size:18px;'>{s['bulk_cap']}</p>"""
+        return _shell(f"""{bar}
+<div class='box blue'><span class='lbl'>&#9632; {s['bulk_title']}</span><div class='big'>{s['bulk_intro']}</div></div>
+{body}
+<p class='big'><a href='/'>{s['nav_clear']}</a></p>""", s)
+    counts = counts or {}
+    all_actions = ""
+    for r in results:
+        for a in r.get("actions", []):
+            all_actions += f"<div class='big'>&#9654; {esc(a)} <span style='font-size:18px;'>— {s['bulk_from']} {esc(r.get('sender',''))}</span></div>"
+    if not all_actions:
+        all_actions = f"<div class='big'>{s['no_actions'] if 'no_actions' in s else ''}</div>"
+    cards = ""
+    for r in results:
+        acts = "".join(f"<div class='big'>{i}. {esc(a)}</div>" for i, a in enumerate(r.get("actions", []), 1))
+        dates = "".join(f"<div style='font-size:26px'><b>{esc(d)}</b></div>" for d in r.get("dates_numbers", [])) or f"<div class='big'>{s['no_dates']}</div>"
+        cards += f"""<div class='box blue'><span class='lbl'>&#9632; {esc(r.get('sender',''))} — {esc(r.get('subject',''))}</span><div class='big'>{esc(r.get('what',''))}</div></div>
+<div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{acts}</div>
+<div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
+<p class='big'><a href='/inbox/clear?id={esc(r.get('mid',''))}&lang={esc(lang)}'>{s['bulk_open']}</a></p>"""
+    skips = ""
+    if counts.get("own"):
+        skips += f"<div style='font-size:18px;'>{counts['own']} {s['bulk_skip_own']}</div>"
+    if counts.get("dupe"):
+        skips += f"<div style='font-size:18px;'>{counts['dupe']} {s['bulk_skip_dupe']}</div>"
+    if counts.get("failed"):
+        skips += f"<div style='font-size:18px;'>{counts['failed']} {s['bulk_failed']}</div>"
+    more = ""
+    if counts.get("remaining"):
+        more = f"""<form method='post' action='/bulk/clear'>
+<input type='hidden' name='lang' value='{esc(lang)}'>
+<p><button type='submit' class='bigbtn'>&#9993; {s['bulk_btn']}</button></p></form>"""
+    return _shell(f"""{bar}
+<p class='big'><b>{len(results)}</b> {s['bulk_cleared']}</p>
+<div class='box amber'><span class='lbl'>&#9654; {s['bulk_all']}</span>{all_actions}</div>
+{skips}
+{cards}
+{more}
+<p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
 
 def render_inbox(messages, lang="en", down=False):
     s = S(lang)
@@ -300,13 +372,14 @@ def _raw_card(s):
 <div>{_story_note_html(s)}</div>
 <div class='cardtitle' style='margin-top:18px;'>{s['raw_dialog_title']}</div>
 <div id='freshmsg'>{s['fresh_step1']}</div><div class='freshtrack'><div id='freshfill'></div></div>
-<iframe src='/mailpit/' title='Mailpit' loading='lazy'></iframe>
+<div><a class='btn' id='seeemail' href='#rawmail' style='display:none'>{s['see_email']} &#8595;</a></div>
+<iframe id='rawmail' src='/mailpit/' title='Mailpit' loading='lazy'></iframe>
 <p><button type='button' id='rawclose'>{s['raw_close_plain']}</button></p>
 </dialog>
 <script>
 window.__fresh1={json.dumps(s['fresh_step1'])};window.__fresh2={json.dumps(s['fresh_step2'])};
 document.addEventListener('click',function(e){{var a=e.target.closest?e.target.closest('a.rawbtn'):null;if(a){{e.preventDefault();var d=document.getElementById('rawbox');if(d&&d.showModal){{d.showModal();fresh();}}else{{window.open(a.href,'_blank');}}}}
-function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}}});
+function land(){{fetch('/mailpit/api/v1/messages').then(function(r){{return r.json();}}).then(function(j){{var ms=j.messages||[];var m=null;for(var i=0;i<ms.length;i++){{if(ms[i].Subject==='Board meeting moved'){{m=ms[i];break;}}}}if(!m&&ms.length){{m=ms[0];}}if(m){{var f=document.querySelector('#rawbox iframe');if(f){{f.src='/mailpit/view/'+m.ID;}}}}}}).catch(function(){{}});}}var se3=e.target.closest?e.target.closest('#seeemail'):null;if(se3){{e.preventDefault();var f3=document.getElementById('rawmail');if(f3){{f3.scrollIntoView({{block:'nearest'}});}}}}var c=e.target.closest?e.target.closest('#rawclose'):null;if(c){{var d2=document.getElementById('rawbox');if(d2){{d2.close();}}}}}});
 </script>"""
 
 def render_form(extra="", lang="en", prefill=None):
