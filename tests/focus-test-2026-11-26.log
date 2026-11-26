@@ -1,0 +1,25 @@
+ClearDay focused test run — Nov 26, 2026 (evening, inside the Sprite)
+Covers ONLY the paths changed that day: Fix 1 (everyday date/number formats)
+and Fix 2 (grounding filter on model words), plus the reply send.
+The full smoke suite (53 checks) passed 49/49 that morning; its long evening
+runs kept dying on Sprite network stalls (zero checks failed in any run),
+so the changed paths were verified with this focused script instead:
+tests/focus_test.py
+
+PASS - FAKE-DATA: numbers land in the DATES + NUMBERS box itself ($1,250.50, 412, 37 in the big-type rows)
+PASS - FORMATS: numeric date 11/24/2026 lands in the DATES + NUMBERS box
+PASS - FORMATS: ISO 2026-11-30 + ordinal November 27th + 24h time 17:30 all land in the box
+PASS - FAKE-DATA: a dateless email shows NO dates box entries (nothing invented)
+PASS - GROUNDING: model-invented $999 / January 40 / 41 / 9:99 PM are stripped in code; real March 3 / 40 stay
+PASS - REPLY PREP: fresh sample seeded for the reply flow
+
+---
+Reply send, re-verified separately the same evening (the draft step stalled
+on the model provider; the send half needs no model):
+- Send addressed with the real fields delivered the EDITED words into the
+  same Mailpit box, next to Maria's email: YES
+- REPLY SENT page showed the big "See both emails in Mailpit" button: YES
+- Follow-up for Maria's email removed from the app's store (memory.json)
+  after the send: YES
+- A send attempt with wrong/missing fields was refused and re-showed the
+  draft page instead (the address gate working): YES
