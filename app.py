@@ -10,7 +10,7 @@ from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 from clearday import transform, draft_reply, connector_proof
-from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, render_connected, S
+from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, render_connected, render_bulk, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
@@ -78,20 +78,114 @@ def mp_messages():
     except Exception:
         return [], False
 
+MEM_LOCK = threading.Lock()
+
 def load_memory():
-    try:
-        return json.load(open(MEMORY_FILE))
-    except Exception:
-        return []
+    with MEM_LOCK:
+        try:
+            return json.load(open(MEMORY_FILE))
+        except Exception:
+            return []
 
 def save_memory(items):
-    json.dump(items, open(MEMORY_FILE, "w"), indent=2)
+    with MEM_LOCK:
+        json.dump(items, open(MEMORY_FILE, "w"), indent=2)
+
+API_LOCK = threading.Lock()
+API_CALLS = []
+
+def api_rate_ok():
+    """Public API guard: at most 60 clears a minute (each one can spend a
+    model call). The model itself is also capped demo-wide by a semaphore
+    in clearday.py - together they keep a script from stalling the demo."""
+    import time
+    now = time.time()
+    with API_LOCK:
+        API_CALLS[:] = [t for t in API_CALLS if now - t < 60]
+        if len(API_CALLS) >= 60:
+            return False
+        API_CALLS.append(now)
+        return True
 
 class H(BaseHTTPRequestHandler):
     def _send(self, html, code=200):
         b = html.encode(); self.send_response(code)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
+    def _send_json(self, obj, code=200):
+        body = json.dumps(obj).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+    def _clear_one(self, mid, lang, dedupe=False):
+        """Clear ONE inbox message into a clear page + a follow-up.
+        The GET door keeps the original behavior; the POST door and bulk
+        dedupe by message id, so the same email never stacks follow-ups."""
+        try:
+            msg = mp_api("/api/v1/message/" + mid)
+            frm = msg.get("From") or {}
+            sender = frm.get("Name") or frm.get("Address") or ""
+            result = transform(msg.get("Text") or "", sender, msg.get("Subject") or "", lang)
+            result["_text"] = msg.get("Text") or ""
+            result["_mid"] = mid
+            result["_addr"] = frm.get("Address") or ""
+            result["_subject"] = msg.get("Subject") or ""
+            items = load_memory()
+            if not (dedupe and any(i.get("mid") == mid for i in items)):
+                items.append({"what": result["what"], "sender": result["sender"],
+                              "lang": result.get("lang", lang), "mid": mid,
+                              "addr": frm.get("Address") or ""})
+                save_memory(items[-20:])
+            return render_page(result)
+        except Exception:
+            msgs, up = mp_messages()
+            return render_inbox(msgs, lang, down=True)
+    def _do_bulk(self, lang):
+        """Clear up to 10 waiting inbox emails at once. Snapshots the box
+        first; skips my own replies; follow-ups dedupe by message id; the
+        page reports cleared / skipped / failed counts - never invents one."""
+        try:
+            data = mp_api("/api/v1/messages?limit=50")
+            msgs = data.get("messages", [])
+        except Exception:
+            return render_bulk(lang, up=False)
+        own = 0
+        eligible = []
+        for m in msgs:
+            addr = (m.get("From") or {}).get("Address") or ""
+            if addr == "you@clearday.demo":
+                own += 1
+            else:
+                eligible.append(m)
+        batch = eligible[:10]
+        remaining = len(eligible) - len(batch)
+        items = load_memory()
+        have = {i.get("mid") for i in items}
+        results, dupe, failed = [], 0, 0
+        for m in batch:
+            mid = m.get("ID") or ""
+            try:
+                msg = mp_api("/api/v1/message/" + mid)
+                frm = msg.get("From") or {}
+                sender = frm.get("Name") or frm.get("Address") or ""
+                r = transform(msg.get("Text") or "", sender, msg.get("Subject") or "", lang)
+                results.append({"sender": sender, "subject": msg.get("Subject") or "",
+                                "what": r.get("what", ""), "actions": r.get("actions", []),
+                                "dates_numbers": r.get("dates_numbers", []), "mid": mid})
+                if mid in have:
+                    dupe += 1
+                else:
+                    items.append({"what": r["what"], "sender": r["sender"],
+                                  "lang": r.get("lang", lang), "mid": mid,
+                                  "addr": frm.get("Address") or ""})
+                    have.add(mid)
+            except Exception:
+                failed += 1
+        save_memory(items[-20:])
+        counts = {"own": own, "dupe": dupe, "failed": failed, "remaining": remaining}
+        return render_bulk(lang, results=results, counts=counts)
     def _proxy_mailpit(self):
         """Pass /mailpit* through to Mailpit on localhost - its real UI, unmodified.
         READ-ONLY for the public: the demo inbox can be looked at, never written
@@ -127,6 +221,9 @@ class H(BaseHTTPRequestHandler):
             conn.close()
 
     def do_GET(self):
+        if self.path.startswith("/reply"):
+            self._send("Not found", 404)
+            return
         if self.path.startswith("/connected"):
             q = parse_qs(urlparse(self.path).query)
             lang = (q.get("lang") or ["en"])[0]
@@ -145,6 +242,37 @@ class H(BaseHTTPRequestHandler):
             if lang not in ("en", "es", "vi"):
                 lang = "en"
             self._send(render_why(lang))
+        elif self.path.startswith("/api/followups"):
+            items = load_memory()
+            safe = [{"what": i.get("what", ""), "sender": i.get("sender", ""),
+                     "lang": i.get("lang", "en"), "mid": i.get("mid", "")} for i in items]
+            self._send_json({"count": len(safe), "followups": safe})
+        elif self.path.startswith("/api"):
+            if urlparse(self.path).path in ("/api", "/api/"):
+                self._send_json({
+                    "name": "ClearDay API", "version": 1,
+                    "endpoints": {
+                        "POST /api/clear": "Send JSON {sender, subject, text, lang} - get the clear page back as JSON. Dates and numbers are copied exactly from the text, never invented. The API saves nothing.",
+                        "GET /api/followups": "The follow-ups the agent is remembering (names only - never email addresses).",
+                        "GET /bulk": "The bulk page: clear the whole demo inbox at once.",
+                        "POST /bulk/clear": "Run the bulk clear and get the combined page.",
+                    },
+                    "example": "curl -X POST https://clearday-bnjwz.sprites.app/api/clear -H 'Content-Type: application/json' -d '{\"text\": \"The meeting moved to Tuesday November 24 at 5:15 PM. Please reply to confirm.\", \"sender\": \"Maria Lopez\", \"subject\": \"Board meeting moved\", \"lang\": \"en\"}'",
+                })
+            else:
+                self._send_json({"error": "Not found"}, 404)
+        elif self.path.startswith("/bulk"):
+            q = parse_qs(urlparse(self.path).query)
+            lang = (q.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            try:
+                data = mp_api("/api/v1/messages?limit=50")
+                msgs = data.get("messages", [])
+                waiting = sum(1 for m in msgs if ((m.get("From") or {}).get("Address") or "") != "you@clearday.demo")
+                self._send(render_bulk(lang, waiting=waiting))
+            except Exception:
+                self._send(render_bulk(lang, up=False))
         elif self.path.startswith("/mailpit"):
             self._proxy_mailpit()
         elif self.path.startswith("/inbox/clear"):
@@ -153,24 +281,7 @@ class H(BaseHTTPRequestHandler):
             if lang not in ("en", "es", "vi"):
                 lang = "en"
             mid = (q.get("id") or [""])[0]
-            try:
-                msg = mp_api("/api/v1/message/" + mid)
-                frm = msg.get("From") or {}
-                sender = frm.get("Name") or frm.get("Address") or ""
-                result = transform(msg.get("Text") or "", sender, msg.get("Subject") or "", lang)
-                result["_text"] = msg.get("Text") or ""
-                result["_mid"] = mid
-                result["_addr"] = frm.get("Address") or ""
-                result["_subject"] = msg.get("Subject") or ""
-                items = load_memory()
-                items.append({"what": result["what"], "sender": result["sender"],
-                              "lang": result.get("lang", lang), "mid": mid,
-                              "addr": frm.get("Address") or ""})
-                save_memory(items[-20:])
-                self._send(render_page(result))
-            except Exception:
-                msgs, up = mp_messages()
-                self._send(render_inbox(msgs, lang, down=True))
+            self._send(self._clear_one(mid, lang))
         elif self.path.startswith("/inbox"):
             q = parse_qs(urlparse(self.path).query)
             lang = (q.get("lang") or ["en"])[0]
@@ -348,6 +459,60 @@ class H(BaseHTTPRequestHandler):
                 except Exception:
                     sent = False
             self._send(render_reply_sent(to, rsubject, draft, sent, lang))
+            return
+        if self.path.startswith("/api/clear"):
+            if not api_rate_ok():
+                self._send_json({"error": "Too many calls. Wait a minute and try again."}, 429)
+                return
+            length = int(self.headers.get("Content-Length") or 0)
+            if length > 60000:
+                self._send_json({"error": "That message is too long for the demo."}, 400)
+                return
+            raw = self.rfile.read(length).decode(errors="replace") if length else ""
+            try:
+                data = json.loads(raw)
+            except Exception:
+                data = None
+            if not isinstance(data, dict):
+                self._send_json({"error": "Body must be JSON."}, 400)
+                return
+            text = str(data.get("text") or "")
+            if not text.strip():
+                self._send_json({"error": "Field 'text' is required."}, 400)
+                return
+            if len(text) > 50000:
+                self._send_json({"error": "That message is too long for the demo (50,000 characters max)."}, 400)
+                return
+            lang = str(data.get("lang") or "en")
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            r = transform(text, str(data.get("sender") or ""), str(data.get("subject") or ""), lang)
+            self._send_json({"what": r.get("what", ""), "actions": r.get("actions", []),
+                             "facts": r.get("facts", {}), "steps": r.get("steps", []),
+                             "risk": r.get("risk", ""), "dates_numbers": r.get("dates_numbers", []),
+                             "sender": r.get("sender", ""), "subject": str(data.get("subject") or ""),
+                             "lang": r.get("lang", lang), "source": r.get("source", "rules"),
+                             "model_name": r.get("model_name", "")})
+            return
+        if self.path.startswith("/api"):
+            self._send_json({"error": "Not found"}, 404)
+            return
+        if self.path.startswith("/bulk/clear"):
+            length = int(self.headers.get("Content-Length") or 0)
+            f = parse_qs(self.rfile.read(length).decode(errors="replace")) if length else {}
+            lang = (f.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            self._send(self._do_bulk(lang))
+            return
+        if self.path.startswith("/inbox/clear"):
+            length = int(self.headers.get("Content-Length") or 0)
+            f = parse_qs(self.rfile.read(length).decode(errors="replace")) if length else {}
+            lang = (f.get("lang") or ["en"])[0]
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            mid = (f.get("id") or [""])[0]
+            self._send(self._clear_one(mid, lang, dedupe=True))
             return
         if self.path.startswith("/inbox/fresh"):
             mid = mp_fresh()
