@@ -145,11 +145,11 @@ async function main() {
     }
   }
   check("Home: raw-inbox dialog LANDS on Maria's email already open - body visible, NO click on the message needed", landedText.includes("Hi everyone") && landedText.includes("5:15"), "");
-  check("Home: progress bar FINISHES - 'It just landed in the raw inbox' over the opened email", (await freshMsg.innerText()).includes("just landed"), "");
+  check("Home: progress bar FINISHES - bar full, and the message line steps aside (it repeated the dialog title - Jose Luis, Nov 26)", (await page.locator("#freshfill").evaluate((e) => e.style.width)) === "100%" && !(await freshMsg.isVisible()), "");
   // Build C (Nov 26, Jose Luis's pick): the dialog must NOT jump on its own.
   const dlgScrollTop = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return d ? d.scrollTop : -1; });
   check("Home (build C): after the email lands, the dialog did NOT scroll itself - his story is still at the top", dlgScrollTop === 0, `scrollTop=${dlgScrollTop}`);
-  check("Home (build C): the landed note is BIG and the 'See the email' button is showing", await page.locator("#seeemail").isVisible() && (await freshMsg.evaluate((e) => parseFloat(getComputedStyle(e).fontSize))) >= 24, "");
+  check("Home (build C): on landing the 'See the email' button is showing and the message line is hidden", await page.locator("#seeemail").isVisible() && !(await freshMsg.isVisible()), "");
   await page.click("#seeemail");
   await page.waitForTimeout(600);
   const dlgScrollAfter = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return d ? d.scrollTop : -1; });
