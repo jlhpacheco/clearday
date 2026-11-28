@@ -278,7 +278,9 @@ NO_ASK_PHRASES = {
            "no need to reply", "no response needed", "nothing is needed", "nothing needed from you",
            "just sharing", "just wanted to share", "for your information"),
     "es": ("no es necesario responder", "no hace falta responder", "solo comparto",
-           "solo para tu información", "solo para su información"),
+           "solo para tu información", "solo para su información",
+           "no es necesario que responda", "no es necesario que respondas",
+           "no hace falta que responda", "no hace falta que respondas"),
     "vi": ("không cần trả lời", "chỉ chia sẻ", "chỉ để bạn biết"),
 }
 ASK_EXTRA = {
@@ -288,7 +290,8 @@ ASK_EXTRA = {
     "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
            "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
            "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite",
-           "confirma", "responde", "envía", "envia", "envíe", "firma", "revisa", "completa"),
+           "confirma", "responde", "envía", "envia", "envíe", "firma", "revisa", "completa",
+           "firmar", "remitir", "sírvase", "tenga a bien"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
            "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót"),
 }
@@ -303,6 +306,15 @@ _NOT_ASK_WORDS = {"please", "por favor", "vui lòng",
 _ASK_WORDS = tuple(w for lg in ("en", "es", "vi")
                    for w in ACTION_HINTS[lg] + ASK_EXTRA[lg]
                    if w not in _NOT_ASK_WORDS)
+# Spanish glues the pronoun to the verb's tail - "devolverlo" (return it),
+# "firmarla" (sign it) - and a word boundary after the bare verb misses it.
+# Add the -lo/-la/-me tails of every single-word Spanish ask verb so the
+# formal register cannot slip past (round-5 skeptic probes, Nov 28).
+_ASK_WORDS += tuple(w + tail
+                    for w in list(_ASK_WORDS)
+                    if " " not in w and w in (ACTION_HINTS["es"] + ASK_EXTRA["es"])
+                    and (w[-1] in "aeiou" or w.endswith("r"))
+                    for tail in ("lo", "la", "me"))
 _ASK_RE = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ASK_WORDS) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 
@@ -321,7 +333,7 @@ def _has_ask(text, lang="en"):
     return bool(_ASK_RE.search(low))
 
 
-_MODEL_SEM = threading.Semaphore(3)  # max model calls in flight, demo-wide
+_MODEL_SEM = threading.Semaphore(3)  # max model calls in flight, demo-wide - held inside _call_model so EVERY call site counts (technical lens, Nov 28)
 
 _MODEL_DEADLINE = 45  # seconds TOTAL per model call, never per socket read
 
@@ -339,11 +351,12 @@ def _call_model(req):
                 box["data"] = r.read()
         except Exception as e:  # handed to the caller below
             box["error"] = e
-    t = threading.Thread(target=run, daemon=True)
-    t.start()
-    t.join(_MODEL_DEADLINE)
-    if t.is_alive():
-        raise TimeoutError(f"model call passed the {_MODEL_DEADLINE}s cap")
+    with _MODEL_SEM:
+        t = threading.Thread(target=run, daemon=True)
+        t.start()
+        t.join(_MODEL_DEADLINE)
+        if t.is_alive():
+            raise TimeoutError(f"model call passed the {_MODEL_DEADLINE}s cap")
     if "error" in box:
         raise box["error"]
     return box["data"]
@@ -404,8 +417,7 @@ def llm_transform(text, sender="", subject="", lang="en"):
                                  headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
                                           "User-Agent": "ClearDay/1.0"})
     try:
-        with _MODEL_SEM:
-            data = json.loads(_call_model(req))
+        data = json.loads(_call_model(req))
         content = data["choices"][0]["message"]["content"]
         raw = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
     except Exception:
