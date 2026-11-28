@@ -287,7 +287,8 @@ ASK_EXTRA = {
            "need you", "asking", "request", "required", "must", "deadline", "due by"),
     "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
            "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
-           "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite"),
+           "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite",
+           "confirma", "responde", "envía", "envia", "envíe", "firma", "revisa", "completa"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
            "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót"),
 }
