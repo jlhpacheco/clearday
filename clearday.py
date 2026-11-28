@@ -281,9 +281,22 @@ NO_ASK_PHRASES = {
     "es": ("no es necesario responder", "no hace falta responder", "solo comparto",
            "solo para tu información", "solo para su información",
            "no es necesario que responda", "no es necesario que respondas",
-           "no hace falta que responda", "no hace falta que respondas",
-           "se muestra", "se presenta", "se enseña", "una muestra", "la muestra", "muestra gratuita"),
+           "no hace falta que responda", "no hace falta que respondas"),
     "vi": ("không cần trả lời", "chỉ chia sẻ", "chỉ để bạn biết"),
+}
+# Scoping phrases (round-17 simplicity): literal shapes that do not cancel
+# an ask - they mark an occurrence that never was one. "at present" is an
+# idiom, "the show" carries its article before the noun, "una muestra" is
+# the noun, never the verb. An entry that needs context the phrase does
+# not carry - a subject, a following word, an "except when" - does NOT
+# belong in this list.
+SCOPES = {
+    "en": ("at present", "the present", "present address", "the show",
+           "come monday", "come tuesday", "come wednesday", "come thursday",
+           "come friday", "come saturday", "come sunday",
+           "come rain or shine", "will come"),
+    "es": ("una muestra", "la muestra", "muestra gratuita"),
+    "vi": (),
 }
 ASK_EXTRA = {
     "en": ("register", "complete", "fill out", "fill in", "return", "pay", "review", "check",
@@ -352,6 +365,13 @@ _ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} |
                    {_deacc(w) + t for w in _ES_STEMS for t in _ES_TAILS + _ES_STACKS})
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
+_SCOPES_ALL = tuple(p for lg in ("en", "es", "vi") for p in SCOPES[lg])
+# The Spanish announcement verbs are stamped by a GUARDED pattern, not a
+# literal (round-17 skeptic): "se muestra / se presenta / se enseña" is an
+# announcement only while no place or time follows within four words -
+# "Se presenta a la oficina mañana" is an order to appear, and the stamp
+# must not touch it.
+_SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?!\s+(?:\w+\s+){0,4}?(?:a la\b|al\b|a trabajar\b|en la puerta\b|mañana\b|a las\b|al entrar\b))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
@@ -401,6 +421,9 @@ def _has_ask(text, lang="en"):
     low = (text or "").lower().replace("\u2019", "'").replace("\u2018", "'")
     for p in _NO_ASK_ALL:
         low = low.replace(p, " ")
+    for p in _SCOPES_ALL:
+        low = low.replace(p, " ")
+    low = _SE_SCOPE_RE.sub(" ", low)
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
     low = _NO_NEED_VI_RE.sub(" ", _BARE_NO_ES_RE.sub(" ", _NEG_ASK_ES_RE.sub(" ", low)))
     low = _NEG_ASK_VI_RE.sub(" ", _NEVER_EN_RE.sub(" ", _DO_NOT_EN_RE.sub(" ", low)))
