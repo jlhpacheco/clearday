@@ -361,10 +361,11 @@ _NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es p
                          r"(\s+ni)?(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
                          + _GOVERNED + r"(\s+(?:\w+\s+){0,2}?(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no)\s+\w+(?:" + _PRON + r")?(\s+ni\s+\w+(?:" + _PRON + ")?)*")
-_NO_NEED_VI_RE = re.compile(r"\bkhông cần(\s+phải)?\s+\w+")
-_DO_NOT_EN_RE = re.compile(r"\b(do not|don't)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_VI_RE = re.compile(r"\bđừng\s+\w+")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega |favor de )?abstenerse de)\s+\w+(?:" + _PRON + r")?(\s+ni\s+\w+(?:" + _PRON + ")?)*")
+_NO_NEED_VI_RE = re.compile(r"\bkhông cần(\s+phải)?\s+\w+(\s+(?:\w+\s+){0,2}?hay\s+\w+)*")
+_DO_NOT_EN_RE = re.compile(r"\b(do not|don't|that you not)\s+\w+(\s+(or|and)\s+\w+)*")
+_NEVER_EN_RE = re.compile(r"\bnever\s+\w+(\s+(or|and)\s+\w+)*")
+_NEG_ASK_VI_RE = re.compile(r"\b(đừng|chớ|không nên)\s+\w+")
 
 def _has_ask(text, lang="en"):
     """True when the source text itself asks the reader for something.
@@ -380,7 +381,7 @@ def _has_ask(text, lang="en"):
         low = low.replace(p, " ")
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
     low = _NO_NEED_VI_RE.sub(" ", _NEG_ASK_ES_RE.sub(" ", low))
-    low = _NEG_ASK_VI_RE.sub(" ", _DO_NOT_EN_RE.sub(" ", low))
+    low = _NEG_ASK_VI_RE.sub(" ", _NEVER_EN_RE.sub(" ", _DO_NOT_EN_RE.sub(" ", low)))
     return bool(_ASK_RE.search(low) or _ASK_RE_ES.search(_deacc(low)))
 
 
