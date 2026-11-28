@@ -499,10 +499,10 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
 <input type='hidden' name='to' value='{esc(addr)}'>
 <input type='hidden' name='subject' value='{esc(subject)}'>
 <input type='hidden' name='lang' value='{esc(lang)}'>
+<p style='margin-top:12px'><button type='submit' class='bigbtn sendbtn'>{s['send_btn']}</button></p>
+<p class='big'><a href='/'>{s['dont_send']}</a></p>
 <div>{s['edit_hint']}</div>
-<textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea>
-<p><button type='submit' class='bigbtn sendbtn'>{s['send_btn']}</button></p></form>
-<p class='big'><a href='/'>{s['dont_send']}</a></p>"""
+<textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea></form>"""
     else:
         send_form = f"""<div class='box amber'><span class='lbl'>&#9650; {s['no_send_here']}</span><div class='big'>{s['no_send_why']}</div></div>
 <div>{s['edit_hint']}</div>
