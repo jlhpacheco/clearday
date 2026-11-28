@@ -569,5 +569,4 @@ def render_connected(proof, lang="en", checked=""):
 <div class='cols2'>
 {gh_html}
 {tg_html}
-</div>
-<div class='card'><div class='big'><b>{s['proof_note']}</b></div></div>""", s)
+</div>""", s)
