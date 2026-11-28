@@ -475,12 +475,12 @@ def render_page(p):
 <div class='box blue'><span class='lbl'>&#9632; {s['what']}</span><div class='big'>{esc(p.get('what',''))}</div></div>
 <div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{actions}</div>
 <div class='box purple'><span class='lbl'>&#9679; {s['facts']}</span><table>{facts}</table></div>
-<div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
 <p class='big' style='margin-top:16px;'>{s['steps']}: {steps}</p>
 <p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
-{risk}
 </div><div>
+<div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
 {reply_card}
+{risk}
 </div></div>
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
 
