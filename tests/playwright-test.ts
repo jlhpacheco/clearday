@@ -221,7 +221,7 @@ async function main() {
     res.includes("Demo page — made from text pasted by a visitor")
   );
   check("Result: labeled dates shown - Original / New (time joined) / Reply by (Jose Luis, Nov 26)", res.includes("Original Meeting Date: Monday, November 23") && res.includes("New Meeting Date: Tuesday, November 24 at 5:15 PM") && res.includes("Reply by: Friday, November 27"));
-  check("Result: side column is IF YOU DO NOTHING -> REPLY (his Nov 27 printout: both moved UP beside the reading, Why card off this page)", res.indexOf("IF YOU DO NOTHING") > res.indexOf("Source:") && res.indexOf("Click Draft a reply after reading the email.") > res.indexOf("IF YOU DO NOTHING") && !res.includes("warm backgrounds tested best"));
+  check("Result: side column is REPLY -> IF YOU DO NOTHING under it (his Nov 27 printouts: cards up beside the reading in the morning, risk moved under the reply in the evening; Why card off this page)", res.indexOf("Click Draft a reply after reading the email.") > res.indexOf("Source:") && res.indexOf("IF YOU DO NOTHING") > res.indexOf("Click Draft a reply after reading the email.") && !res.includes("warm backgrounds tested best"));
   const bigBtns = await page.locator("button.bigbtn").count();
   check("Result: REPLY button is the BIG button (noticeable, active)", bigBtns >= 1, `big buttons=${bigBtns}`);
   check("Result: exact time '5:15 PM' shown", res.includes("5:15 PM"));
