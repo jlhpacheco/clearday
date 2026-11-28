@@ -167,6 +167,8 @@ def unit():
     check("U72", "duties guard: an English ask is seen even when the picker says Spanish (skeptic P5)", cd._has_ask("The meeting moved to Tuesday, November 24 at 5:15 PM. Please reply before Friday, November 27 to confirm.", "es") is True)
     check("U73", "duties guard: a question mark alone is conversation, not a duty (skeptic P9)", cd._has_ask("Did you see the game last night? What a finish! Best game of the season, easily.", "en") is False)
     check("U74", "duties guard: the noun 'deadline' alone asks nothing (skeptic P6)", cd._has_ask("Hi, the workshop is in Room 412. It matters a lot. This is high priority and very important. The deadline is crucial and the stakes are high.", "en") is False)
+    check("U75", "duties guard: Spanish imperative 'confirma' is a real ask (round-4 skeptic)", cd._has_ask("Hola, por favor confirma tu asistencia antes del viernes. Gracias.", "es") is True)
+    check("U76", "duties guard: Spanish imperative 'responde' is a real ask even under the English picker (round-4 skeptic)", cd._has_ask("Por favor responde a este mensaje hoy.", "en") is True)
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):
