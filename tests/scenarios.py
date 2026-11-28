@@ -169,6 +169,10 @@ def unit():
     check("U74", "duties guard: the noun 'deadline' alone asks nothing (skeptic P6)", cd._has_ask("Hi, the workshop is in Room 412. It matters a lot. This is high priority and very important. The deadline is crucial and the stakes are high.", "en") is False)
     check("U75", "duties guard: Spanish imperative 'confirma' is a real ask (round-4 skeptic)", cd._has_ask("Hola, por favor confirma tu asistencia antes del viernes. Gracias.", "es") is True)
     check("U76", "duties guard: Spanish imperative 'responde' is a real ask even under the English picker (round-4 skeptic)", cd._has_ask("Por favor responde a este mensaje hoy.", "en") is True)
+    check("U77", "duties guard: formal 'sirvase firmar' + pronoun tail 'devolverlo' are real asks (round-5 skeptic)", cd._has_ask("Sírvase firmar el documento y devolverlo antes del viernes.", "es") is True)
+    check("U78", "duties guard: formal 'tenga a bien remitir' is a real ask (round-5 skeptic)", cd._has_ask("Tenga a bien remitir el pago antes del día 5.", "es") is True)
+    check("U79", "duties guard: 'no es necesario que responda' asks nothing - the subjunctive cannot slip past the lift (round-5 skeptic)", cd._has_ask("Solo para su información: la reunión cambió de sala. No es necesario que responda.", "es") is False)
+    check("U80", "duties guard: a pronoun tail alone ('devolverlo') is a real ask (round-5 skeptic)", cd._has_ask("El paquete llegó hoy. Devolverlo antes del viernes, por favor.", "es") is True)
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):
@@ -303,26 +307,28 @@ def live():
     check("L20", "bulk: empty inbox landing shows the empty note (no button to press)", code == 200 and "The inbox is empty" in bpage)
     post("/inbox/fresh", {}); time.sleep(1)
     code, bpage = post("/bulk/clear", {"lang": "en"})
-    cards = bpage.split("class='box blue'")
-    check("L21", "bulk: 1 email -> exactly 1 summary card naming Maria + subject + her date", code == 200 and len(cards) - 1 == 1 and "Maria Lopez" in bpage and "Board meeting moved" in bpage and "Tuesday, November 24" in bpage)
-    check("L22", "bulk: combined list heading + Maria's other dates on her card", "EVERYTHING YOU MUST DO" in bpage and "5:15 PM" in bpage and "Friday, November 27" in bpage)
+    lines = bpage.split("class='bulkline'")
+    check("L21", "bulk slim: 1 email -> exactly 1 line naming Maria + subject + her first date + the tap-to-open link", code == 200 and len(lines) - 1 == 1 and "Maria Lopez" in bpage and "Board meeting moved" in bpage and "Monday, November 23" in bpage and "/inbox/clear?id=" in bpage)
+    _m = re.search(r"/inbox/clear\?id=([A-Za-z0-9_\-]+)", bpage)
+    code, opened = get("/inbox/clear?id=" + (_m.group(1) if _m else "") + "&lang=en")
+    check("L22", "bulk slim: behind the tap, Maria's full clear page with her labeled dates", "EVERYTHING YOU MUST DO" in bpage and code == 200 and "Tuesday, November 24 at 5:15 PM" in opened and "Friday, November 27" in opened)
     send_mail("Dana Ruiz <dana@example.org>", "Form due", "The form is due 11/24/2026. Please reply to confirm.")
     send_mail("Sam Ortiz <sam@example.org>", "Deadline", "The deadline is 2026-11-30. Please reply.")
     time.sleep(1)
     before = mp_list()["total"]
     code, bpage = post("/bulk/clear", {"lang": "en"}, timeout=300)
-    cards = bpage.split("class='box blue'")[1:]
-    def card_with(token):
-        for c in cards:
+    lines = bpage.split("class='bulkline'")[1:]
+    def line_with(token):
+        for c in lines:
             if token in c:
                 return c
         return ""
-    check("L23", "bulk: 3 emails -> 3 cards, each with ONLY its own date", len(cards) == 3 and "2026-11-30" not in card_with("11/24/2026") and "Tuesday, November 24" not in card_with("11/24/2026") and "11/24/2026" not in card_with("2026-11-30") and "11/24/2026" not in card_with("Tuesday, November 24") and "2026-11-30" not in card_with("Tuesday, November 24"))
+    check("L23", "bulk slim: 3 emails -> 3 lines, each with ONLY its own first date", len(lines) == 3 and "2026-11-30" not in line_with("11/24/2026") and "Monday, November 23" not in line_with("11/24/2026") and "11/24/2026" not in line_with("2026-11-30") and "11/24/2026" not in line_with("Monday, November 23") and "2026-11-30" not in line_with("Monday, November 23"))
     combined = bpage.split("class='box blue'")[0]
     check("L24", "bulk: combined list aggregates actions from all 3 emails", combined.count("&#9654;") >= 3)
     check("L25", "bulk: the inbox itself is untouched (nothing deleted, nothing sent)", mp_list()["total"] == before)
     code, bpage2 = post("/bulk/clear", {"lang": "en"}, timeout=300)
-    check("L26", "bulk: a second press shows the same summary count (idempotent)", code == 200 and len(bpage2.split("class='box blue'")) - 1 == 3)
+    check("L26", "bulk slim: a second press shows the same line count (idempotent)", code == 200 and len(bpage2.split("class='bulkline'")) - 1 == 3)
     # Pages regression (L27-L34)
     code, home = get("/")
     check("L27", "home: one Read-my-story button + the hero", code == 200 and home.count("class='btn rawbtn'") == 1 and "Long message in" in home)
