@@ -30,7 +30,7 @@ STRINGS = {
            "nav_clear": "Clear page", "nav_followups": "Follow-ups", "nav_proof": "Connector proof",
            "nav_inbox": "Inbox", "nav_why": "Why the cream page?",
            "nav_bulk": "Bulk clear", "bulk_title": "CLEAR THE WHOLE INBOX", "bulk_intro": "One press clears every email waiting in the demo inbox. You get one page: everything you must do first, then one short line for each email.",
-           "bulk_btn": "Clear the whole inbox", "bulk_waiting": "emails waiting", "bulk_cleared": "emails cleared", "bulk_cleared_one": "email cleared", "bulk_all": "EVERYTHING YOU MUST DO",
+           "bulk_btn": "Clear the whole inbox", "bulk_waiting": "emails waiting", "bulk_waiting_one": "email waiting", "bulk_cleared": "emails cleared", "bulk_cleared_one": "email cleared", "bulk_all": "EVERYTHING YOU MUST DO",
            "bulk_from": "from", "bulk_empty": "The inbox is empty. Nothing to clear.", "bulk_down": "The inbox is resting. Try again in a moment.",
            "bulk_cap": "Bulk clear takes up to 10 emails at a time. It can take a minute - the AI reads each one.", "bulk_open": "Open the clear page",
            "bulk_skip_own": "of your own replies, skipped", "bulk_skip_dupe": "already waiting as follow-ups, skipped", "bulk_failed": "could not be read",
@@ -85,7 +85,7 @@ STRINGS = {
            "nav_clear": "Página clara", "nav_followups": "Seguimientos", "nav_proof": "Prueba de conexión",
            "nav_inbox": "Bandeja", "nav_why": "¿Por qué la página crema?",
            "nav_bulk": "Limpiar todo", "bulk_title": "HAZ CLARA TODA LA BANDEJA", "bulk_intro": "Un toque hace claras todas las cartas de la bandeja. Recibes una página: primero todo lo que debes hacer, y luego una línea corta por cada carta.",
-           "bulk_btn": "Hacer clara toda la bandeja", "bulk_waiting": "cartas esperando", "bulk_cleared": "cartas claras", "bulk_cleared_one": "carta clara", "bulk_all": "TODO LO QUE DEBES HACER",
+           "bulk_btn": "Hacer clara toda la bandeja", "bulk_waiting": "cartas esperando", "bulk_waiting_one": "carta esperando", "bulk_cleared": "cartas claras", "bulk_cleared_one": "carta clara", "bulk_all": "TODO LO QUE DEBES HACER",
            "bulk_from": "de", "bulk_empty": "La bandeja está vacía. Nada que limpiar.", "bulk_down": "La bandeja está descansando. Inténtalo en un momento.",
            "bulk_cap": "Se limpian hasta 10 cartas por vez. Puede tardar un minuto: la IA lee cada una.", "bulk_open": "Abrir la página clara",
            "bulk_skip_own": "respuestas tuyas, saltadas", "bulk_skip_dupe": "ya en seguimiento, saltadas", "bulk_failed": "no se pudieron leer",
@@ -140,7 +140,7 @@ STRINGS = {
            "nav_clear": "Trang rõ ràng", "nav_followups": "Việc cần theo dõi", "nav_proof": "Bằng chứng kết nối",
            "nav_inbox": "Hộp thư", "nav_why": "Vì sao trang màu kem?",
            "nav_bulk": "Làm rõ hết", "bulk_title": "LÀM RÕ CẢ HỘP THƯ", "bulk_intro": "Một lần nhấn làm rõ mọi thư đang chờ trong hộp thư. Bạn nhận một trang: trước hết là mọi việc phải làm, rồi mỗi thư một dòng ngắn.",
-           "bulk_btn": "Làm rõ cả hộp thư", "bulk_waiting": "thư đang chờ", "bulk_cleared": "thư đã làm rõ", "bulk_cleared_one": "thư đã làm rõ", "bulk_all": "MỌI VIỆC BẠN PHẢI LÀM",
+           "bulk_btn": "Làm rõ cả hộp thư", "bulk_waiting": "thư đang chờ", "bulk_waiting_one": "thư đang chờ", "bulk_cleared": "thư đã làm rõ", "bulk_cleared_one": "thư đã làm rõ", "bulk_all": "MỌI VIỆC BẠN PHẢI LÀM",
            "bulk_from": "từ", "bulk_empty": "Hộp thư trống. Không có gì để làm rõ.", "bulk_down": "Hộp thư đang nghỉ. Thử lại sau một lát.",
            "bulk_cap": "Mỗi lần làm rõ tối đa 10 thư. Có thể mất một phút — AI đọc từng thư.", "bulk_open": "Mở trang rõ ràng",
            "bulk_skip_own": "thư trả lời của bạn, đã bỏ qua", "bulk_skip_dupe": "đã có trong danh sách theo dõi, đã bỏ qua", "bulk_failed": "không đọc được",
@@ -299,7 +299,7 @@ def render_bulk(lang="en", waiting=0, results=None, counts=None, up=True):
         if waiting == 0:
             body = f"<div class='big'>{s['bulk_empty']}</div>"
         else:
-            body = f"""<div class='big'><b>{waiting}</b> {s['bulk_waiting']}</div>
+            body = f"""<div class='big'><b>{waiting}</b> {s['bulk_waiting_one'] if waiting == 1 else s['bulk_waiting']}</div>
 <form method='post' action='/bulk/clear'>
 <input type='hidden' name='lang' value='{esc(lang)}'>
 <p><button type='submit' class='bigbtn'>&#9993; {s['bulk_btn']}</button></p></form>
