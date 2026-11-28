@@ -365,7 +365,7 @@ _ES_TAILS = ("lo", "la", "los", "las", "le", "les", "me", "se")
 _ES_STACKS = tuple(i + d for i in ("me", "te", "se", "nos") for d in ("lo", "la", "los", "las"))
 
 def _es_finite():
-    # Plural and future finite forms (round-21 skeptic): the scan family
+    # Finite forms - present, subjunctive and future (rounds 21 + 23): the scan family
     # held only singular stems, so group instructions ("Los solicitantes
     # presentan...") and futures ("Usted presentará...") were invisible.
     # Generated from the same base as the rest of the family - plurals
@@ -381,7 +381,7 @@ def _es_finite():
         if w.endswith("r"):
             out |= {d + e for e in ("a", "as", "an", "emos")}
         if w.endswith(("ar", "er", "ir")) and len(d) >= 5:
-            # Plural present + subjunctive ride the infinitive stem:
+            # Present + subjunctive ride the infinitive stem, singular and plural:
             # entregar -> entregan / entreguen. Most verbs enter the
             # base as infinitives only, so the singular-stem rule above
             # never sees them. The length floor keeps "ir" / "dar"
@@ -390,6 +390,8 @@ def _es_finite():
             out |= {stem + "an", stem + "en", stem + "a", stem + "e"}
         if d[-1:] in "ae":
             out.add(d + "n")
+    out.discard("page")  # pagar's stem mint coins an English noun; its
+    # true subjunctive (pague) is already in the family (round-24 technical)
     return out | _ES_IRREGULAR
 
 _ES_IRREGULAR = {"viene", "vienen", "vendra", "vendras", "vendran",
@@ -399,7 +401,8 @@ _ES_FINITE = _es_finite()
 # Plural imperatives (the ustedes forms) carry glued pronouns too -
 # "presentenlo" (present it, all of you) - so their stems join the tail
 # expansion: -ar verbs take the -en stem, -er/-ir the -an stem
-# (round-22 skeptic).
+# (round-22 skeptic). Five stems are named, not generated - the
+# spelling-change residue: paguen, entreguen, digan, traigan, vengan.
 _ES_IMP_PL = sorted({_deacc(w)[:-2] + "en" for w in _ES_BASE
                      if " " not in w and w.endswith("ar") and len(_deacc(w)) >= 5} |
                     {_deacc(w)[:-2] + "an" for w in _ES_BASE
@@ -442,6 +445,7 @@ _SE_SCOPE_RE = re.compile(r"\bse (" + _ANNOUNCE_ES + r")\b(?![^.!?;\n]*?\b(?:a l
 _READER_ROLES = "solicitantes?|participantes?|aspirantes?|postulantes?|estudiantes?|titular(?:es)?|contribuyentes?|pacientes?|residentes?|derechohabientes?|comparecientes?|pensionistas?|cosolicitantes?|interesad[oa]s?|candidat[oa]s?|usuari[oa]s?|emplead[oa]s?|pasajer[oa]s?|vecin[oa]s?|client[ea]s?|miembr[oa]s?|beneficiari[oa]s?|asegurad[oa]s?|afiliad[oa]s?|inquilin[oa]s?|pensionad[oa]s?|alumn[oa]s?|jubilad[oa]s?|becari[oa]s?|pasantes?|arrendatari[oa]s?"
 _ROLE_GUARD = r"(?!(?:" + _READER_ROLES + r"|se)\b)"
 _SE_GUARD = r"(?!se\b)"
+_MOD_CHAIN_ES = r"(?:\s+(?:de|en|del)\s+(?:(?:el|la|los|las)\s+)?\w+)*"
 # The pattern's first alternative is the guard made visible (round-22
 # skeptic): a role-headed subject phrase is consumed whole, so the
 # stamp can never restart at a determiner inside the role's own
@@ -451,7 +455,11 @@ _SE_GUARD = r"(?!se\b)"
 # verb is never prep-headed, so the chain can repeat without ever
 # eating it - a bare optional word in that seat ate the verb in this
 # fix's first build, and U268 caught it.
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b(?:\s+(?:de|en|del)\s+(?:(?:el|la|los|las)\s+)?\w+)*|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
+# A coordinated second subject is consumed with the first ("el
+# titular y la directora...", ", junto con la directora,") - any
+# determiner left standing is a fresh start for the stamp, and the
+# stamp would orphan the role and silence the pair (round-24 skeptic).
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:\s+y\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")?(?:,\s+junto\s+con\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")?|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
