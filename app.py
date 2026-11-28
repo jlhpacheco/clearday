@@ -91,6 +91,19 @@ def save_memory(items):
     with MEM_LOCK:
         json.dump(items, open(MEMORY_FILE, "w"), indent=2)
 
+def remember_paste(items, page, subject, lang):
+    """Paste-path follow-ups dedupe by sender + subject (simplicity lens,
+    Nov 28): clearing the same email twice refreshes its ONE row instead
+    of stacking copies. Rows that carry a message id keep their own
+    mid-based dedupe in _clear_one and are never touched here."""
+    key = ((page.get("sender") or "").strip().lower(), (subject or "").strip().lower())
+    items = [i for i in items if i.get("mid") or
+             ((i.get("sender") or "").strip().lower(), (i.get("subject") or "").strip().lower()) != key]
+    items.append({"what": page["what"], "sender": page["sender"],
+                  "lang": page.get("lang", lang), "subject": subject})
+    return items[-20:]
+
+
 API_LOCK = threading.Lock()
 API_CALLS = []
 
@@ -310,7 +323,7 @@ class H(BaseHTTPRequestHandler):
                 text = ""
             page = transform(text, "Maria Lopez", "Board meeting moved", lang)
             page["_text"] = text; page["_mid"] = ""; page["_addr"] = ""; page["_subject"] = "Board meeting moved"
-            items = load_memory(); items.append({"what": page["what"], "sender": page["sender"], "lang": page.get("lang", lang)}); save_memory(items[-20:])
+            save_memory(remember_paste(load_memory(), page, "Board meeting moved", lang))
             self._send(render_page(page))
         elif self.path.startswith("/followups"):
             items = load_memory()
@@ -550,7 +563,7 @@ class H(BaseHTTPRequestHandler):
             self._send(render_form("<p style='font-size:22px;'><b>Paste a message first.</b></p>", lang)); return
         page = transform(text, sender, subject, lang)
         page["_text"] = text; page["_mid"] = ""; page["_addr"] = ""; page["_subject"] = subject
-        items = load_memory(); items.append({"what": page["what"], "sender": page["sender"], "lang": page.get("lang", lang)}); save_memory(items[-20:])
+        save_memory(remember_paste(load_memory(), page, subject, lang))
         self._send(render_page(page))
 
 if __name__ == "__main__":
