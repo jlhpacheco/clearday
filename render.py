@@ -471,12 +471,11 @@ def render_page(p):
 </div>"""
     return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
+<p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
 <div class='layout even'><div>
 <div class='box blue'><span class='lbl'>&#9632; {s['what']}</span><div class='big'>{esc(p.get('what',''))}</div></div>
 <div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{actions}</div>
 <div class='box purple'><span class='lbl'>&#9679; {s['facts']}</span><table>{facts}</table></div>
-<p class='big' style='margin-top:16px;'>{s['steps']}: {steps}</p>
-<p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
 </div><div>
 <div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
 {reply_card}
