@@ -289,7 +289,7 @@ ASK_EXTRA = {
            "let me know", "let us know", "forget", "remember to", "be sure", "make sure",
            "need you", "asking", "request", "required", "must", "deadline", "due by",
            "remit", "requested", "be signed", "be returned", "be submitted", "be completed",
-           "be paid", "be sent"),
+           "be paid", "be sent", "would you mind"),
     "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
            "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
            "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite",
@@ -298,7 +298,7 @@ ASK_EXTRA = {
            "enviar", "confirmar", "responder", "entregar", "entregue",
            "firmes", "pagues", "envíes", "envies", "devuelvas", "traigas", "respondas",
            "completes", "revises", "rellenes", "registres", "decir", "diga", "digan", "dime",
-           "se ruega"),
+           "se ruega", "paga", "devuelve", "trae", "firmad", "enviad", "enviadlo"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
            "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót",
            "nộp", "hoàn tất", "chuyển khoản", "đề nghị", "phản hồi"),
@@ -355,8 +355,8 @@ _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 # are exactly what the sentence says is NOT needed, so the phrase and
 # its governed verb(s) lift out together - otherwise the scan hears two
 # duties in a sentence that cancels them (round-7 skeptic, Nov 28).
-_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso)(\s+que)?[\s,]*(?:por ahora|por el momento)?[\s,]*\w+(?:lo|la|los|las|les|me|te|se|nos)?(\s+ni\s+\w+(?:lo|la|los|las|les|me|te|se|nos)?)*")
-_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to)\s+\w+(\s+(or|and)\s+\w+)*")
+_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes)(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*(?:(lo|la|los|las|le|les|me|te|se|nos)\s+)?\w+(?:lo|la|los|las|les|me|te|se|nos)?(\s+ni\s+(?:que\s+)?(?:(lo|la|los|las|le|les|me|te|se|nos)\s+)?\w+(?:lo|la|los|las|les|me|te|se|nos)?)*")
+_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to)\s+\w+(\s+(or|and)\s+\w+)*")
 
 def _has_ask(text, lang="en"):
     """True when the source text itself asks the reader for something.
@@ -367,7 +367,7 @@ def _has_ask(text, lang="en"):
     'add' inside 'addition' and 'sign' inside 'signed' stay silent. A real
     ask anywhere outranks a no-ask phrase anywhere; a question mark alone
     is conversation, not a duty."""
-    low = (text or "").lower()
+    low = (text or "").lower().replace("\u2019", "'").replace("\u2018", "'")
     for p in _NO_ASK_ALL:
         low = low.replace(p, " ")
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
