@@ -371,8 +371,8 @@ def _es_finite():
     # Generated from the same base as the rest of the family - plurals
     # ride the singular stems (muestra -> muestran, diphthong included),
     # futures ride the infinitive (presentar -> presentara/as/an/emos,
-    # accents already folded by _deacc). Irregulars whose stems are not
-    # in the base (vendr- from venir) stay named, not generated.
+    # accents already folded by _deacc). The irregular forms mail
+    # actually uses are named in _ES_IRREGULAR - named, not generated.
     out = set()
     for w in _ES_BASE:
         if " " in w:
@@ -390,11 +390,22 @@ def _es_finite():
             out |= {stem + "an", stem + "en"}
         if d[-1:] in "ae":
             out.add(d + "n")
-    return out
+    return out | _ES_IRREGULAR
 
+_ES_IRREGULAR = {"viene", "vienen", "vendra", "vendras", "vendran",
+                 "vendremos", "dira", "diras", "diran", "diremos",
+                 "dicen", "digan", "tengan", "pidan", "duermen"}
 _ES_FINITE = _es_finite()
+# Plural imperatives (the ustedes forms) carry glued pronouns too -
+# "presentenlo" (present it, all of you) - so their stems join the tail
+# expansion: -ar verbs take the -en stem, -er/-ir the -an stem
+# (round-22 skeptic).
+_ES_IMP_PL = sorted({_deacc(w)[:-2] + "en" for w in _ES_BASE
+                     if " " not in w and w.endswith("ar") and len(_deacc(w)) >= 5} |
+                    {_deacc(w)[:-2] + "an" for w in _ES_BASE
+                     if " " not in w and w.endswith(("er", "ir")) and len(_deacc(w)) >= 5})
 _ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} | _ES_FINITE |
-                   {_deacc(w) + t for w in _ES_STEMS for t in _ES_TAILS + _ES_STACKS})
+                   {_deacc(w) + t for w in _ES_STEMS + _ES_IMP_PL for t in _ES_TAILS + _ES_STACKS})
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 _SCOPES_ALL = tuple(p for lg in ("en", "es", "vi") for p in SCOPES[lg])
@@ -407,7 +418,7 @@ def _stamp_re(phrases):
 
 _NO_ASK_RE = _stamp_re(_NO_ASK_ALL)
 _SCOPES_RE = _stamp_re(_SCOPES_ALL)
-_ANNOUNCE_ES = "muestra|presenta|enseña|muestran|presentan|enseñan|mostrará|presentará|enseñará|mostrarán|presentarán|enseñarán"
+_ANNOUNCE_ES = "muestra|presenta|enseña|muestre|presente|enseñe|muestran|presentan|enseñan|muestren|presenten|enseñen|mostrará|presentará|enseñará|mostrarán|presentarán|enseñarán"
 # The Spanish announcement verbs are stamped by a GUARDED pattern, not a
 # literal (round-17 skeptic): "se muestra / se presenta / se enseña" is an
 # announcement only while no place or time follows before the sentence ends -
@@ -427,10 +438,15 @@ _SE_SCOPE_RE = re.compile(r"\bse (" + _ANNOUNCE_ES + r")\b(?![^.!?;\n]*?\b(?:a l
 # fill a slot lets the stamp eat "se presenta" duties (U196). The role
 # guard applies only under definite determiners (round-20 skeptic):
 # "un solicitante" in a news sentence is a stranger, not the reader.
-_READER_ROLES = "solicitantes?|participantes?|aspirantes?|postulantes?|estudiantes?|titular(?:es)?|contribuyentes?|pacientes?|residentes?|derechohabientes?|comparecientes?|pensionistas?|cosolicitantes?|interesad[oa]s?|candidat[oa]s?|usuari[oa]s?|emplead[oa]s?|pasajer[oa]s?|vecin[oa]s?|client[ea]s?|miembr[oa]s?|beneficiari[oa]s?|asegurad[oa]s?|afiliad[oa]s?|inquilin[oa]s?|pensionad[oa]s?|alumn[oa]s?|jubilad[oa]s?"
+_READER_ROLES = "solicitantes?|participantes?|aspirantes?|postulantes?|estudiantes?|titular(?:es)?|contribuyentes?|pacientes?|residentes?|derechohabientes?|comparecientes?|pensionistas?|cosolicitantes?|interesad[oa]s?|candidat[oa]s?|usuari[oa]s?|emplead[oa]s?|pasajer[oa]s?|vecin[oa]s?|client[ea]s?|miembr[oa]s?|beneficiari[oa]s?|asegurad[oa]s?|afiliad[oa]s?|inquilin[oa]s?|pensionad[oa]s?|alumn[oa]s?|jubilad[oa]s?|becari[oa]s?|pasantes?|arrendatari[oa]s?"
 _ROLE_GUARD = r"(?!(?:" + _READER_ROLES + r"|se)\b)"
 _SE_GUARD = r"(?!se\b)"
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+de\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)")
+# The pattern's first alternative is the guard made visible (round-22
+# skeptic): a role-headed subject phrase is consumed whole, so the
+# stamp can never restart at a determiner inside the role's own
+# de-phrase and re-read "la cuenta" as the subject - "el titular de
+# la cuenta presenta..." asks, because the reader's party is acting.
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b(?:\s+(?:de\s+(?:el|la|los|las)|del)\s+\w+)?|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+de\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
