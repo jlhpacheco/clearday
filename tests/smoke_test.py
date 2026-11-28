@@ -86,22 +86,33 @@ check("SCRIPTS: every script block on the home page parses as valid JavaScript (
 check("clear page: 'Why the cream page' is now a TAB - link in the nav, card body OFF the home page", "href='/why'" in form and "warm backgrounds tested best" not in form)
 code, whypage = get("/why?lang=en")
 check("WHY TAB: /why page carries the full research card (title + all five reasons)", code == 200 and "Why the cream page? For judges" in whypage and "warm backgrounds tested best" in whypage and "WCAG 2.2 AA" in whypage)
+code, spage = get("/?sample=1&lang=en")
+_js_ok2 = True
+for _s in _re.findall(r"<script>(.*?)</script>", spage, _re.S):
+    with _tf.NamedTemporaryFile("w", suffix=".js", delete=False) as _f:
+        _f.write(_s); _p = _f.name
+    if _sp.run([_node, "--check", _p]).returncode != 0:
+        _js_ok2 = False
+check("SAMPLE SCROLL (Jose Luis, Nov 27): the sample-loaded page carries the glide-down script + banner anchor, and every script on it parses", code == 200 and "id='sampletop'" in spage and "scrollIntoView" in spage and _js_ok2)
 sample = open("/home/sprite/clearday/sample_email.txt").read()
 code, page = post("/", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
 if "Rules: instant answer" in page:
     # one retry: a single slow gateway call falls back to rules BY DESIGN;
     # two in a row would mean the model path is really down
     code, page = post("/", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
-dates = ["Monday November 23", "Tuesday November 24", "5:15 PM", "Friday November 27"]
+dates = ["Original Meeting Date: Monday, November 23", "New Meeting Date: Tuesday, November 24 at 5:15 PM", "Reply by: Friday, November 27"]
 check("sample -> sections + exact 4 dates", code == 200 and "YOU MUST DO" in page and "KEY FACTS" in page and all(d in page for d in dates))
 check("green pill: live model answered", "AI: live model response" in page and "DeepSeek" in page)
-check("result page: two columns - IF YOU DO NOTHING + Why the cream page on the right", "IF YOU DO NOTHING" in page and "Why the cream page" in page and "class='layout'" in page)
-check("result page: REPLY is an action card with the BIG button", "replycard" in page and "bigbtn" in page and "Done reading? Answer it:" in page)
+check("result page: right column = IF YOU DO NOTHING, then REPLY - the Why card lives only on its own tab (Jose Luis's printout, Nov 27)", "IF YOU DO NOTHING" in page and "Click Draft a reply after reading the email." in page and "warm backgrounds tested best" not in page and "class='layout'" in page and page.index("IF YOU DO NOTHING") > page.index("DATES + NUMBERS") and page.index("Click Draft a reply after reading the email.") > page.index("IF YOU DO NOTHING"))
+check("result page: REPLY is an action card with the BIG button", "replycard" in page and "bigbtn" in page and "Click Draft a reply after reading the email." in page)
 code, conn = get("/connected")
 check("PROOF PAGE: GitHub side LIVE with real metadata (login, newest commit, rate left)", code == 200 and "jlhpacheco" in conn and "Newest commit" in conn and "API calls left" in conn)
 check("PROOF PAGE: Together side LIVE with a real test call (model answer + tokens + call id)", "DeepSeek-V4.1-Flash-1017" in conn and "Tokens in the test call" in conn and "The model answered" in conn and conn.count("LIVE - working now") >= 2 and "No typed-in numbers" in conn)
+check("PROOF PAGE: TWO COLUMNS - GitHub left, Together AI right (Jose Luis's printout, Nov 27)", "class='cols2'" in conn and conn.index("GitHub") < conn.index("Together AI") and conn.index("class='cols2'") < conn.index("GitHub"))
 code, esc = post("/", {"sender": "Test", "subject": "Esc", "text": "Hello <b>ZZTEST</b> world. Please reply to confirm.", "lang": "en"})
 check("pasted HTML never raw (escaped or paraphrased)", "<b>ZZTEST</b>" not in esc)
+code, noask = post("/", {"sender": "Ana Ruiz", "subject": "Thank you", "text": "Thank you for the wonderful evening. We loved the food and the company. No reply is needed at all.", "lang": "en"})
+check("DUTIES GUARD (live): a no-ask email shows 'asks nothing of you' - no invented duties, model or not", code == 200 and "This email asks nothing of you" in noask)
 try:
     code, big = post("/", {"sender": "Test", "subject": "Big", "text": "x" * 60000, "lang": "en"})
     refused = code == 200 and ("too long" in big.lower() or "shorter" in big.lower() or "50,000" in big or "50000" in big)
@@ -117,7 +128,7 @@ code, ib = get("/inbox?lang=en")
 check("inbox page lists the real email (Maria Lopez + Make it clear)", code == 200 and "Maria Lopez" in ib and "Make it clear" in ib)
 _mid = find_id("Board meeting moved")
 code, cl = get("/inbox/clear?id=" + _mid + "&lang=en")
-check("inbox clear flow -> clear page + exact date", code == 200 and "WHAT THIS IS" in cl and "Tuesday November 24" in cl)
+check("inbox clear flow -> clear page + labeled date", code == 200 and "WHAT THIS IS" in cl and "New Meeting Date: Tuesday, November 24" in cl)
 code, fol = get("/followups")
 check("/followups demo label", code == 200 and "Demo entries" in fol)
 one = json.loads(mp_get(MP + "/api/v1/message/" + _mid))
