@@ -569,4 +569,5 @@ def render_connected(proof, lang="en", checked=""):
 <div class='cols2'>
 {gh_html}
 {tg_html}
-</div>""", s)
+</div>
+<div class='box plain'><p><a class='btn' href='/'>&#9993; {s['nav_clear']}</a></p></div>""", s)
