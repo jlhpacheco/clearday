@@ -363,7 +363,37 @@ _ES_STEMS = [w for w in _ES_BASE if " " not in w and (w[-1] in "aeiou" or w.ends
 _ES_STEMS += [g for w in _ES_BASE if " " not in w and _es_gerund(w) for g in (_es_gerund(w),)]
 _ES_TAILS = ("lo", "la", "los", "las", "le", "les", "me", "se")
 _ES_STACKS = tuple(i + d for i in ("me", "te", "se", "nos") for d in ("lo", "la", "los", "las"))
-_ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} |
+
+def _es_finite():
+    # Plural and future finite forms (round-21 skeptic): the scan family
+    # held only singular stems, so group instructions ("Los solicitantes
+    # presentan...") and futures ("Usted presentará...") were invisible.
+    # Generated from the same base as the rest of the family - plurals
+    # ride the singular stems (muestra -> muestran, diphthong included),
+    # futures ride the infinitive (presentar -> presentara/as/an/emos,
+    # accents already folded by _deacc). Irregulars whose stems are not
+    # in the base (vendr- from venir) stay named, not generated.
+    out = set()
+    for w in _ES_BASE:
+        if " " in w:
+            continue
+        d = _deacc(w)
+        if w.endswith("r"):
+            out |= {d + e for e in ("a", "as", "an", "emos")}
+        if w.endswith(("ar", "er", "ir")) and len(d) >= 5:
+            # Plural present + subjunctive ride the infinitive stem:
+            # entregar -> entregan / entreguen. Most verbs enter the
+            # base as infinitives only, so the singular-stem rule above
+            # never sees them. The length floor keeps "ir" / "dar"
+            # stems from minting bare syllables.
+            stem = d[:-2]
+            out |= {stem + "an", stem + "en"}
+        if d[-1:] in "ae":
+            out.add(d + "n")
+    return out
+
+_ES_FINITE = _es_finite()
+_ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} | _ES_FINITE |
                    {_deacc(w) + t for w in _ES_STEMS for t in _ES_TAILS + _ES_STACKS})
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
@@ -377,12 +407,13 @@ def _stamp_re(phrases):
 
 _NO_ASK_RE = _stamp_re(_NO_ASK_ALL)
 _SCOPES_RE = _stamp_re(_SCOPES_ALL)
+_ANNOUNCE_ES = "muestra|presenta|enseña|muestran|presentan|enseñan|mostrará|presentará|enseñará|mostrarán|presentarán|enseñarán"
 # The Spanish announcement verbs are stamped by a GUARDED pattern, not a
 # literal (round-17 skeptic): "se muestra / se presenta / se enseña" is an
 # announcement only while no place or time follows before the sentence ends -
 # "Se presenta a la oficina mañana" is an order to appear, and the stamp
 # must not touch it.
-_SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?![^.!?;\n]*?\b(?:a la\b|al\b|a trabajar\b|ante el\b|ante la\b|en la puerta\b|en recepción\b|mañana\b|a las\b|al entrar\b))")
+_SE_SCOPE_RE = re.compile(r"\bse (" + _ANNOUNCE_ES + r")\b(?![^.!?;\n]*?\b(?:a la\b|al\b|a trabajar\b|ante el\b|ante la\b|en la puerta\b|en recepción\b|mañana\b|a las\b|al entrar\b))")
 # Named-subject descriptives (round-18 skeptic): "El museo presenta
 # una exposición" announces what a third party does - the reader is
 # asked nothing. Determiner + one noun + the verb stamps, unless a
@@ -396,10 +427,10 @@ _SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?![^.!?;\n]*?\b(?:
 # fill a slot lets the stamp eat "se presenta" duties (U196). The role
 # guard applies only under definite determiners (round-20 skeptic):
 # "un solicitante" in a news sentence is a stranger, not the reader.
-_READER_ROLES = "solicitante|participante|aspirante|postulante|estudiante|titular|contribuyente|paciente|residente|interesad[oa]|candidat[oa]|usuari[oa]|emplead[oa]|pasajer[oa]|vecin[oa]|client[ea]|miembr[oa]|beneficiari[oa]|asegurad[oa]|afiliad[oa]|inquilin[oa]|pensionad[oa]|alumn[oa]"
+_READER_ROLES = "solicitantes?|participantes?|aspirantes?|postulantes?|estudiantes?|titular(?:es)?|contribuyentes?|pacientes?|residentes?|derechohabientes?|comparecientes?|pensionistas?|cosolicitantes?|interesad[oa]s?|candidat[oa]s?|usuari[oa]s?|emplead[oa]s?|pasajer[oa]s?|vecin[oa]s?|client[ea]s?|miembr[oa]s?|beneficiari[oa]s?|asegurad[oa]s?|afiliad[oa]s?|inquilin[oa]s?|pensionad[oa]s?|alumn[oa]s?|jubilad[oa]s?"
 _ROLE_GUARD = r"(?!(?:" + _READER_ROLES + r"|se)\b)"
 _SE_GUARD = r"(?!se\b)"
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+de\s+\w+)?[\s,]+(?:muestra|presenta|enseña)\b(?!\s+(?:tu|su)\b)")
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+de\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
@@ -446,7 +477,7 @@ def _has_ask(text, lang="en"):
     'add' inside 'addition' and 'sign' inside 'signed' stay silent. A real
     ask anywhere outranks a no-ask phrase anywhere; a question mark alone
     is conversation, not a duty."""
-    text = unicodedata.normalize("NFC", text)  # round-20 technical: decomposed (NFD) Vietnamese must match the literal phrases
+    text = unicodedata.normalize("NFC", text or "")  # round-20 technical: decomposed (NFD) Vietnamese must match the literal phrases
     low = (text or "").lower().replace("\u2019", "'").replace("\u2018", "'")
     low = _NO_ASK_RE.sub(" ", low)
     low = _SCOPES_RE.sub(" ", low)
