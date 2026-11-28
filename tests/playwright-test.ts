@@ -258,7 +258,7 @@ async function main() {
   await page.click("text=Draft a reply");
   await page.waitForSelector("text=YOUR REPLY DRAFT", { timeout: 150_000 });
   const dp = await bodyText(page);
-  check("Reply: draft page shows BEFORE anything is sent - his line on top, Send button waits for the reader", dp.includes("Send this reply") && dp.includes("Below, please read the proposed draft reply email generated for you.") && dp.includes("dark blue Send this reply button"));
+  check("Reply: draft page shows BEFORE anything is sent - his line on top, Send + No moved up to the top of the page (his Nov 27 move)", dp.includes("Send this reply") && dp.includes("Below, please read the proposed draft reply email generated for you.") && dp.includes("dark blue Send this reply button"));
   check("Reply: draft page says who wrote it (AI pill or Rules pill)", dp.includes("AI: live model response") || dp.includes("Rules: instant answer"));
   const sendBg = await page.evaluate(() => { const b = document.querySelector("button.sendbtn"); return b ? getComputedStyle(b).backgroundColor : ""; });
   check("Reply: the Send button IS dark blue, as the page's own words say", sendBg === "rgb(18, 58, 122)", sendBg);
