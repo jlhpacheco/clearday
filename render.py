@@ -22,8 +22,8 @@ STRINGS = {
            "what": "WHAT THIS IS", "do": "YOU MUST DO", "facts": "KEY FACTS", "dates": "DATES + NUMBERS",
            "no_dates": "No dates found", "risk": "IF YOU DO NOTHING", "risk_none": "No deadline or danger found in this message.", "steps": "Steps", "source": "Source",
            "ai_live": "AI: live model response", "ai_rules": "Rules: instant answer — no model used",
-           "hero1": "Long message in.", "hero2": "One clear page out.",
-           "hero_sub": "Built for people with dyslexia. Paste a wall of text — get the facts, the actions, and the dates in big type.",
+           "hero1": "Long message in", "hero2": "one clear page out!",
+           "hero_sub": "Built for people with dyslexia.",
            "path_title": "Your path to a clear page", "path_sub": "Three steps. No guesswork.",
            "step1": "Paste the long message", "step2": "Press the button", "step3": "Read one clear page — same order, every time",
            "brand_pill": "Built for dyslexic readers",
@@ -77,8 +77,8 @@ STRINGS = {
            "what": "QUÉ ES ESTO", "do": "LO QUE DEBES HACER", "facts": "DATOS CLAVE", "dates": "FECHAS Y NÚMEROS",
            "no_dates": "No se encontraron fechas", "risk": "SI NO HACES NADA", "risk_none": "No se encontró fecha límite ni peligro en este mensaje.", "steps": "Pasos", "source": "Fuente",
            "ai_live": "IA: respuesta en vivo del modelo", "ai_rules": "Reglas: respuesta instantánea — sin modelo",
-           "hero1": "Mensaje largo entra.", "hero2": "Una página clara sale.",
-           "hero_sub": "Hecho para personas con dislexia. Pega un muro de texto y recibe los datos, las acciones y las fechas en letra grande.",
+           "hero1": "Mensaje largo entra", "hero2": "una página clara sale!",
+           "hero_sub": "Hecho para personas con dislexia.",
            "path_title": "Tu camino a una página clara", "path_sub": "Tres pasos. Sin adivinar.",
            "step1": "Pega el mensaje largo", "step2": "Pulsa el botón", "step3": "Lee una página clara — el mismo orden, siempre",
            "brand_pill": "Hecho para lectores con dislexia",
@@ -132,8 +132,8 @@ STRINGS = {
            "what": "ĐÂY LÀ GÌ", "do": "VIỆC BẠN PHẢI LÀM", "facts": "THÔNG TIN CHÍNH", "dates": "NGÀY VÀ CON SỐ",
            "no_dates": "Không tìm thấy ngày nào", "risk": "NẾU BẠN KHÔNG LÀM GÌ", "risk_none": "Không tìm thấy hạn chót hay nguy hiểm nào trong tin nhắn này.", "steps": "Các bước", "source": "Nguồn",
            "ai_live": "AI: phản hồi trực tiếp từ mô hình", "ai_rules": "Quy tắc: trả lời ngay — không dùng mô hình",
-           "hero1": "Đưa vào tin nhắn dài.", "hero2": "Nhận lại một trang rõ ràng.",
-           "hero_sub": "Làm cho người mắc chứng khó đọc. Dán một bức tường chữ — nhận lại thông tin, việc phải làm và ngày tháng bằng chữ lớn.",
+           "hero1": "Đưa vào tin nhắn dài", "hero2": "nhận lại một trang rõ ràng!",
+           "hero_sub": "Làm cho người mắc chứng khó đọc.",
            "path_title": "Đường tới một trang rõ ràng", "path_sub": "Ba bước. Không phải đoán.",
            "step1": "Dán tin nhắn dài", "step2": "Nhấn nút", "step3": "Đọc một trang rõ ràng — cùng thứ tự, mọi lần",
            "brand_pill": "Làm cho người đọc khó đọc",
@@ -402,7 +402,7 @@ def render_form(extra="", lang="en", prefill=None):
     scroll = ("<script>window.addEventListener('load',function(){var el=document.getElementById('sampletop');"
               "if(el){setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},200);}});</script>") if pf else ""
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
-<div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
+<div class='hero'>{s['hero1']}, <span class='accent'>{s['hero2']}</span></div>
 <div class='big'>{s['hero_sub']}</div>
 <div class='layout'><div>
 {_raw_card(s)}
