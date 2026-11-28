@@ -1,6 +1,6 @@
 # ClearDay
 
-**Long message in. One clear page out.**
+**Long message in, one clear page out!**
 
 **1 in 5 people has dyslexia** (Yale Center for Dyslexia & Creativity). A 40-line email goes in. **3 actions, a fact table, and the dates in big type** come out.
 
@@ -224,7 +224,7 @@ And the authority behind the whole design: **Yale**. Dr. Sally Shaywitz, co-dire
 
 ClearDay also has a **real inbox**, and you can watch email arrive in it:
 
-The **home page itself** opens with the product — **“Long message in. One clear page out.”** — and right under it sits a slim strip carrying Jose Luis's invitation, in his own words (he swapped the two himself, marker on printout, Nov 26: solution first, story second): *“Before you judge this app, please take a moment to experience what it is like to be dyslexic.”* Beside it, ONE button: **Read my story**. It opens **one dialog window over the page**: his full narrative sits on top — *“…can take me three tries reading before it gives up its meaning to me… See for yourself. That is why I created ClearDay.”* — and below the story, the raw inbox, with a **brand-new email from Maria sent on the spot** (a progress bar shows it traveling), **landing on that fresh email already open**, no hunting, no extra click. Story first — then the judge steps straight inside the ugly original and feels how hard it is to read. The sample arrives like real email, with both a text and a web-page version, so the reading pane can never open blank. The strip stays small on purpose — the page belongs to the solution; the problem is one honest click away. Maria's email is guaranteed to be in Mailpit: the demo puts it there itself, whichever page a judge opens first.
+The **home page itself** opens with the product — **“Long message in, one clear page out!”** — and right under it sits a slim strip carrying Jose Luis's invitation, in his own words (he swapped the two himself, marker on printout, Nov 26: solution first, story second): *“Before you judge this app, please take a moment to experience what it is like to be dyslexic.”* Beside it, ONE button: **Read my story**. It opens **one dialog window over the page**: his full narrative sits on top — *“…can take me three tries reading before it gives up its meaning to me… See for yourself. That is why I created ClearDay, so I can help folks like me…”* — and below the story, the raw inbox, with a **brand-new email from Maria sent on the spot** (a progress bar shows it traveling), **landing on that fresh email already open**, no hunting, no extra click. Story first — then the judge steps straight inside the ugly original and feels how hard it is to read. The sample arrives like real email, with both a text and a web-page version, so the reading pane can never open blank. The strip stays small on purpose — the page belongs to the solution; the problem is one honest click away. Maria's email is guaranteed to be in Mailpit: the demo puts it there itself, whichever page a judge opens first.
 
 **[Open the raw inbox — Mailpit](https://clearday-bnjwz.sprites.app/mailpit/)** — the one inbox, in Mailpit's own screen: small, dense, gray text. *(There is no separate Inbox tab anymore — Jose Luis removed it on Nov 26; two inboxes confused the story. The raw inbox is the inbox.)*
 
