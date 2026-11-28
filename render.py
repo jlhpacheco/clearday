@@ -53,7 +53,7 @@ STRINGS = {
            "inbox_seed": "Send the sample email into this inbox",
            "inbox_down": "The inbox is resting right now. The paste form still works.",
            "inbox_raw": "See the raw inbox (Mailpit)",
-           "inbox_raw_note": "Before you judge this app, please take a moment to experience what it is like to be dyslexic.\nAn email like the one below, which is long, tangled up, and in small dense gray text - can take me three tries reading before it gives up its meaning to me.\nSee for yourself [[MAILPIT]]. That is why I created ClearDay.\nSo I can help folks like me and be thankful this Thanksgiving to give something back to the world. :)",
+           "inbox_raw_note": "Before you judge this app, please take a moment to experience what it is like to be dyslexic.\nAn email like the one below, which is long, tangled up, and in small dense gray text - can take me three tries reading before it gives up its meaning to me.\nSee for yourself [[MAILPIT]]. That is why I created ClearDay, so I can help folks like me and be thankful this Thanksgiving to give something back to the world. :)",
            "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
            "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
            "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
@@ -382,9 +382,8 @@ def _raw_card(s):
 <div>{_story_note_html(s)}</div>
 <div class='cardtitle' style='margin-top:18px;'>{s['raw_dialog_title']}</div>
 <div id='freshmsg'>{s['fresh_step1']}</div><div class='freshtrack'><div id='freshfill'></div></div>
-<div><a class='btn' id='seeemail' href='#rawmail' style='display:none'>{s['see_email']} &#8595;</a></div>
+<div><a class='btn' id='seeemail' href='#rawmail' style='display:none'>{s['see_email']} &#8595;</a> <button type='button' class='btn' id='rawclose'>{s['raw_close_plain']}</button></div>
 <iframe id='rawmail' src='/mailpit/' title='Mailpit' loading='lazy'></iframe>
-<p><button type='button' id='rawclose'>{s['raw_close_plain']}</button></p>
 </dialog>
 <script>
 window.__fresh1={json.dumps(s['fresh_step1'])};window.__fresh2={json.dumps(s['fresh_step2'])};
