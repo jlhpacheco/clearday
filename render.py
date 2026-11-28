@@ -450,7 +450,7 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
 </div></div>
-<p class='big'><a href='/followups'>{s['see_followups']}</a></p>{scroll}""", s)
+<p class='big'><a href='/'>{s['nav_clear']}</a></p>{scroll}""", s)
 
 def _dates_html(p, s):
     """The DATES + NUMBERS lines: labeled when the rules found cue words
