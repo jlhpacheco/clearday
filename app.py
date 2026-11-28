@@ -80,28 +80,58 @@ def mp_messages():
 
 MEM_LOCK = threading.Lock()
 
+def _read_memory_file(path):
+    with open(path) as f:
+        data = json.load(f)
+    return data if isinstance(data, list) else []
+
 def load_memory():
+    """Follow-ups survive a crash (technical lens, Nov 28): save_memory
+    writes a temp file and renames it over the old one, and keeps the last
+    good state as .bak - a torn main file falls back to the backup
+    instead of silently emptying the list."""
     with MEM_LOCK:
         try:
-            return json.load(open(MEMORY_FILE))
+            return _read_memory_file(MEMORY_FILE)
         except Exception:
-            return []
+            try:
+                return _read_memory_file(MEMORY_FILE + ".bak")
+            except Exception:
+                return []
 
 def save_memory(items):
     with MEM_LOCK:
-        json.dump(items, open(MEMORY_FILE, "w"), indent=2)
+        tmp = MEMORY_FILE + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(items, f, indent=2)
+        os.replace(tmp, MEMORY_FILE)
+        try:
+            with open(MEMORY_FILE + ".bak", "w") as f:
+                json.dump(items, f, indent=2)
+        except Exception:
+            pass
 
-def remember_paste(items, page, subject, lang):
-    """Paste-path follow-ups dedupe by sender + subject (simplicity lens,
-    Nov 28): clearing the same email twice refreshes its ONE row instead
-    of stacking copies. Rows that carry a message id keep their own
-    mid-based dedupe in _clear_one and are never touched here."""
-    key = ((page.get("sender") or "").strip().lower(), (subject or "").strip().lower())
+def remember(items, what, sender, lang, mid="", subject="", addr="", force=False):
+    """The ONE follow-up writer (simplicity lens, Nov 28): every door -
+    paste, inbox, bulk - saves through here, in ONE record shape.
+    Dedupe: a row with a message id is keyed by that id (skipped when
+    already waiting, unless force - the GET inbox door's documented
+    behavior); a row without one is keyed by sender + subject, and
+    re-clearing refreshes its one row instead of stacking a copy.
+    Returns (items, added)."""
+    row = {"what": what, "sender": sender, "lang": lang,
+           "mid": mid, "subject": subject, "addr": addr}
+    if mid:
+        if not force and any(i.get("mid") == mid for i in items):
+            return items[-20:], False
+        items.append(row)
+        return items[-20:], True
+    key = ((sender or "").strip().lower(), (subject or "").strip().lower())
     items = [i for i in items if i.get("mid") or
              ((i.get("sender") or "").strip().lower(), (i.get("subject") or "").strip().lower()) != key]
-    items.append({"what": page["what"], "sender": page["sender"],
-                  "lang": page.get("lang", lang), "subject": subject})
-    return items[-20:]
+    items.append(row)
+    return items[-20:], True
+
 
 
 API_LOCK = threading.Lock()
@@ -145,12 +175,12 @@ class H(BaseHTTPRequestHandler):
             result["_mid"] = mid
             result["_addr"] = frm.get("Address") or ""
             result["_subject"] = msg.get("Subject") or ""
-            items = load_memory()
-            if not (dedupe and any(i.get("mid") == mid for i in items)):
-                items.append({"what": result["what"], "sender": result["sender"],
-                              "lang": result.get("lang", lang), "mid": mid,
-                              "addr": frm.get("Address") or ""})
-                save_memory(items[-20:])
+            items, added = remember(load_memory(), result["what"], result["sender"],
+                                    result.get("lang", lang), mid=mid,
+                                    subject=msg.get("Subject") or "",
+                                    addr=frm.get("Address") or "", force=not dedupe)
+            if added:
+                save_memory(items)
             return render_page(result)
         except Exception:
             msgs, up = mp_messages()
@@ -188,13 +218,13 @@ class H(BaseHTTPRequestHandler):
                                 "what": r.get("what", ""), "actions": r.get("actions", []),
                                 "dates_numbers": r.get("dates_numbers", []),
                                 "dates_labeled": r.get("dates_labeled", []), "mid": mid})
-                if mid in have:
-                    dupe += 1
-                else:
-                    items.append({"what": r["what"], "sender": r["sender"],
-                                  "lang": r.get("lang", lang), "mid": mid,
-                                  "addr": frm.get("Address") or ""})
+                items, added = remember(items, r["what"], r["sender"], r.get("lang", lang),
+                                        mid=mid, subject=msg.get("Subject") or "",
+                                        addr=frm.get("Address") or "")
+                if added:
                     have.add(mid)
+                else:
+                    dupe += 1
             except Exception:
                 failed += 1
         save_memory(items[-20:])
@@ -323,7 +353,8 @@ class H(BaseHTTPRequestHandler):
                 text = ""
             page = transform(text, "Maria Lopez", "Board meeting moved", lang)
             page["_text"] = text; page["_mid"] = ""; page["_addr"] = ""; page["_subject"] = "Board meeting moved"
-            save_memory(remember_paste(load_memory(), page, "Board meeting moved", lang))
+            _items, _added = remember(load_memory(), page["what"], page["sender"], page.get("lang", lang), subject="Board meeting moved")
+            save_memory(_items)
             self._send(render_page(page))
         elif self.path.startswith("/followups"):
             items = load_memory()
@@ -563,7 +594,8 @@ class H(BaseHTTPRequestHandler):
             self._send(render_form("<p style='font-size:22px;'><b>Paste a message first.</b></p>", lang)); return
         page = transform(text, sender, subject, lang)
         page["_text"] = text; page["_mid"] = ""; page["_addr"] = ""; page["_subject"] = subject
-        save_memory(remember_paste(load_memory(), page, subject, lang))
+        _items, _added = remember(load_memory(), page["what"], page["sender"], page.get("lang", lang), subject=subject)
+        save_memory(_items)
         self._send(render_page(page))
 
 if __name__ == "__main__":
