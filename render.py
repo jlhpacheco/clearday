@@ -267,7 +267,7 @@ function fresh(){{var msg=document.getElementById('freshmsg'),fill=document.getE
 def _bar(right, s):
     return f"""<div class='topbar'><div class='brand'><div class='mark'>C<span>&#9650;</span></div>
 <div><h1>ClearDay</h1><div class='brandsub'>A clearer way to read</div></div></div><div>{right}</div></div>
-<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/followups'>{s['nav_followups']}</a><a href='/bulk'>{s['nav_bulk']}</a><a href='/why'>{s['nav_why']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
+<div class='navrow'><a href='/'>{s['nav_clear']}</a><a href='/why'>{s['nav_why']}</a><a href='/connected'>{s['nav_proof']}</a></div>"""
 
 def _why_card(s):
     items = "".join(f"<div>&#10003; {s[k]}</div>" for k in ("why1", "why2", "why3", "why4", "why5"))
