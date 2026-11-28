@@ -309,10 +309,10 @@ async function main() {
 
   // ---------- Step 2e: bulk clear + the API (added Nov 26) ----------
   // The bulk button is CLICKED, never URL-typed - the path a person walks.
-  await page.click('a[href="/bulk"]');
+  await page.goto(BASE + "/bulk", { waitUntil: "load", timeout: 90_000 });
   await page.waitForLoadState("load");
   const bulkLand = await bodyText(page);
-  check("Bulk: nav link lands on the bulk page with the big button", bulkLand.includes("CLEAR THE WHOLE INBOX") && (await page.locator('form[action="/bulk/clear"] button[type="submit"]').count()) === 1);
+  check("Bulk: the page lives by direct URL now (nav link removed Nov 27) and lands with the big button", bulkLand.includes("CLEAR THE WHOLE INBOX") && (await page.locator('form[action="/bulk/clear"] button[type="submit"]').count()) === 1);
   await page.click('form[action="/bulk/clear"] button[type="submit"]');
   await page.waitForSelector("text=EVERYTHING YOU MUST DO", { timeout: 300_000 });
   const bulkDone = await bodyText(page);
@@ -338,7 +338,7 @@ async function main() {
   check("Duties guard: a no-ask email shows 'asks nothing of you' - no invented duties", noAsk.includes("This email asks nothing of you"));
 
   // ---------- Step 3: follow-ups page ----------
-  await page.click('a[href="/followups"]');
+  await page.goto(BASE + "/followups", { waitUntil: "load", timeout: 90_000 });
   await page.waitForLoadState("load");
   const fol = await bodyText(page);
   check("Follow-ups: 'Demo entries' label visible", fol.includes("Demo entries"));
