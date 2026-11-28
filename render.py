@@ -42,18 +42,18 @@ STRINGS = {
            "proof_note": "No typed-in numbers. If a connector is down, this page says DOWN and shows the real error. It never invents a number.",
  "inbox_title": "THE INBOX - the before picture",
            "thinking": "AI is thinking - reading your message...",
-           "reply_title": "REPLY", "reply_next": "Done reading? Answer it:", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
-           "reply_note": "ClearDay drafts the reply with the AI. You read it first. Nothing is sent until you press Send.",
+           "reply_title": "REPLY", "reply_next": "Click Draft a reply after reading the email.", "reply_btn": "Draft a reply", "reply_btn_draft": "Draft a reply",
+           "reply_note": "First you read the draft, and then, you approve it by pressing the send button.",
            "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
            "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "see_email": "See the email", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in the raw inbox:", "sent_see": "Your email was sent and landed in Mailpit, right next to Maria's email to you. Go see both:", "sent_both": "See both emails in Mailpit", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
-           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Read it first. Nothing is sent until you press Send.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "We have the words, but no real email address to send to - the raw inbox is empty. Go to the clear page and press Mailpit: a fresh email from Maria lands there. Then draft the reply again, and the Send button will be here.",
+           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Below, please read the proposed draft reply email generated for you. Please feel free to revise it and afterwards, approve it by pressing the dark blue Send this reply button. Thank you.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "We have the words, but no real email address to send to - the raw inbox is empty. Go to the clear page and press Mailpit: a fresh email from Maria lands there. Then draft the reply again, and the Send button will be here.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
            "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
            "inbox_seed": "Send the sample email into this inbox",
            "inbox_down": "The inbox is resting right now. The paste form still works.",
            "inbox_raw": "See the raw inbox (Mailpit)",
-           "inbox_raw_note": "Before you judge this app, please take a moment to experience what it is like to be dyslexic.\nAn email like this one below, which is long, tangled up, and in small dense gray text - can take me three tries to read it slowly before it gives up its meaning to me.\nEverything hides at first - the dates and keywords in the text too.\nSee for yourself [[MAILPIT]].\nThat is why I created ClearDay.\nSo I can help folks like me and be thankful this Thanksgiving to give something back to the world. :)",
+           "inbox_raw_note": "Before you judge this app, please take a moment to experience what it is like to be dyslexic.\nAn email like the one below, which is long, tangled up, and in small dense gray text - can take me three tries reading before it gives up its meaning to me.\nSee for yourself [[MAILPIT]]. That is why I created ClearDay.\nSo I can help folks like me and be thankful this Thanksgiving to give something back to the world. :)",
            "sample_title": "Fastest way to test", "sample_btn": "Load the sample email",
            "sample_line": "No email handy? One press fills the form below with a real sample board email. You see it first — then press Make it clear.",
            "sample_loaded": "Sample loaded in the form — read it, then press Make it clear.",
@@ -97,12 +97,12 @@ STRINGS = {
            "proof_note": "Sin números escritos a mano. Si una conexión está caída, esta página dice CAÍDO y muestra el error real. Nunca inventa un número.",
  "inbox_title": "LA BANDEJA - la foto del antes",
            "thinking": "La IA está pensando - leyendo tu mensaje...",
-           "reply_title": "RESPUESTA", "reply_next": "¿Terminaste de leer? Respóndelo:", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
-           "reply_note": "ClearDay redacta la respuesta con la IA. Tú la lees primero. Nada se envía hasta que presiones Enviar.",
+           "reply_title": "RESPUESTA", "reply_next": "Presiona Redactar una respuesta después de leer el correo.", "reply_btn": "Redactar y enviar una respuesta", "reply_btn_draft": "Redactar una respuesta",
+           "reply_note": "Primero lees el borrador, y luego, lo apruebas al presionar el botón Enviar.",
            "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
            "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "see_email": "Ver el correo", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en la bandeja cruda:", "sent_see": "Tu correo fue enviado y llegó a Mailpit, junto al correo de Maria para ti. Ve a ver ambos:", "sent_both": "Ver ambos correos en Mailpit", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
-           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Léelo primero. Nada se envía hasta que presiones Enviar.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Tenemos las palabras, pero no una dirección real a la que enviar: la bandeja cruda está vacía. Ve a la página clara y presiona Mailpit: un correo nuevo de Maria llega allí. Luego redacta la respuesta otra vez y el botón Enviar estará aquí.",
+           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Abajo, por favor lee el correo del borrador de respuesta propuesto, generado para ti. Siéntete libre de revisarlo y, después, apruébalo al presionar el botón azul oscuro Enviar esta respuesta. Gracias.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Tenemos las palabras, pero no una dirección real a la que enviar: la bandeja cruda está vacía. Ve a la página clara y presiona Mailpit: un correo nuevo de Maria llega allí. Luego redacta la respuesta otra vez y el botón Enviar estará aquí.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
            "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
@@ -152,12 +152,12 @@ STRINGS = {
            "proof_note": "Không có con số gõ tay. Nếu một kết nối hỏng, trang này báo KHÔNG HOẠT ĐỘNG và hiện lỗi thật. Nó không bao giờ bịa ra con số.",
  "inbox_title": "HỘP THƯ - hình ảnh trước",
            "thinking": "AI đang suy nghĩ - đang đọc tin nhắn của bạn...",
-           "reply_title": "TRẢ LỜI", "reply_next": "Đọc xong chưa? Trả lời ngay:", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
-           "reply_note": "ClearDay soạn thư trả lời bằng AI. Bạn đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.",
+           "reply_title": "TRẢ LỜI", "reply_next": "Nhấn Soạn thư trả lời sau khi đọc email.", "reply_btn": "Soạn và gửi trả lời", "reply_btn_draft": "Soạn thư trả lời",
+           "reply_note": "Đầu tiên bạn đọc bản nháp, và sau đó, bạn duyệt nó bằng cách nhấn nút Gửi.",
            "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "see_email": "Xem thư", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong hộp thư thô:", "sent_see": "Thư của bạn đã được gửi và đã đến Mailpit, ngay cạnh email của Maria gửi bạn. Hãy xem cả hai:", "sent_both": "Xem cả hai email trong Mailpit", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
-           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Đọc trước. Chưa có gì được gửi cho đến khi bạn nhấn Gửi.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Chúng ta có nội dung, nhưng không có địa chỉ email thật để gửi: hộp thư thô đang trống. Hãy vào trang rõ ràng và nhấn Mailpit: một email mới từ Maria sẽ đến đó. Rồi soạn thư trả lời lại, nút Gửi sẽ ở đây.",
+           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Bên dưới, xin hãy đọc email nháp trả lời được đề xuất, tạo ra cho bạn. Xin cứ tự nhiên sửa lại nó và sau đó, duyệt nó bằng cách nhấn nút Gửi thư trả lời này màu xanh đậm. Cảm ơn bạn.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Chúng ta có nội dung, nhưng không có địa chỉ email thật để gửi: hộp thư thô đang trống. Hãy vào trang rõ ràng và nhấn Mailpit: một email mới từ Maria sẽ đến đó. Rồi soạn thư trả lời lại, nút Gửi sẽ ở đây.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
            "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
@@ -208,6 +208,7 @@ padding:6px 16px;font-weight:bold;font-size:20px}
 .card{background:#FFFDF4;border:3px solid #20242E;border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 0 rgba(32,36,46,.12)}
 .replycard{border:4px solid #0E7A5F;background:#EFFAF4}
 .bigbtn{width:100%;font-size:25px;padding:18px 20px;margin-top:10px;cursor:pointer;box-shadow:0 4px 0 rgba(32,36,46,.12)}
+.sendbtn{background:#123A7A;color:#FFF6D6;border:3px solid #123A7A;border-radius:12px}
 .rawbtn{padding:2px 16px;font-size:20px;vertical-align:baseline}
 .freshtrack{height:20px;border:3px solid #20242E;border-radius:10px;background:#FFF6D6;overflow:hidden;margin:8px 0 12px}
 #freshfill{height:100%;width:0%;background:#0E7A5F;transition:width .3s ease}
@@ -247,9 +248,10 @@ padding:12px 22px;font-size:22px;font-weight:bold;text-decoration:none;box-shado
 @keyframes blink{50%{opacity:.15}}
 @media (prefers-reduced-motion: reduce){.thinking .dot{animation:none}}
 .layout{display:block}
+.cols2{display:block}
 .trust div{margin-top:8px}
 .why div{margin-top:10px}
-@media(min-width:920px){.wrap{max-width:1080px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}}
+@media(min-width:920px){.wrap{max-width:1080px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}}
 """
 
 def _shell(inner, s):
@@ -275,7 +277,16 @@ def render_why(lang="en"):
     s = S(lang)
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
 {_why_card(s)}
+<div class='box plain'><p><a class='btn' href='/'>&#9993; {s['nav_clear']}</a></p></div>""", s)
+
+def render_followups_page(rows_html, lang="en"):
+    s = S(lang)
+    return _shell(f"""{_bar("", s)}
+<div class='box blue'><span class='lbl'>&#9679; {s['followups_title']}</span>
+<p class='big'><b>{s['demo_entries']}</b></p>
+{rows_html}</div>
 <p class='big'><a href='/'>{s['nav_clear']}</a></p>""", s)
+
 
 def render_bulk(lang="en", waiting=0, results=None, counts=None, up=True):
     s = S(lang)
@@ -307,7 +318,7 @@ def render_bulk(lang="en", waiting=0, results=None, counts=None, up=True):
     cards = ""
     for r in results:
         acts = "".join(f"<div class='big'>{i}. {esc(a)}</div>" for i, a in enumerate(r.get("actions", []), 1))
-        dates = "".join(f"<div style='font-size:26px'><b>{esc(d)}</b></div>" for d in r.get("dates_numbers", [])) or f"<div class='big'>{s['no_dates']}</div>"
+        dates = _dates_html(r, s)
         cards += f"""<div class='box blue'><span class='lbl'>&#9632; {esc(r.get('sender',''))} — {esc(r.get('subject',''))}</span><div class='big'>{esc(r.get('what',''))}</div></div>
 <div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{acts}</div>
 <div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
@@ -388,7 +399,9 @@ def render_form(extra="", lang="en", prefill=None):
     pf_sender = esc(pf.get("sender", ""))
     pf_subject = esc(pf.get("subject", ""))
     pf_text = esc(pf.get("text", ""))
-    loaded = f"<p class='big'><b>&#10003; {s['sample_loaded']}</b></p>" if pf else ""
+    loaded = f"<p class='big' id='sampletop'><b>&#10003; {s['sample_loaded']}</b></p>" if pf else ""
+    scroll = ("<script>window.addEventListener('load',function(){var el=document.getElementById('sampletop');"
+              "if(el){setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},200);}});</script>") if pf else ""
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
 <div class='hero'>{s['hero1']}<br><span class='accent'>{s['hero2']}</span></div>
 <div class='big'>{s['hero_sub']}</div>
@@ -418,13 +431,23 @@ def render_form(extra="", lang="en", prefill=None):
 <div class='step'><div class='num'>03</div><div><b>{s['step3']}</b></div></div></div>
 <div class='card trust'><div>&#10003; {s['trust1']}</div><div>&#10003; {s['trust2']}</div><div>&#10003; {s['trust3']}</div></div>
 </div></div>
-<p class='big'><a href='/followups'>{s['see_followups']}</a></p>""", s)
+<p class='big'><a href='/followups'>{s['see_followups']}</a></p>{scroll}""", s)
+
+def _dates_html(p, s):
+    """The DATES + NUMBERS lines: labeled when the rules found cue words
+    ('Reply by: Friday, November 27'), plain when they did not."""
+    lab = p.get("dates_labeled") or []
+    if lab:
+        return "".join(
+            f"<div style='font-size:26px'><b>{esc((it.get('label') + ': ') if it.get('label') else '')}{esc(it.get('value', ''))}</b></div>"
+            for it in lab)
+    return "".join(f"<div style='font-size:26px'><b>{esc(d)}</b></div>" for d in p.get("dates_numbers", [])) or f"<div class='big'>{s['no_dates']}</div>"
 
 def render_page(p):
     s = S(p.get("lang", "en"))
     actions = "".join(f"<div class='big'>{i}. {esc(a)}</div>" for i, a in enumerate(p.get("actions", []), 1))
     facts = "".join(f"<tr><td style='width:32%'><b>{esc(k)}</b></td><td>{esc(v)}</td></tr>" for k, v in (p.get("facts") or {}).items())
-    dates = "".join(f"<div style='font-size:26px'><b>{esc(d)}</b></div>" for d in p.get("dates_numbers", [])) or f"<div class='big'>{s['no_dates']}</div>"
+    dates = _dates_html(p, s)
     steps = " &rarr; ".join(esc(x) for x in p.get("steps", []))
     risk_text = esc(p["risk"]) if p.get("risk") else s["risk_none"]
     risk = f"<div class='box plain'><span class='lbl'>&#9650; {s['risk']}</span><div class='big'>{risk_text}</div></div>"
@@ -437,7 +460,6 @@ def render_page(p):
     if p.get("_text") is not None:
         can_send = bool(p.get("_addr"))
         btn = s['reply_btn'] if can_send else s['reply_btn_draft']
-        note = s['reply_note'] if can_send else s['reply_draft_only']
         reply_card = f"""<div class='card replycard'><div class='cardtitle'>&#9993; {s['reply_title']}</div>
 <div class='big'><b>{s['reply_next']}</b></div>
 <form method='post' action='/reply'>
@@ -447,7 +469,7 @@ def render_page(p):
 <input type='hidden' name='lang' value='{esc(p.get("lang", "en"))}'>
 <textarea name='text' style='display:none'>{esc(p.get("_text", ""))}</textarea>
 <p><button type='submit' class='bigbtn'>&#9993; {btn}</button></p></form>
-<div style='margin-top:10px;'>{note}</div></div>"""
+</div>"""
     return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
 <div class='layout'><div>
@@ -460,7 +482,6 @@ def render_page(p):
 </div><div>
 {risk}
 {reply_card}
-{_why_card(s)}
 </div></div>
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
 
@@ -482,7 +503,7 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
 <input type='hidden' name='lang' value='{esc(lang)}'>
 <div>{s['edit_hint']}</div>
 <textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea>
-<p><button type='submit' class='bigbtn'>{s['send_btn']}</button></p></form>
+<p><button type='submit' class='bigbtn sendbtn'>{s['send_btn']}</button></p></form>
 <p class='big'><a href='/'>{s['dont_send']}</a></p>"""
     else:
         send_form = f"""<div class='box amber'><span class='lbl'>&#9650; {s['no_send_here']}</span><div class='big'>{s['no_send_why']}</div></div>
@@ -547,6 +568,8 @@ def render_connected(proof, lang="en", checked=""):
 <div class='hero' style='font-size:34px'>&#9670; {s['proof_title']}</div>
 <div class='big'>{s['proof_sub']}</div>
 <div class='big'><b>{s['proof_checked']}:</b> {esc(checked)}</div>
+<div class='cols2'>
 {gh_html}
 {tg_html}
+</div>
 <div class='card'><div class='big'><b>{s['proof_note']}</b></div></div>""", s)
