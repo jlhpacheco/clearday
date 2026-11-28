@@ -104,6 +104,7 @@ dates = ["Original Meeting Date: Monday, November 23", "New Meeting Date: Tuesda
 check("sample -> sections + exact 4 dates", code == 200 and "YOU MUST DO" in page and "KEY FACTS" in page and all(d in page for d in dates))
 check("green pill: live model answered", "AI: live model response" in page and "DeepSeek" in page)
 check("result page: right column = DATES + NUMBERS on top, REPLY under it, IF YOU DO NOTHING at the bottom (Jose Luis's word, Nov 27)", "IF YOU DO NOTHING" in page and "Click Draft a reply after reading the email." in page and "warm backgrounds tested best" not in page and "class='layout even'" in page and page.index("DATES + NUMBERS") > page.index("KEY FACTS") and page.index("Click Draft a reply after reading the email.") > page.index("DATES + NUMBERS") and page.index("IF YOU DO NOTHING") > page.index("Click Draft a reply after reading the email."))
+check("result page: the bottom link reads 'Untangle another one' and the Follow-ups link is GONE (Jose Luis's pick, Nov 28)", "Untangle another one" in page and "href='/followups'" not in page and "Make another clear" not in page and "Redo the ClearDay" not in page)
 check("result page: REPLY is an action card with the BIG button", "replycard" in page and "bigbtn" in page and "Click Draft a reply after reading the email." in page)
 code, conn = get("/connected")
 check("PROOF PAGE: GitHub side LIVE with real metadata (login, newest commit, rate left)", code == 200 and "jlhpacheco" in conn and "Newest commit" in conn and "API calls left" in conn)
@@ -227,6 +228,7 @@ before = mp_list()["total"]
 code, rp = post("/reply", {"mid": _mid, "lang": "en"})
 check("REPLY: draft page first - editable box + Send button, NOTHING sent yet", code == 200 and "YOUR REPLY DRAFT" in rp and "Send this reply" in rp and "name='body'" in rp and mp_list()["total"] == before)
 check("REPLY: draft page says who wrote it (AI pill or Rules pill)", "AI: live model response" in rp or "Rules: instant answer" in rp)
+check("REPLY: draft page bottom is ONE door - 'Untangle another one', no Follow-ups link (Jose Luis's screenshot call, Nov 28)", "Untangle another one" in rp and "href='/followups'" not in rp)
 mem = json.load(open("/home/sprite/clearday/memory.json"))
 check("REPLY: follow-up still waiting after the draft (not closed yet)", any(i.get("mid") == _mid for i in mem))
 edited = "Hello Maria,\n\nEDITED-BY-READER: I will attend on Tuesday November 24 at 5:15 PM and bring my photo ID.\n\nThank you,\nJose Luis"
@@ -235,6 +237,7 @@ newest = mp_list()["messages"][0]
 rtext = json.loads(mp_get(MP + "/api/v1/message/" + newest["ID"]))["Text"]
 mem = json.load(open("/home/sprite/clearday/memory.json"))
 check("REPLY SEND: sent only on Send press - edited words delivered, follow-up closed", code == 200 and "REPLY SENT" in rp2 and mp_list()["total"] == before + 1 and newest["To"][0]["Address"] == "maria.lopez@example.org" and newest["Subject"] == "Re: Board meeting moved" and "EDITED-BY-READER" in rtext and not any(i.get("mid") == _mid for i in mem))
+check("REPLY SENT: page bottom is ONE door - 'Back to the clear page', no Follow-ups link (Jose Luis's screenshot call, Nov 28)", "Back to the clear page" in rp2 and "href='/followups'" not in rp2 and "Untangle another one" not in rp2)
 before = mp_list()["total"]
 code, rp3 = post("/reply", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
 check("REPLY (paste path): real address found in the Inbox - Send button IS here, banner says where it came from, nothing sent yet", code == 200 and "YOUR REPLY DRAFT" in rp3 and "/reply/send" in rp3 and "found the real address in the raw inbox" in rp3 and "maria.lopez@example.org" in rp3 and mp_list()["total"] == before)
@@ -311,6 +314,7 @@ _, f_after = api_get("/api/followups")
 check("API: clearing through the API saves NOTHING (follow-ups untouched, no address field leaks)", code == 200 and f_after["count"] == f_before["count"] and all("addr" not in i for i in f_after["followups"]))
 code, home = get("/")
 check("NAV: Follow-ups and Bulk clear are OUT of the top nav (Jose Luis: remove them, Nov 27) - the pages still live by direct URL", code == 200 and "href='/bulk'" not in home and "href='/followups'" not in home)
+check("HOME: the bottom link reads 'Clear page' and goes back to the clear page (Jose Luis's word, Nov 28) - 'See follow-ups I remember' is gone", "See follow-ups I remember" not in home and "<a href='/'>Clear page</a>" in home)
 code, bulk = get("/bulk")
 check("BULK: landing page shows the big button (Clear the whole inbox)", code == 200 and "Clear the whole inbox" in bulk and "/bulk/clear" in bulk)
 mp_delete_all()
