@@ -10,7 +10,7 @@ Design rules (International Dyslexia Association (IDA, USA) + US WCAG 2.2 AA (AD
 import re, json, os, urllib.request, threading
 from datetime import datetime
 
-DATE_RE = re.compile(r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b|\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b|\b(?:[01]?\d|2[0-3]):[0-5]\d\b", re.I)
+DATE_RE = re.compile(r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b|\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b|\b(?:[01]?\d|2[0-3]):[0-5]\d\b", re.I)
 # Numbers finder: money, comma-grouped, decimals, plain integers (2+ digits).
 # Only ever applied OUTSIDE date/time spans, so a day or year inside a date is never double-counted.
 NUMBER_RE = re.compile(r"\$\s?\d[\d,]*\.?\d*|(?<![\d/-])\d{1,3}(?:,\d{3})+(?:\.\d+)?(?![\d/-])|(?<![\d/-])\d+\.\d+(?![\d/-])|(?<![\d/-])\d{2,}(?![\d/-])")
@@ -27,18 +27,94 @@ ACTION_HINTS = {
 CORE = {
     "en": {"who": "Who", "what": "What", "unknown_sender": "Unknown sender", "see_original": "See original",
            "fallback_action": "Read the key facts below",
+           "no_ask": "This email asks nothing of you",
            "steps": ["Read this page", "Do the actions in the amber box", "Check the date in the white box"]},
     "es": {"who": "Quién", "what": "Qué", "unknown_sender": "Remitente desconocido", "see_original": "Ver el original",
            "fallback_action": "Lee los datos clave de abajo",
+           "no_ask": "Este correo no te pide nada",
            "steps": ["Lee esta página", "Haz lo que dice el cuadro de color ámbar", "Revisa la fecha en el cuadro blanco"]},
     "vi": {"who": "Ai", "what": "Việc gì", "unknown_sender": "Không rõ người gửi", "see_original": "Xem bản gốc",
            "fallback_action": "Đọc thông tin chính bên dưới",
+           "no_ask": "Email này không yêu cầu bạn làm gì",
            "steps": ["Đọc trang này", "Làm các việc trong khung màu hổ phách", "Kiểm tra ngày trong khung trắng"]},
 }
 
 def _sentences(text):
     text = re.sub(r"\s+", " ", text).strip()
     return [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if len(s.strip()) > 3]
+
+_WEEKDAYS_EN = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday"
+_MONTHS_EN = "January|February|March|April|May|June|July|August|September|October|November|December"
+_TIME_ONLY = re.compile(r"^(?:[01]?\d|2[0-3]):[0-5]\d(?:\s?[APap][Mm])?$")
+
+def _disp_date(v, lang):
+    if lang == "en":
+        v = re.sub(rf"^({_WEEKDAYS_EN}) ({_MONTHS_EN}) ", r"\1, \2 ", v)
+    return v
+
+def _label_for(ctx, meeting):
+    """Label one date from the words just before it in the same sentence.
+    The label is built ONLY from the email's own cue words - never guessed."""
+    if re.search(r"\b(moved|rescheduled|postponed)\b[^.]{0,120}?\bto\b", ctx):
+        return "New Meeting Date" if meeting else "New date"
+    if "moved from" in ctx or "rescheduled from" in ctx or "originally" in ctx or "was scheduled" in ctx:
+        return "Original Meeting Date" if meeting else "Original date"
+    if re.search(r"\b(reply|confirm|respond|rsvp)\b", ctx) and re.search(r"\b(before|by)\b", ctx):
+        return "Reply by"
+    if re.search(r"\bpay\b", ctx) and re.search(r"\b(before|by)\b", ctx):
+        return "Pay by"
+    if re.search(r"\b(submit|send)\b", ctx) and re.search(r"\b(before|by)\b", ctx):
+        return "Send by"
+    return ""
+
+def _label_dates(text, subject="", lang="en"):
+    """The DATES + NUMBERS list with a plain label on each date, in text order.
+    Labels come from the email's own words (Jose Luis's rule, Nov 26, 2026:
+    'Original Meeting Date: Monday, November 23' / 'New Meeting Date: Tuesday,
+    November 24 at 5:15 PM' / 'Reply by: Friday, November 27'). A time that
+    belongs to a date joins its date. No cue words -> no label, never invented.
+    English labels first; other languages keep the plain values for now."""
+    items = []
+    spans = []
+    for rx in (DATE_RES[lang], DATE_RE):
+        for m in rx.finditer(text):
+            spans.append(m.span())
+            items.append((m.start(), m.end(), m.group(0), True))
+    for m in NUMBER_RE.finditer(text):
+        if any(m.start() < e and s < m.end() for s, e in spans):
+            continue
+        items.append((m.start(), m.end(), m.group(0), False))
+    items.sort()
+    vals = [v for _, _, v, _ in items]
+    items = [it for it in items if not any(it[2] != o and o.startswith(it[2]) for o in vals)]
+    meeting = "meeting" in f"{subject} {text[:300]}".lower()
+    out = []
+    seen = set()
+    prev_end = 0
+    for start, end, value, is_date in items:
+        if value in seen:
+            prev_end = max(prev_end, end)
+            continue
+        if is_date and _TIME_ONLY.match(value) and out and out[-1]["_date"] and start - prev_end <= 10:
+            out[-1]["value"] += " at " + value
+            seen.add(value)
+            prev_end = end
+            continue
+        label = ""
+        if is_date and lang == "en":
+            seg = text[prev_end:start]
+            cut = max(seg.rfind(". "), seg.rfind("." + chr(10)), seg.rfind(chr(10)), seg.rfind("; "))
+            if cut >= 0:
+                seg = seg[cut + 1:]
+            label = _label_for(seg.lower(), meeting)
+        out.append({"label": label, "value": _disp_date(value, lang), "_date": is_date})
+        seen.add(value)
+        prev_end = end
+        if len(out) >= 6:
+            break
+    for it in out:
+        del it["_date"]
+    return out
 
 def heuristic_transform(text, sender="", subject="", lang="en"):
     if lang not in CORE:
@@ -81,6 +157,7 @@ def heuristic_transform(text, sender="", subject="", lang="en"):
         "actions": actions[:3],
         "facts": {core["who"]: sender or core["see_original"], core["what"]: title},
         "dates_numbers": dates,
+        "dates_labeled": _label_dates(text, subject, lang),
         "steps": core["steps"],
         "risk": "",
         "source_date": datetime.now().strftime("%a %b %d"),
@@ -171,6 +248,78 @@ def _strip_ungrounded(s, allowed, lang="en"):
     return s.strip(" ,;")
 
 
+def _ground_facts(facts, allowed, source, lang="en"):
+    """Facts get the same no-invention treatment as every other field.
+    Keys are stripped of ungrounded dates/numbers too (a model key like
+    'Due January 40' used to sail into the table untouched), and a row is
+    dropped when neither its key nor its value shares one real word with
+    the source - a row with no anchor in the email is an invented row
+    ('importance: high', 'deadline: matters'). Dropping beats inventing."""
+    src_words = {w for w in re.split(r"[^\w]+", (source or "").lower()) if len(w) >= 3}
+    out = {}
+    for k, v in facts.items():
+        key = _strip_ungrounded(k, allowed, lang)
+        val = _strip_ungrounded(v, allowed, lang)
+        if not key or not val:
+            continue
+        words = {w for w in re.split(r"[^\w]+", f"{key} {val}".lower()) if len(w) >= 3}
+        if words and not (words & src_words):
+            continue
+        out[key] = val
+    return out
+
+# The duties guard (Skeptic lens, Nov 26): if the email itself never asks
+# for anything, the YOU MUST DO box must not be invented - not by the
+# model, not by a fallback. These phrases say "no ask" out loud and win
+# over the ask-word scan; the scan itself is generous on purpose (it errs
+# toward seeing an ask, so the guard stays silent unless it is sure).
+NO_ASK_PHRASES = {
+    "en": ("no reply is needed", "no reply needed", "no action needed", "no action is needed",
+           "no need to reply", "no response needed", "nothing is needed", "nothing needed from you",
+           "just sharing", "just wanted to share", "for your information"),
+    "es": ("no es necesario responder", "no hace falta responder", "solo comparto",
+           "solo para tu información", "solo para su información"),
+    "vi": ("không cần trả lời", "chỉ chia sẻ", "chỉ để bạn biết"),
+}
+ASK_EXTRA = {
+    "en": ("register", "complete", "fill out", "fill in", "return", "pay", "review", "check",
+           "let me know", "let us know", "forget", "remember to", "be sure", "make sure",
+           "need you", "asking", "request", "required", "must", "deadline", "due by"),
+    "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
+           "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
+           "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite"),
+    "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
+           "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót"),
+}
+
+# Politeness words and pressure nouns are NOT asks on their own: "please"
+# decorates thank-you notes too, and a deadline can be crucial without
+# asking anyone for anything (skeptic probes P6/P9, Nov 27).
+_NOT_ASK_WORDS = {"please", "por favor", "vui lòng",
+                  "must", "deadline", "required", "due by",
+                  "debe", "requerido", "fecha límite",
+                  "bắt buộc", "phải", "hạn chót", "check", "review"}
+_ASK_WORDS = tuple(w for lg in ("en", "es", "vi")
+                   for w in ACTION_HINTS[lg] + ASK_EXTRA[lg]
+                   if w not in _NOT_ASK_WORDS)
+_ASK_RE = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ASK_WORDS) + r")\b")
+_NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
+
+def _has_ask(text, lang="en"):
+    """True when the source text itself asks the reader for something.
+    Round-3 rebuild (skeptic + technical lenses, Nov 27): first lift the
+    'no reply needed' phrases OUT of the text - the ask-words inside them
+    ('reply' in 'no need to reply') must not trip the scan - then look for
+    a real ask-word in ANY of the three languages, on word boundaries, so
+    'add' inside 'addition' and 'sign' inside 'signed' stay silent. A real
+    ask anywhere outranks a no-ask phrase anywhere; a question mark alone
+    is conversation, not a duty."""
+    low = (text or "").lower()
+    for p in _NO_ASK_ALL:
+        low = low.replace(p, " ")
+    return bool(_ASK_RE.search(low))
+
+
 _MODEL_SEM = threading.Semaphore(3)  # max model calls in flight, demo-wide
 
 _MODEL_DEADLINE = 45  # seconds TOTAL per model call, never per socket read
@@ -198,6 +347,31 @@ def _call_model(req):
         raise box["error"]
     return box["data"]
 
+def _labeled_str(text, subject="", lang="en"):
+    lab = _label_dates(text, subject, lang)
+    if not lab:
+        return "NONE"
+    return "; ".join(f"{it['label']}: {it['value']}" if it["label"] else it["value"] for it in lab)
+
+_WEEKDAY_ONLY = re.compile(r"^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[.,]?$", re.I)
+
+def _drop_date_facts(facts, labeled):
+    """KEY FACTS are about the message, never about dates (Jose Luis's order,
+    Nov 26 late - the model had turned the date labels into fact rows with
+    weekday-only values: 'Original Meeting Date: Monday'). Drop any row whose
+    key is a date label, or whose value is a bare weekday or a lone date."""
+    labels = {it["label"].lower() for it in (labeled or []) if it.get("label")}
+    out = {}
+    for k, v in (facts or {}).items():
+        if k.strip().lower() in labels:
+            continue
+        if _WEEKDAY_ONLY.match(v.strip()):
+            continue
+        if DATE_RE.fullmatch(v.strip()) or any(rx.fullmatch(v.strip()) for rx in (DATE_RES["en"],)):
+            continue
+        out[k] = v
+    return out
+
 def llm_transform(text, sender="", subject="", lang="en"):
     """Optional model pass, through a Sprites Connector gateway (Together AI).
     Env: CLEARDAY_MODEL_URL (connector gateway base, OpenAI-compatible),
@@ -217,7 +391,9 @@ def llm_transform(text, sender="", subject="", lang="en"):
         "Turn this message into JSON only with keys: what (<=8 words), "
         "actions (max 3, each <=7 words, verb first), facts (object, max 4 short key/value pairs), "
         "steps (max 5, each <=6 words), risk (<=8 words or empty string). "
-        "Do NOT output dates or numbers - they are handled separately. "
+        f"For your understanding only, the schedule in this message is: {_labeled_str(text, subject, lang)}. "
+        "The app prints those labeled dates in their own box - do NOT write the labels, any date, any time, or any number in your output. "
+        "Facts must be about the message itself (for example: meeting, location, attendance, agenda) - never about dates. "
         f"Sender: {sender}\nSubject: {subject}\nText: {text[:6000]}"
     )
     body = json.dumps({"model": os.environ.get("CLEARDAY_MODEL", "unused"),
@@ -245,7 +421,7 @@ def llm_transform(text, sender="", subject="", lang="en"):
     out["risk"] = _strip_ungrounded(out["risk"], allowed, lang)
     out["actions"] = [a for a in (_strip_ungrounded(x, allowed, lang) for x in out["actions"]) if a]
     out["steps"] = [a for a in (_strip_ungrounded(x, allowed, lang) for x in out["steps"]) if a]
-    out["facts"] = {k: v for k, v in ((k, _strip_ungrounded(v, allowed, lang)) for k, v in out["facts"].items()) if v}
+    out["facts"] = _drop_date_facts(_ground_facts(out["facts"], allowed, f"{subject} {text}", lang), _label_dates(text, subject, lang))
     if not out["what"] and not out["actions"]:
         return None
     return out
@@ -275,6 +451,7 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
             "to the sender of this message, confirming what they asked. "
             "You may ONLY use these exact dates/times, copied word for word, and no others: "
             f"{dates if dates else 'NONE - do not mention any date or time'}. "
+            "When you mention a date, copy it in full - weekday, month, and day, with its time. Never write a weekday by itself. "
             "Do not invent any fact, date, time, place, or number. "
             "Sign off as Jose Luis. Output the reply text only, no subject line. "
             f"Sender: {sender}\nSubject: {subject}\nMessage: {text[:4000]}"
@@ -315,6 +492,8 @@ def transform(text, sender="", subject="", lang="en"):
         out["source"] = "rules"
         out["model_name"] = ""
     out["lang"] = lang if lang in CORE else "en"
+    if not _has_ask(f"{subject} {text}", out["lang"]):
+        out["actions"] = [CORE[out["lang"]]["no_ask"]]
     return out
 
 
