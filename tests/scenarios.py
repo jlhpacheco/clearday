@@ -43,6 +43,9 @@ def check(sid, name, cond):
 def dn(text, lang="en", sender="", subject=""):
     return cd.heuristic_transform(text, sender, subject, lang)["dates_numbers"]
 
+def dl(text, lang="en", sender="", subject=""):
+    return cd.heuristic_transform(text, sender, subject, lang)["dates_labeled"]
+
 # ============================ UNIT (60) ============================
 def unit():
     # Dates - English formats (U01-U14)
@@ -134,6 +137,36 @@ def unit():
     check("U59", "no hints -> fallback action + fixed steps", r["actions"] == ["Read the key facts below"] and r["steps"] == cd.CORE["en"]["steps"])
     r = cd.heuristic_transform("The meeting is on March 3.", "Ana", "Note", "fr")
     check("U60", "unsupported lang falls back to English, no crash", r["lang"] == "en" and r["dates_numbers"] == ["March 3"])
+
+    # Guards (U61-U66) - Nov 26 evening, on the swarm's word (Technical + Skeptic lenses)
+    h = cd.heuristic_transform("We meet Jan. 5 at noon to plan the spring fair.", "Ana Ruiz", "Planning", "en")
+    check("U61", "dotted month date extracted: 'Jan. 5' lands in the box", "Jan. 5" in h["dates_numbers"])
+    a = cd._allowed_tokens("We meet Jan. 5 at noon.", "en")
+    out = cd._strip_ungrounded("Meet Jan. 5 or Jan. 9", a, "en")
+    check("U62", "dotted date grounded: real 'Jan. 5' kept, invented 'Jan. 9' cut", "Jan. 5" in out and "Jan. 9" not in out)
+    src_t = "The meeting is in Room 412 on Friday. Maria will bring the list."
+    f = cd._ground_facts({"Due January 40": "Friday", "importance": "high", "deadline": "matters", "Room": "Room 412"}, cd._allowed_tokens(src_t, "en"), src_t, "en")
+    check("U63", "fact KEYS grounded: 'January 40' stripped from a key", all("January 40" not in k for k in f))
+    check("U64", "junk fact rows dropped, anchored rows kept", "importance" not in f and "deadline" not in f and f.get("Room") == "Room 412")
+    r = cd.transform("Thank you for the wonderful evening. We loved the food and the company. No reply is needed at all.", "Ana Ruiz", "Thank you", "en")
+    check("U65", "duties guard: a no-ask email gets the honest line, not invented duties", r["actions"] == ["This email asks nothing of you"])
+    r = cd.transform(sample, "Maria Lopez", "Board meeting moved", "en")
+    check("U66", "duties guard stays silent when the email asks", r["actions"] != ["This email asks nothing of you"] and len(r["actions"]) >= 1)
+    # Labeled dates (U67-U69) - Nov 26 late, Jose Luis's own format
+    check("U67", "labeled dates: the sample reads exactly as Jose Luis wrote it", dl(sample, "en", "Maria Lopez", "Board meeting moved") == [
+        {"label": "Original Meeting Date", "value": "Monday, November 23"},
+        {"label": "New Meeting Date", "value": "Tuesday, November 24 at 5:15 PM"},
+        {"label": "Reply by", "value": "Friday, November 27"}])
+    check("U68", "labeled dates: pay-by takes its label from the email's own verb", dl("Please pay the invoice by March 5.") == [{"label": "Pay by", "value": "March 5"}])
+    check("U69", "labeled dates: no cue words -> NO label is invented", dl("The picnic is on July 4.") == [{"label": "", "value": "July 4"}])
+    lab = dl(sample, "en", "Maria Lopez", "Board meeting moved")
+    bad = {"Original Meeting Date": "Monday", "New Meeting Date": "Tuesday, at 5:15 PM", "Reply by": "Friday",
+           "Location": "Room 4 and Zoom", "When": "November 24"}
+    check("U70", "facts guard: date-label rows and bare weekdays can NEVER stand as facts", cd._drop_date_facts(bad, lab) == {"Location": "Room 4 and Zoom"})
+    check("U71", "duties guard: a no-ask sentence can NOT erase a real ask in the next one (skeptic P10)", cd._has_ask("No need to reply to this note. But please send me the signed form by March 3 so we can file it on time.", "en") is True)
+    check("U72", "duties guard: an English ask is seen even when the picker says Spanish (skeptic P5)", cd._has_ask("The meeting moved to Tuesday, November 24 at 5:15 PM. Please reply before Friday, November 27 to confirm.", "es") is True)
+    check("U73", "duties guard: a question mark alone is conversation, not a duty (skeptic P9)", cd._has_ask("Did you see the game last night? What a finish! Best game of the season, easily.", "en") is False)
+    check("U74", "duties guard: the noun 'deadline' alone asks nothing (skeptic P6)", cd._has_ask("Hi, the workshop is in Room 412. It matters a lot. This is high priority and very important. The deadline is crucial and the stakes are high.", "en") is False)
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):
@@ -269,8 +302,8 @@ def live():
     post("/inbox/fresh", {}); time.sleep(1)
     code, bpage = post("/bulk/clear", {"lang": "en"})
     cards = bpage.split("class='box blue'")
-    check("L21", "bulk: 1 email -> exactly 1 summary card naming Maria + subject + her date", code == 200 and len(cards) - 1 == 1 and "Maria Lopez" in bpage and "Board meeting moved" in bpage and "Tuesday November 24" in bpage)
-    check("L22", "bulk: combined list heading + Maria's other dates on her card", "EVERYTHING YOU MUST DO" in bpage and "5:15 PM" in bpage and "Friday November 27" in bpage)
+    check("L21", "bulk: 1 email -> exactly 1 summary card naming Maria + subject + her date", code == 200 and len(cards) - 1 == 1 and "Maria Lopez" in bpage and "Board meeting moved" in bpage and "Tuesday, November 24" in bpage)
+    check("L22", "bulk: combined list heading + Maria's other dates on her card", "EVERYTHING YOU MUST DO" in bpage and "5:15 PM" in bpage and "Friday, November 27" in bpage)
     send_mail("Dana Ruiz <dana@example.org>", "Form due", "The form is due 11/24/2026. Please reply to confirm.")
     send_mail("Sam Ortiz <sam@example.org>", "Deadline", "The deadline is 2026-11-30. Please reply.")
     time.sleep(1)
@@ -282,7 +315,7 @@ def live():
             if token in c:
                 return c
         return ""
-    check("L23", "bulk: 3 emails -> 3 cards, each with ONLY its own date", len(cards) == 3 and "2026-11-30" not in card_with("11/24/2026") and "Tuesday November 24" not in card_with("11/24/2026") and "11/24/2026" not in card_with("2026-11-30") and "11/24/2026" not in card_with("Tuesday November 24") and "2026-11-30" not in card_with("Tuesday November 24"))
+    check("L23", "bulk: 3 emails -> 3 cards, each with ONLY its own date", len(cards) == 3 and "2026-11-30" not in card_with("11/24/2026") and "Tuesday, November 24" not in card_with("11/24/2026") and "11/24/2026" not in card_with("2026-11-30") and "11/24/2026" not in card_with("Tuesday, November 24") and "2026-11-30" not in card_with("Tuesday, November 24"))
     combined = bpage.split("class='box blue'")[0]
     check("L24", "bulk: combined list aggregates actions from all 3 emails", combined.count("&#9654;") >= 3)
     check("L25", "bulk: the inbox itself is untouched (nothing deleted, nothing sent)", mp_list()["total"] == before)
