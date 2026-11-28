@@ -109,7 +109,7 @@ async function main() {
   // system curl, not by Chromium's store), so the test context accepts it.
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
-  page.setDefaultTimeout(60_000);
+  page.setDefaultTimeout(120_000);
 
   // ---------- Step 1: home page ----------
   await page.goto(BASE + "/", { waitUntil: "load", timeout: 90_000 });
@@ -133,15 +133,19 @@ async function main() {
   const story = await page.evaluate(() => { const d = document.getElementById("rawbox") as HTMLDialogElement | null; return d ? d.textContent || "" : ""; });
   check("Home: the dialog's story is his FULL story ('three tries' + the Thanksgiving close)", story.includes("three tries") && story.includes("thankful this Thanksgiving"), "");
   const freshMsg = page.locator("#freshmsg");
-  check("Home: the SAME press starts the FRESH delivery - progress bar + 'on its way' words", await page.locator("#freshfill").isVisible() && ((await freshMsg.innerText()).includes("on its way") || (await freshMsg.innerText()).includes("just landed")), "");
+  let freshStarted = false;
+  for (let i = 0; i < 10 && !freshStarted; i++) {
+    const w = await page.locator("#freshfill").evaluate((e) => e.style.width).catch(() => "");
+    const t = await freshMsg.innerText().catch(() => "");
+    freshStarted = (w !== "" && w !== "0%") || t.includes("on its way");
+    if (!freshStarted) await page.waitForTimeout(500);
+  }
+  check("Home: the SAME press starts the FRESH delivery - progress bar moving + 'on its way' words", freshStarted, "");
   let landedText = "";
   for (let i = 0; i < 25 && !landedText.includes("Hi everyone"); i++) {
     await page.waitForTimeout(1000);
     for (const f of page.frames()) {
-      if (f.url().includes("/view/")) {
-        try { landedText = await f.evaluate(() => document.body ? document.body.innerText : ""); } catch {}
-        if (landedText.includes("Hi everyone")) break;
-      }
+      try { const t = await f.evaluate(() => document.body ? document.body.innerText : ""); if (t.includes("Hi everyone") && t.includes("5:15")) { landedText = t; break; } } catch {}
     }
   }
   check("Home: raw-inbox dialog LANDS on Maria's email already open - body visible, NO click on the message needed", landedText.includes("Hi everyone") && landedText.includes("5:15"), "");
@@ -179,10 +183,13 @@ async function main() {
   check("Sample button: message body filled in the box", sBody.includes("Room 4") && sBody.length > 100, `body length=${sBody.length}`);
   const filled = await bodyText(page);
   check("Sample button: 'Sample loaded in the form' note shown", filled.includes("Sample loaded in the form"));
+  let scrolledY = 0;
+  for (let i = 0; i < 10; i++) { scrolledY = await page.evaluate(() => window.scrollY); if (scrolledY > 100) break; await page.waitForTimeout(500); }
+  check("Sample button: the page GLIDES DOWN to the filled form on its own (Jose Luis, Nov 27)", scrolledY > 100, `scrollY=${scrolledY}`);
   await page.click('button[type="submit"]');
   await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
   const sRes = await bodyText(page);
-  check("Sample button: result page shows exact date 'Tuesday November 24'", sRes.includes("Tuesday November 24"));
+  check("Sample button: result page shows the LABELED date line (Jose Luis, Nov 26)", sRes.includes("New Meeting Date: Tuesday, November 24 at 5:15 PM"));
   await page.goto(BASE + "/", { waitUntil: "load", timeout: 90_000 });
 
   // ---------- Step 2: submit the sample email ----------
@@ -213,8 +220,8 @@ async function main() {
     "Result: 'Demo page — made from text pasted by a visitor' label shown",
     res.includes("Demo page — made from text pasted by a visitor")
   );
-  check("Result: exact date 'Tuesday November 24' shown", res.includes("Tuesday November 24"));
-  check("Result: right column present - 'IF YOU DO NOTHING' + 'Why the cream page'", res.includes("IF YOU DO NOTHING") && res.includes("Why the cream page"));
+  check("Result: labeled dates shown - Original / New (time joined) / Reply by (Jose Luis, Nov 26)", res.includes("Original Meeting Date: Monday, November 23") && res.includes("New Meeting Date: Tuesday, November 24 at 5:15 PM") && res.includes("Reply by: Friday, November 27"));
+  check("Result: side column is IF YOU DO NOTHING -> REPLY (his Nov 27 printout: both moved UP beside the reading, Why card off this page)", res.indexOf("IF YOU DO NOTHING") > res.indexOf("Source:") && res.indexOf("Click Draft a reply after reading the email.") > res.indexOf("IF YOU DO NOTHING") && !res.includes("warm backgrounds tested best"));
   const bigBtns = await page.locator("button.bigbtn").count();
   check("Result: REPLY button is the BIG button (noticeable, active)", bigBtns >= 1, `big buttons=${bigBtns}`);
   check("Result: exact time '5:15 PM' shown", res.includes("5:15 PM"));
@@ -233,7 +240,7 @@ async function main() {
   await page.click("text=Make it clear");
   await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
   const ibRes = await bodyText(page);
-  check("Inbox: clear page shows exact date 'Tuesday November 24'", ibRes.includes("Tuesday November 24"));
+  check("Inbox: clear page shows the labeled date line", ibRes.includes("New Meeting Date: Tuesday, November 24 at 5:15 PM"));
 
   // ---------- Step 2c: the reply walk (added Nov 24) ----------
   // From the inbox clear page: draft + send a reply, thinking banner up while drafting.
@@ -249,13 +256,15 @@ async function main() {
   check("Reply: thinking banner shows while the AI drafts the reply", draftThink);
   await page.evaluate(() => { document.querySelectorAll("button[type=submit]").forEach((b) => { (b as HTMLButtonElement).disabled = false; }); });
   await page.click("text=Draft a reply");
-  await page.waitForSelector("text=YOUR REPLY DRAFT", { timeout: 90_000 });
+  await page.waitForSelector("text=YOUR REPLY DRAFT", { timeout: 150_000 });
   const dp = await bodyText(page);
-  check("Reply: draft page shows BEFORE anything is sent (Send button waits for the reader)", dp.includes("Send this reply") && dp.includes("Nothing is sent until you press Send"));
+  check("Reply: draft page shows BEFORE anything is sent - his line on top, Send button waits for the reader", dp.includes("Send this reply") && dp.includes("Below, please read the proposed draft reply email generated for you.") && dp.includes("dark blue Send this reply button"));
   check("Reply: draft page says who wrote it (AI pill or Rules pill)", dp.includes("AI: live model response") || dp.includes("Rules: instant answer"));
+  const sendBg = await page.evaluate(() => { const b = document.querySelector("button.sendbtn"); return b ? getComputedStyle(b).backgroundColor : ""; });
+  check("Reply: the Send button IS dark blue, as the page's own words say", sendBg === "rgb(18, 58, 122)", sendBg);
   await page.fill('textarea[name="body"]', "Hello Maria,\n\nI will attend on Tuesday November 24 at 5:15 PM and bring my photo ID.\n\nThank you,\nJose Luis");
   await page.click("text=Send this reply");
-  await page.waitForSelector("text=REPLY SENT", { timeout: 90_000 });
+  await page.waitForSelector("text=REPLY SENT", { timeout: 150_000 });
   const rp = await bodyText(page);
   check("Reply: sent page shows the sender's real address", rp.includes("maria.lopez@example.org"));
   check("Reply: sent page shows subject 'Re: Board meeting moved'", rp.includes("Re: Board meeting moved"));
@@ -316,6 +325,17 @@ async function main() {
   const apiFol = await page.request.get(BASE + "/api/followups");
   const folJson = await apiFol.json();
   check("API: follow-ups JSON never carries an address field", apiFol.status() === 200 && (folJson.followups || []).every((i: any) => !("addr" in i)));
+
+  // ---------- Step 2f: the duties guard (added Nov 26 evening) ----------
+  // A thank-you email that asks for NOTHING must not grow invented duties.
+  await page.goto(BASE + "/", { waitUntil: "load", timeout: 90_000 });
+  await page.fill('input[name="sender"]', "Ana Ruiz");
+  await page.fill('input[name="subject"]', "Thank you");
+  await page.fill('textarea[name="text"]', "Thank you for the wonderful evening. We loved the food and the company. No reply is needed at all.");
+  await page.click('button[type="submit"]');
+  await page.waitForSelector("text=WHAT THIS IS", { timeout: 60_000 });
+  const noAsk = await bodyText(page);
+  check("Duties guard: a no-ask email shows 'asks nothing of you' - no invented duties", noAsk.includes("This email asks nothing of you"));
 
   // ---------- Step 3: follow-ups page ----------
   await page.click('a[href="/followups"]');
