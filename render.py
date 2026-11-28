@@ -65,7 +65,7 @@ STRINGS = {
            "why3": "Wide letter spacing — reading errors cut in half in 74 dyslexic children (PNAS 2012)",
            "why4": "Short lines, one column — 27% faster reading, backward eye jumps cut by more than half (Harvard–Smithsonian, 2013)",
            "why5": "Color never works alone — every box has a big label + a shape (WCAG 2.2 AA)",
-           "another": "Untangle another one", "followups": "Follow-ups",
+           "another": "Untangle another one", "back_clear": "Back to the clear page", "followups": "Follow-ups",
            "followups_title": "Follow-ups I remember",
            "demo_entries": "Demo entries — made from sample text pasted by visitors.",
            "no_followups": "No follow-ups waiting.", "nudge": "no reply yet — I will nudge"},
@@ -120,7 +120,7 @@ STRINGS = {
            "why3": "Espaciado amplio entre letras — los errores de lectura se redujeron a la mitad en 74 niños con dislexia (PNAS 2012)",
            "why4": "Líneas cortas, una columna — lectura 27% más rápida y menos de la mitad de saltos hacia atrás (Harvard–Smithsonian, 2013)",
            "why5": "El color nunca actúa solo — cada caja tiene una etiqueta grande y una forma (WCAG 2.2 AA)",
-           "another": "Desenreda otro mensaje", "followups": "Seguimientos",
+           "another": "Desenreda otro mensaje", "back_clear": "Volver a la página clara", "followups": "Seguimientos",
            "followups_title": "Seguimientos que recuerdo",
            "demo_entries": "Entradas de demostración: creadas con texto de ejemplo pegado por visitantes.",
            "no_followups": "No hay seguimientos en espera.", "nudge": "sin respuesta aún — le recordaré a"},
@@ -175,7 +175,7 @@ STRINGS = {
            "why3": "Khoảng cách chữ rộng — lỗi đọc giảm một nửa ở 74 trẻ khó đọc (PNAS 2012)",
            "why4": "Dòng ngắn, một cột — đọc nhanh hơn 27%, số lần mắt nhảy ngược giảm hơn một nửa (Harvard–Smithsonian, 2013)",
            "why5": "Màu sắc không bao giờ đứng một mình — mỗi hộp có nhãn lớn + hình dạng (WCAG 2.2 AA)",
-           "another": "Gỡ rối thêm một tin nữa", "followups": "Việc cần theo dõi",
+           "another": "Gỡ rối thêm một tin nữa", "back_clear": "Quay lại trang rõ ràng", "followups": "Việc cần theo dõi",
            "followups_title": "Những việc tôi ghi nhớ",
            "demo_entries": "Mục demo — được tạo từ văn bản mẫu do khách truy cập dán vào.",
            "no_followups": "Không có việc nào đang chờ.", "nudge": "chưa trả lời — tôi sẽ nhắc"},
@@ -361,7 +361,7 @@ def render_bulk(lang="en", waiting=0, results=None, counts=None, up=True):
 {skips}
 {cards}
 {more}
-<p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
+<p class='big'><a href='/'>{s['another']}</a></p>""", s)
 
 def render_inbox(messages, lang="en", down=False):
     s = S(lang)
@@ -534,7 +534,7 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
 <div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
 <div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
 {send_form}</div>
-<p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
+<p class='big'><a href='/'>{s['another']}</a></p>""", s)
 
 def render_reply_sent(to, subject, body_text, sent, lang="en"):
     s = S(lang)
@@ -545,7 +545,7 @@ def render_reply_sent(to, subject, body_text, sent, lang="en"):
 <div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
 <div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div></div>
 {("<p class='big'><b>" + s['sent_see'] + "</b></p><p><a class='btn bigbtn' href='/mailpit/' target='_blank' rel='noopener'>" + s['sent_both'] + "</a></p>") if sent else ""}
-<p class='big'><a href='/followups'>{s['nav_followups']}</a> &middot; <a href='/'>{s['nav_clear']}</a></p>""", s)
+<p class='big'><a href='/'>{s['back_clear']}</a></p>""", s)
 
 
 def render_connected(proof, lang="en", checked=""):
