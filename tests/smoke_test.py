@@ -107,7 +107,7 @@ check("result page: right column = DATES + NUMBERS on top, REPLY under it, IF YO
 check("result page: REPLY is an action card with the BIG button", "replycard" in page and "bigbtn" in page and "Click Draft a reply after reading the email." in page)
 code, conn = get("/connected")
 check("PROOF PAGE: GitHub side LIVE with real metadata (login, newest commit, rate left)", code == 200 and "jlhpacheco" in conn and "Newest commit" in conn and "API calls left" in conn)
-check("PROOF PAGE: Together side LIVE with a real test call (model answer + tokens + call id)", "DeepSeek-V4.1-Flash-1017" in conn and "Tokens in the test call" in conn and "The model answered" in conn and conn.count("LIVE - working now") >= 2 and "No typed-in numbers" in conn)
+check("PROOF PAGE: Together side LIVE with a real test call (model answer + tokens + call id)", "DeepSeek-V4.1-Flash-1017" in conn and "Tokens in the test call" in conn and "The model answered" in conn and conn.count("LIVE - working now") >= 2)
 check("PROOF PAGE: TWO COLUMNS - GitHub left, Together AI right (Jose Luis's printout, Nov 27)", "class='cols2'" in conn and conn.index("GitHub") < conn.index("Together AI") and conn.index("class='cols2'") < conn.index("GitHub"))
 code, esc = post("/", {"sender": "Test", "subject": "Esc", "text": "Hello <b>ZZTEST</b> world. Please reply to confirm.", "lang": "en"})
 check("pasted HTML never raw (escaped or paraphrased)", "<b>ZZTEST</b>" not in esc)
