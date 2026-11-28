@@ -298,10 +298,12 @@ ASK_EXTRA = {
            "enviar", "confirmar", "responder", "entregar", "entregue",
            "firmes", "pagues", "envíes", "envies", "devuelvas", "traigas", "respondas",
            "completes", "revises", "rellenes", "registres", "decir", "diga", "digan", "dime",
-           "se ruega", "paga", "devuelve", "trae", "firmad", "enviad", "enviadlo"),
+           "se ruega", "paga", "devuelve", "trae", "firmad", "enviad", "enviadlo",
+           "muestra", "muestre", "mostrar", "presenta", "presente", "presentar",
+           "enseña", "enseñe", "enseñar", "ven", "venga", "vengan", "venir"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
            "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót",
-           "nộp", "hoàn tất", "chuyển khoản", "đề nghị", "phản hồi"),
+           "nộp", "hoàn tất", "chuyển khoản", "đề nghị", "phản hồi", "mang"),
 }
 
 # Politeness words and pressure nouns are NOT asks on their own: "please"
@@ -350,6 +352,23 @@ _ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} |
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 
+# A chain link may cross a short object ("el documento firmado por el
+# notario o..."), but it may not step over a word that is itself an ask
+# word: in a punctuation-free run-on ("...que firmes el documento envía
+# el pago o trae el recibo") an untempered span swallows the second duty
+# whole (round-15 technical). The temper sets are BUILT from the ask
+# lists above, never hand-spelled: every bare ask word, plus each
+# infinitive's stem (enviar -> envia, so "envía" is caught too).
+def _fold_acc(w):
+    return "".join({"a": "[aá]", "e": "[eé]", "i": "[ií]", "o": "[oó]", "u": "[uú]"}.get(c, re.escape(c)) for c in w)
+
+_ES_TEMPER_WORDS = sorted({_deacc(w) for w in _ES_BASE if " " not in w} |
+                          {_deacc(w)[:-1] for w in _ES_BASE if " " not in w and w.endswith("r")})
+_SPAN_ES = (r"(?:(?!(?:" + "|".join(_fold_acc(w) for w in _ES_TEMPER_WORDS) + r")\b)\w+\s+){0,6}?")
+_VI_BASE = [w for w in ACTION_HINTS["vi"] + ASK_EXTRA["vi"] if w not in _NOT_ASK_WORDS]
+_VI_TEMPER_WORDS = sorted({w for w in _VI_BASE if " " not in w})
+_SPAN_VI = (r"(?:(?!(?:" + "|".join(re.escape(w) for w in _VI_TEMPER_WORDS) + r")\b)\w+\s+){0,6}?")
+
 # A no-need phrase governs the verb right after it: in "No hace falta
 # firmarlo ni enviarlo" (no need to sign it or send it) the glued verbs
 # are exactly what the sentence says is NOT needed, so the phrase and
@@ -357,13 +376,13 @@ _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 # duties in a sentence that cancels them (round-7 skeptic, Nov 28).
 _PRON = "lo|la|los|las|le|les|me|te|se|nos"
 _GOVERNED = "(?:(" + _PRON + r")\s+)?\w+(?:" + _PRON + ")?"
-_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes|no hay que|no hay necesidad de|no es obligatorio)"
+_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes|no hay que|no hay necesidad de|no es obligatorio|no es menester|no resulta necesario|no se precisa|no procede)"
                          r"(\s+ni)?(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
-                         + _GOVERNED + r"(\s+(?:\w+\s+){0,6}?(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
-_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not|not required to)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega(?:\s+\w+)? |favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+ni\s+" + _GOVERNED + r")*")
-_BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"(\s+(?:\w+\s+){0,6}?(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
-_NO_NEED_VI_RE = re.compile(r"\bkhông cần(\s+thiết)?(\s+phải)?\s+\w+(\s+(?:\w+\s+){0,6}?hay\s+\w+)*")
+                         + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
+_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not|not required to|not necessary to|no obligation to|under no obligation to)\s+\w+(\s+(or|and)\s+\w+)*")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega(?:\s+\w+){0,2}?\s+no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega(?:\s+\w+){0,2}? |favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+ni\s+" + _GOVERNED + r")*")
+_BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
+_NO_NEED_VI_RE = re.compile(r"\bkhông (?:cần(?:\s+thiết)?|nhất thiết|bắt buộc)(\s+phải)?\s+\w+(\s+" + _SPAN_VI + r"hay\s+\w+)*")
 _DO_NOT_EN_RE = re.compile(r"\b(do not|don't|that you not)\s+\w+(\s+(or|and)\s+\w+)*")
 _NEVER_EN_RE = re.compile(r"\bnever\s+\w+(\s+(or|and)\s+\w+)*")
 _NEG_ASK_VI_RE = re.compile(r"\b(đừng|chớ|không nên|không phải)(\s+có)?\s+\w+")
