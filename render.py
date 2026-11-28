@@ -251,7 +251,7 @@ padding:12px 22px;font-size:22px;font-weight:bold;text-decoration:none;box-shado
 .cols2{display:block}
 .trust div{margin-top:8px}
 .why div{margin-top:10px}
-@media(min-width:920px){.wrap{max-width:1080px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}}
+@media(min-width:920px){.wrap{max-width:1080px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.layout.even{grid-template-columns:1fr 1fr}}
 """
 
 def _shell(inner, s):
@@ -471,7 +471,7 @@ def render_page(p):
 </div>"""
     return _shell(f"""{_bar(pill, s)}
 <p class='big'><b>{s['demo_page']}</b></p>
-<div class='layout'><div>
+<div class='layout even'><div>
 <div class='box blue'><span class='lbl'>&#9632; {s['what']}</span><div class='big'>{esc(p.get('what',''))}</div></div>
 <div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{actions}</div>
 <div class='box purple'><span class='lbl'>&#9679; {s['facts']}</span><table>{facts}</table></div>
