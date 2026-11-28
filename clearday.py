@@ -276,7 +276,8 @@ def _ground_facts(facts, allowed, source, lang="en"):
 NO_ASK_PHRASES = {
     "en": ("no reply is needed", "no reply needed", "no action needed", "no action is needed",
            "no need to reply", "no response needed", "nothing is needed", "nothing needed from you",
-           "just sharing", "just wanted to share", "for your information"),
+           "just sharing", "just wanted to share", "for your information",
+           "do not reply", "don't reply", "no reply please"),
     "es": ("no es necesario responder", "no hace falta responder", "solo comparto",
            "solo para tu información", "solo para su información",
            "no es necesario que responda", "no es necesario que respondas",
@@ -287,16 +288,20 @@ ASK_EXTRA = {
     "en": ("register", "complete", "fill out", "fill in", "return", "pay", "review", "check",
            "let me know", "let us know", "forget", "remember to", "be sure", "make sure",
            "need you", "asking", "request", "required", "must", "deadline", "due by",
-           "remit", "requested", "be signed", "be returned", "be submitted", "be completed"),
+           "remit", "requested", "be signed", "be returned", "be submitted", "be completed",
+           "be paid", "be sent"),
     "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
            "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
            "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite",
            "confirma", "responde", "envía", "envia", "envíe", "firma", "firme", "revisa", "completa",
            "firmar", "remitir", "sírvase", "tenga a bien",
-           "enviar", "confirmar", "responder", "entregar", "entregue"),
+           "enviar", "confirmar", "responder", "entregar", "entregue",
+           "firmes", "pagues", "envíes", "envies", "devuelvas", "traigas", "respondas",
+           "completes", "revises", "rellenes", "registres", "decir", "diga", "digan", "dime",
+           "se ruega"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
            "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót",
-           "nộp", "hoàn tất", "chuyển khoản", "đề nghị"),
+           "nộp", "hoàn tất", "chuyển khoản", "đề nghị", "phản hồi"),
 }
 
 # Politeness words and pressure nouns are NOT asks on their own: "please"
@@ -309,15 +314,6 @@ _NOT_ASK_WORDS = {"please", "por favor", "vui lòng",
 _ASK_WORDS = tuple(w for lg in ("en", "es", "vi")
                    for w in ACTION_HINTS[lg] + ASK_EXTRA[lg]
                    if w not in _NOT_ASK_WORDS)
-# Spanish glues the pronoun to the verb's tail - "devolverlo" (return it),
-# "firmarla" (sign it) - and a word boundary after the bare verb misses it.
-# Add the -lo/-la/-me tails of every single-word Spanish ask verb so the
-# formal register cannot slip past (round-5 skeptic probes, Nov 28).
-_ASK_WORDS += tuple(w + tail
-                    for w in list(_ASK_WORDS)
-                    if " " not in w and w in (ACTION_HINTS["es"] + ASK_EXTRA["es"])
-                    and (w[-1] in "aeiou" or w.endswith("r"))
-                    for tail in ("lo", "la", "los", "las", "le", "les", "me", "se"))
 _ASK_RE = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ASK_WORDS) + r")\b")
 
 def _deacc(s):
@@ -359,8 +355,8 @@ _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 # are exactly what the sentence says is NOT needed, so the phrase and
 # its governed verb(s) lift out together - otherwise the scan hears two
 # duties in a sentence that cancels them (round-7 skeptic, Nov 28).
-_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso)(\s+que)?\s+\w+(?:lo|la|los|las|les|me|te|se|nos)?(\s+ni\s+\w+(?:lo|la|los|las|les|me|te|se|nos)?)*")
-_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to)\s+\w+(\s+(or|and)\s+\w+)*")
+_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso)(\s+que)?[\s,]*(?:por ahora|por el momento)?[\s,]*\w+(?:lo|la|los|las|les|me|te|se|nos)?(\s+ni\s+\w+(?:lo|la|los|las|les|me|te|se|nos)?)*")
+_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to)\s+\w+(\s+(or|and)\s+\w+)*")
 
 def _has_ask(text, lang="en"):
     """True when the source text itself asks the reader for something.
