@@ -7,7 +7,7 @@ Design rules (International Dyslexia Association (IDA, USA) + US WCAG 2.2 AA (AD
 - Avoid red/green as a meaning pair
 - Bold only, no italics / underline, short phrases, max 3 actions
 """
-import re, json, os, urllib.request, threading
+import re, json, os, urllib.request, threading, unicodedata
 from datetime import datetime
 
 DATE_RE = re.compile(r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b|\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b|\b(?:[01]?\d|2[0-3]):[0-5]\d\b", re.I)
@@ -286,11 +286,12 @@ NO_ASK_PHRASES = {
 ASK_EXTRA = {
     "en": ("register", "complete", "fill out", "fill in", "return", "pay", "review", "check",
            "let me know", "let us know", "forget", "remember to", "be sure", "make sure",
-           "need you", "asking", "request", "required", "must", "deadline", "due by"),
+           "need you", "asking", "request", "required", "must", "deadline", "due by",
+           "remit", "requested"),
     "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
            "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
            "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite",
-           "confirma", "responde", "envía", "envia", "envíe", "firma", "revisa", "completa",
+           "confirma", "responde", "envía", "envia", "envíe", "firma", "firme", "revisa", "completa",
            "firmar", "remitir", "sírvase", "tenga a bien"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
            "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót"),
@@ -314,8 +315,25 @@ _ASK_WORDS += tuple(w + tail
                     for w in list(_ASK_WORDS)
                     if " " not in w and w in (ACTION_HINTS["es"] + ASK_EXTRA["es"])
                     and (w[-1] in "aeiou" or w.endswith("r"))
-                    for tail in ("lo", "la", "me"))
+                    for tail in ("lo", "la", "los", "las", "le", "les", "me", "se"))
 _ASK_RE = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ASK_WORDS) + r")\b")
+
+def _deacc(s):
+    """Strip accent marks (á -> a) for the formal-Spanish scan below."""
+    return "".join(ch for ch in unicodedata.normalize("NFD", s)
+                   if not unicodedata.combining(ch))
+
+# Formal written Spanish puts a written accent on a glued pronoun form -
+# "envíelos" (send them), "devuélvalo" (return it), "fírmelas" (sign them) -
+# so neither the bare verb nor its unaccented tail ever matches. Scan a
+# de-accented copy of the text with de-accented Spanish ask-words and the
+# full pronoun tail set (round-6 skeptic probes, Nov 28).
+_ES_BASE = [w for w in ACTION_HINTS["es"] + ASK_EXTRA["es"] if w not in _NOT_ASK_WORDS]
+_ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} |
+                   {_deacc(w) + t for w in _ES_BASE
+                    if " " not in w and (w[-1] in "aeiou" or w.endswith("r"))
+                    for t in ("lo", "la", "los", "las", "le", "les", "me", "se")})
+_ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 
 def _has_ask(text, lang="en"):
@@ -330,7 +348,7 @@ def _has_ask(text, lang="en"):
     low = (text or "").lower()
     for p in _NO_ASK_ALL:
         low = low.replace(p, " ")
-    return bool(_ASK_RE.search(low))
+    return bool(_ASK_RE.search(low) or _ASK_RE_ES.search(_deacc(low)))
 
 
 _MODEL_SEM = threading.Semaphore(3)  # max model calls in flight, demo-wide - held inside _call_model so EVERY call site counts (technical lens, Nov 28)
