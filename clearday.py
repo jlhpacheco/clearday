@@ -445,14 +445,15 @@ _SE_SCOPE_RE = re.compile(r"\bse (" + _ANNOUNCE_ES + r")\b(?![^.!?;\n]*?\b(?:a l
 _READER_ROLES = "solicitantes?|participantes?|aspirantes?|postulantes?|estudiantes?|titular(?:es)?|contribuyentes?|pacientes?|residentes?|derechohabientes?|comparecientes?|pensionistas?|cosolicitantes?|interesad[oa]s?|candidat[oa]s?|usuari[oa]s?|emplead[oa]s?|pasajer[oa]s?|vecin[oa]s?|client[ea]s?|miembr[oa]s?|beneficiari[oa]s?|asegurad[oa]s?|afiliad[oa]s?|inquilin[oa]s?|pensionad[oa]s?|alumn[oa]s?|jubilad[oa]s?|becari[oa]s?|pasantes?|arrendatari[oa]s?"
 _ROLE_GUARD = r"(?!(?:" + _READER_ROLES + r"|se)\b)"
 _SE_GUARD = r"(?!se\b)"
-_MOD_CHAIN_ES = r"(?:\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tras)\s+(?:(?:el|la|los|las)\s+)?\w+)*"
+_MOD_CHAIN_ES = r"(?:\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tras|mediante|desde|a\s+través\s+de)\s+(?:(?:el|la|los|las)\s+)?\w+)*"
 # The pattern's first alternative is the guard made visible (round-22
 # skeptic): a role-headed subject phrase is consumed whole, so the
 # stamp can never restart at a determiner inside the role's own
 # de-phrase and re-read "la cuenta" as the subject - "el titular de
 # la cuenta presenta..." asks, because the reader's party is acting.
 # Its modifier chain is prep-headed (de / en / del at first; por /
-# con / según / ante / durante / tras joined in round 27) on purpose: the
+# con / según / ante / durante / tras joined in round 27; mediante /
+# desde / a través de in round 28) on purpose: the
 # verb is never prep-headed, so the chain can repeat without ever
 # eating it - a bare optional word in that seat ate the verb in this
 # fix's first build, and U268 caught it.
@@ -490,7 +491,20 @@ _MOD_CHAIN_ES = r"(?:\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tra
 # "ni" plus an adjunct now asks, the twin of the single-ni plus
 # conjunct exposure standing since round 24 - the ni...ni pair
 # itself still silences (round-27 skeptic, U325-U348).
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:(?:,\s+|\s+)(?:y/o|y|o)\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)as[íi]\s+como\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)adem[áa]s\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)acompa[ñn]ad[oa]s?\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)como\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:en|con|por|seg[úu]n|ante|durante|tras)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)junto\s+(?:con|a)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")*|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
+# Round 28 took the intervention position's second layer and one
+# parenthetical. The register's stock adjunct phrases joined the
+# seats their shapes allow: mediante / desde / a través de ride
+# both the adjunct member and the chain; por medio de / de parte
+# de / para sit in the adjunct member only - the first two because
+# their bare forms already compose link by link on the chain, para
+# because it must NEVER join the chain: a para link would eat
+# purpose infinitives ("para presentar los documentos, acude...")
+# and manufacture the erasure it claims to fix, while the member's
+# determiner slot refuses infinitives on its own. And a comma-led
+# chain member covers the parenthetical de-phrase ("el titular, de
+# la cuenta, presenta..."), the one comma shape no member reached
+# (round-28 skeptic and technical, U349-U366).
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:(?:,\s+|\s+)(?:y/o|y|o)\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)as[íi]\s+como\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)adem[áa]s\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)acompa[ñn]ad[oa]s?\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)como\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:a\s+través\s+de|por\s+medio\s+de|de\s+parte\s+de|en|con|por|seg[úu]n|ante|durante|tras|mediante|desde|para)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tras|mediante|desde|a\s+través\s+de)\s+(?:(?:el|la|los|las)\s+)?\w+" + _MOD_CHAIN_ES + r"|,\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)junto\s+(?:con|a)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")*|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
