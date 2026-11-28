@@ -357,13 +357,13 @@ _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 # duties in a sentence that cancels them (round-7 skeptic, Nov 28).
 _PRON = "lo|la|los|las|le|les|me|te|se|nos"
 _GOVERNED = "(?:(" + _PRON + r")\s+)?\w+(?:" + _PRON + ")?"
-_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes)"
+_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes|no hay que|no hay necesidad de|no es obligatorio)"
                          r"(\s+ni)?(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
-                         + _GOVERNED + r"(\s+(?:\w+\s+){0,2}?(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
-_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega |favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+\w+(?:" + _PRON + r")?(\s+ni\s+\w+(?:" + _PRON + ")?)*")
-_BARE_NO_ES_RE = re.compile(r"\bno\s+\w+(?:" + _PRON + r")?(\s+(?:\w+\s+){0,2}?(?:ni|o)\s+(?:que\s+)?\w+(?:" + _PRON + r")?)*")
-_NO_NEED_VI_RE = re.compile(r"\bkhông cần(\s+phải)?\s+\w+(\s+(?:\w+\s+){0,2}?hay\s+\w+)*")
+                         + _GOVERNED + r"(\s+(?:\w+\s+){0,6}?(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
+_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not|not required to)\s+\w+(\s+(or|and)\s+\w+)*")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega(?:\s+\w+)? |favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+ni\s+" + _GOVERNED + r")*")
+_BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"(\s+(?:\w+\s+){0,6}?(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
+_NO_NEED_VI_RE = re.compile(r"\bkhông cần(\s+thiết)?(\s+phải)?\s+\w+(\s+(?:\w+\s+){0,6}?hay\s+\w+)*")
 _DO_NOT_EN_RE = re.compile(r"\b(do not|don't|that you not)\s+\w+(\s+(or|and)\s+\w+)*")
 _NEVER_EN_RE = re.compile(r"\bnever\s+\w+(\s+(or|and)\s+\w+)*")
 _NEG_ASK_VI_RE = re.compile(r"\b(đừng|chớ|không nên|không phải)(\s+có)?\s+\w+")
