@@ -355,8 +355,14 @@ _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 # are exactly what the sentence says is NOT needed, so the phrase and
 # its governed verb(s) lift out together - otherwise the scan hears two
 # duties in a sentence that cancels them (round-7 skeptic, Nov 28).
-_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes)(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*(?:(lo|la|los|las|le|les|me|te|se|nos)\s+)?\w+(?:lo|la|los|las|les|me|te|se|nos)?(\s+ni\s+(?:que\s+)?(?:(lo|la|los|las|le|les|me|te|se|nos)\s+)?\w+(?:lo|la|los|las|les|me|te|se|nos)?)*")
-_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to)\s+\w+(\s+(or|and)\s+\w+)*")
+_PRON = "lo|la|los|las|le|les|me|te|se|nos"
+_GOVERNED = "(?:(" + _PRON + r")\s+)?\w+(?:" + _PRON + ")?"
+_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes)"
+                         r"(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
+                         + _GOVERNED + r"(\s+ni\s+(?:que\s+)?" + _GOVERNED + ")*")
+_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't)\s+\w+(\s+(or|and)\s+\w+)*")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega no|sin necesidad de)\s+\w+(?:" + _PRON + r")?(\s+ni\s+\w+(?:" + _PRON + ")?)*")
+_NO_NEED_VI_RE = re.compile(r"\bkhông cần(\s+phải)?\s+\w+")
 
 def _has_ask(text, lang="en"):
     """True when the source text itself asks the reader for something.
@@ -371,6 +377,7 @@ def _has_ask(text, lang="en"):
     for p in _NO_ASK_ALL:
         low = low.replace(p, " ")
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
+    low = _NO_NEED_VI_RE.sub(" ", _NEG_ASK_ES_RE.sub(" ", low))
     return bool(_ASK_RE.search(low) or _ASK_RE_ES.search(_deacc(low)))
 
 
