@@ -287,14 +287,16 @@ ASK_EXTRA = {
     "en": ("register", "complete", "fill out", "fill in", "return", "pay", "review", "check",
            "let me know", "let us know", "forget", "remember to", "be sure", "make sure",
            "need you", "asking", "request", "required", "must", "deadline", "due by",
-           "remit", "requested"),
+           "remit", "requested", "be signed", "be returned", "be submitted", "be completed"),
     "es": ("registre", "registrar", "complete", "completar", "rellene", "rellenar", "devuelva",
            "devolver", "pague", "pagar", "revise", "revisar", "avise", "avíseme", "olvide",
            "recuerde", "asegúrese", "necesito que", "solicito", "requerido", "debe", "fecha límite",
            "confirma", "responde", "envía", "envia", "envíe", "firma", "firme", "revisa", "completa",
-           "firmar", "remitir", "sírvase", "tenga a bien"),
+           "firmar", "remitir", "sírvase", "tenga a bien",
+           "enviar", "confirmar", "responder", "entregar", "entregue"),
     "vi": ("đăng ký", "hoàn thành", "điền", "trả lại", "thanh toán", "xem lại", "cho tôi biết",
-           "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót"),
+           "đừng quên", "nhớ", "hãy chắc chắn", "yêu cầu", "bắt buộc", "phải", "hạn chót",
+           "nộp", "hoàn tất", "chuyển khoản", "đề nghị"),
 }
 
 # Politeness words and pressure nouns are NOT asks on their own: "please"
@@ -329,12 +331,36 @@ def _deacc(s):
 # de-accented copy of the text with de-accented Spanish ask-words and the
 # full pronoun tail set (round-6 skeptic probes, Nov 28).
 _ES_BASE = [w for w in ACTION_HINTS["es"] + ASK_EXTRA["es"] if w not in _NOT_ASK_WORDS]
+def _es_gerund(w):
+    """enviar -> enviando, devolver -> devolviendo, remitir -> remitiendo."""
+    if w.endswith("ar"):
+        return w[:-2] + "ando"
+    if w.endswith(("er", "ir")):
+        return w[:-2] + "iendo"
+    return None
+
+# Stems that can carry glued pronouns: the ask verbs themselves, plus
+# their gerunds ("enviándolos" - sending them). Formal Spanish stacks
+# TWO pronouns on one verb - indirect (me/te/se/nos) + direct
+# (lo/la/los/las): "envíemelos" (send them to me), "fírmeselo" (sign it
+# for him), "enviármelos" (to send them to me) - so the generator builds
+# the stacks too (round-7 skeptic probes, Nov 28).
+_ES_STEMS = [w for w in _ES_BASE if " " not in w and (w[-1] in "aeiou" or w.endswith("r"))]
+_ES_STEMS += [g for w in _ES_BASE if " " not in w and _es_gerund(w) for g in (_es_gerund(w),)]
+_ES_TAILS = ("lo", "la", "los", "las", "le", "les", "me", "se")
+_ES_STACKS = tuple(i + d for i in ("me", "te", "se", "nos") for d in ("lo", "la", "los", "las"))
 _ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} |
-                   {_deacc(w) + t for w in _ES_BASE
-                    if " " not in w and (w[-1] in "aeiou" or w.endswith("r"))
-                    for t in ("lo", "la", "los", "las", "le", "les", "me", "se")})
+                   {_deacc(w) + t for w in _ES_STEMS for t in _ES_TAILS + _ES_STACKS})
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
+
+# A no-need phrase governs the verb right after it: in "No hace falta
+# firmarlo ni enviarlo" (no need to sign it or send it) the glued verbs
+# are exactly what the sentence says is NOT needed, so the phrase and
+# its governed verb(s) lift out together - otherwise the scan hears two
+# duties in a sentence that cancels them (round-7 skeptic, Nov 28).
+_NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso)(\s+que)?\s+\w+(?:lo|la|los|las|les|me|te|se|nos)?(\s+ni\s+\w+(?:lo|la|los|las|les|me|te|se|nos)?)*")
+_NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to)\s+\w+(\s+(or|and)\s+\w+)*")
 
 def _has_ask(text, lang="en"):
     """True when the source text itself asks the reader for something.
@@ -348,6 +374,7 @@ def _has_ask(text, lang="en"):
     low = (text or "").lower()
     for p in _NO_ASK_ALL:
         low = low.replace(p, " ")
+    low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
     return bool(_ASK_RE.search(low) or _ASK_RE_ES.search(_deacc(low)))
 
 
