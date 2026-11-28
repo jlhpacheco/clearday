@@ -459,7 +459,15 @@ _MOD_CHAIN_ES = r"(?:\s+(?:de|en|del)\s+(?:(?:el|la|los|las)\s+)?\w+)*"
 # titular y la directora...", ", junto con la directora,") - any
 # determiner left standing is a fresh start for the stamp, and the
 # stamp would orphan the role and silence the pair (round-24 skeptic).
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:\s+y\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")?(?:,\s+junto\s+con\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")?|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
+# The continuation is one repeating group over the whole coordination
+# vocabulary - y/o conjuncts repeat, bare comma lists, junto con /
+# junto a with or without the comma, acompanado de appositives -
+# because round 25's survivor audit found every connector the group
+# did not know orphaning its conjunct the same way. "ni" is NOT a
+# member on purpose: "ni el titular ni la directora presentan..." is
+# a negative description, and it stays silent only because the stamp
+# still silences the pair (round-25 skeptic, U307).
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:\s+(?:y|o)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+acompañad[oa]\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)junto\s+(?:con|a)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")*|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
