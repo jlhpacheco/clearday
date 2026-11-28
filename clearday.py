@@ -421,8 +421,16 @@ def _stamp_re(phrases):
     return re.compile(r"\b(?:" + "|".join(re.escape(p) for p in sorted(phrases, key=len, reverse=True)) + r")\b")
 
 _NO_ASK_RE = _stamp_re(_NO_ASK_ALL)
-_SCOPES_RE = _stamp_re(_SCOPES_ALL)
+_SCOPES_RE = _stamp_re(tuple(p for p in _SCOPES_ALL if p not in ("una muestra", "la muestra", "muestra gratuita")))
 _ANNOUNCE_ES = "muestra|presenta|enseña|muestre|presente|enseñe|muestran|presentan|enseñan|muestren|presenten|enseñen|mostrará|presentará|enseñará|mostrarán|presentarán|enseñarán"
+# The three muestra scopes ride their own stamp (round-30 judge):
+# eaten plainly, "la muestra" starves the announcement stamp of its
+# re-anchor when the phrase is the intervener's noun ("el museo, en
+# atención a la muestra, presenta..."), so this stamp refuses when
+# an announce verb follows, across an optional de-phrase - the
+# stamp then eats phrase and verb together, as it does for every
+# other intervener noun.
+_SCOPES_MUESTRA_RE = re.compile(r"\b(?:(?:una|la)\s+muestra|muestra\s+gratuita)\b(?!(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b)")
 # The Spanish announcement verbs are stamped by a GUARDED pattern, not a
 # literal (round-17 skeptic): "se muestra / se presenta / se enseña" is an
 # announcement only while no place or time follows before the sentence ends -
@@ -522,7 +530,23 @@ _MOD_CHAIN_ES = r"(?:\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tra
 # announcements stop inventing duties while a role subject with
 # the same phrase still asks (round-29 skeptic and judge,
 # U367-U386).
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:(?:,\s+|\s+)(?:y/o|y|o)\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)as[íi]\s+como\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)adem[áa]s\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)acompa[ñn]ad[oa]s?\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)como\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:para\s+efectos\s+de|al\s+amparo\s+de|a\s+través\s+de|por\s+medio\s+de|de\s+parte\s+de|en|con|por|seg[úu]n|ante|durante|tras|mediante|desde|para)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tras|mediante|desde|a\s+través\s+de|a)\s+(?:(?:el|la|los|las)\s+)?\w+" + _MOD_CHAIN_ES + r"|,\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)junto\s+(?:con|a)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")*|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?(?:[\s,]+(?:(?:en|desde|con|por|ante|durante|tras|mediante|seg[úu]n|a)\s+(?:su|sus)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?|hoy|mañana))?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
+# Round 30 paid three prices in three different seats. The
+# announcement stamp gained a possessive HEAD branch (su / sus +
+# the same role-guarded noun phrase): "su estado de cuenta
+# presenta un saldo" is the bank's commonest announcement frame
+# and it was inventing duties. Alternative 1 gained a pre-verb
+# segment - one non-announce verb, an object, and "y" - because
+# the stamp was building a fake subject out of the object plus
+# the conjunction ("el titular recoge la carpeta y presenta..."
+# lost its verb to "la carpeta y presenta"); the segment is
+# alt-1-side precisely because the same swallow is load-bearing
+# for the museum twin, and the usted twin stays blind - the
+# subject-blindness it shares with the name head, classified for
+# a board decision. And the muestra scopes learned to refuse
+# when an announce verb follows (see _SCOPES_MUESTRA_RE), so a
+# scope can no longer starve the stamp of its anchor
+# (round-30 skeptic and judge, U387-U401).
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b" + _MOD_CHAIN_ES + r"(?:(?:,\s+|\s+)(?:y/o|y|o)\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)as[íi]\s+como\s+(?:también\s+)?(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)adem[áa]s\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)acompa[ñn]ad[oa]s?\s+de\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)como\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:para\s+efectos\s+de|al\s+amparo\s+de|a\s+través\s+de|por\s+medio\s+de|de\s+parte\s+de|en|con|por|seg[úu]n|ante|durante|tras|mediante|desde|para)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|,\s+(?:y\s+)?(?:de|en|del|por|con|seg[úu]n|ante|durante|tras|mediante|desde|a\s+través\s+de|a)\s+(?:(?:el|la|los|las)\s+)?\w+" + _MOD_CHAIN_ES + r"|,\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r"|(?:,\s+|\s+)junto\s+(?:con|a)\s+(?:el|la|los|las)\s+\w+" + _MOD_CHAIN_ES + r")*" + r"(?:\s+(?!(?:" + _ANNOUNCE_ES + r")\b)\w+\s+(?:(?:el|la|los|las|su|sus)\s+\w+|a\s+(?:el|la|los|las)\s+\w+)\s+y)?" + r"|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:su|sus)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?(?:[\s,]+(?:(?:en|desde|con|por|ante|durante|tras|mediante|seg[úu]n|a)\s+(?:su|sus)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?|hoy|mañana))?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
@@ -573,6 +597,7 @@ def _has_ask(text, lang="en"):
     low = (text or "").lower().replace("\u2019", "'").replace("\u2018", "'")
     low = _NO_ASK_RE.sub(" ", low)
     low = _SCOPES_RE.sub(" ", low)
+    low = _SCOPES_MUESTRA_RE.sub(" ", low)
     low = _SE_SCOPE_RE.sub(" ", low)
     low = _SUBJ_SCOPE_RE.sub(" ", low)
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))

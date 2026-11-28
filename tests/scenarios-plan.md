@@ -1,6 +1,6 @@
 # ClearDay — 106-scenario test matrix (plan for tests/scenarios.py)
 
-Data-driven suite designed Nov 26, 2026. Exactly **426 scenarios: 386 unit-level** (60 original + U61–U66 guards, added Nov 26 evening on the swarm's word + U67–U69 labeled dates, added Nov 26 late on Jose Luis's direct order + U70 facts guard, added after his KEY FACTS printout)
+Data-driven suite designed Nov 26, 2026. Exactly **441 scenarios: 401 unit-level** (60 original + U61–U66 guards, added Nov 26 evening on the swarm's word + U67–U69 labeled dates, added Nov 26 late on Jose Luis's direct order + U70 facts guard, added after his KEY FACTS printout)
 (`import clearday`, no network, no model) + **40 live HTTP** (against the app
 inside the Sprite, Mailpit as the inbox).
 
