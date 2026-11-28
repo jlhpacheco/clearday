@@ -368,6 +368,15 @@ _ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} |
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
 _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 _SCOPES_ALL = tuple(p for lg in ("en", "es", "vi") for p in SCOPES[lg])
+
+def _stamp_re(phrases):
+    # Whole words only (round-19 technical): a stamp must never match
+    # inside a longer word - the English scope "a present" was found
+    # eating the Spanish verb "presenta" ("la secretaria presenta...").
+    return re.compile(r"\b(?:" + "|".join(re.escape(p) for p in sorted(phrases, key=len, reverse=True)) + r")\b")
+
+_NO_ASK_RE = _stamp_re(_NO_ASK_ALL)
+_SCOPES_RE = _stamp_re(_SCOPES_ALL)
 # The Spanish announcement verbs are stamped by a GUARDED pattern, not a
 # literal (round-17 skeptic): "se muestra / se presenta / se enseña" is an
 # announcement only while no place or time follows before the sentence ends -
@@ -377,8 +386,13 @@ _SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?![^.!?;\n]*?\b(?:
 # Named-subject descriptives (round-18 skeptic): "El museo presenta
 # una exposición" announces what a third party does - the reader is
 # asked nothing. Determiner + one noun + the verb stamps, unless a
-# reader word (tu / su) follows the verb.
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:el|la|los|las|un|una|este|esta|ese|esa)\s+\w+\s+(?:muestra|presenta|enseña)\b(?!\s+(?:tu|su)\b)")
+# reader word (tu / su) follows the verb, and never when the subject
+# noun is a reader-role noun (round-19 skeptic): bureaucratic Spanish
+# writes instructions in the third person - "El solicitante presenta
+# los documentos" is an order to the reader wearing a role name.
+_READER_ROLES = "solicitante|participante|interesado|aspirante|postulante|candidato|cliente|usuario|estudiante|empleado|miembro|pasajero|vecino"
+_ROLE_GUARD = r"(?!(?:" + _READER_ROLES + r"|se)\b)"
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:el|la|los|las|un|una|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+(?:\s+de\s+\w+)?\s+(?:muestra|presenta|enseña)\b(?!\s+(?:tu|su)\b)")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
@@ -409,7 +423,7 @@ _NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es p
                          r"(\s+ni)?(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
                          + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not|not required to|not necessary to|no obligation to|under no obligation to|not obliged to)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega\s+" + _SPAN_ES + r"no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega\s+" + _SPAN_ES + r"|favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+ni\s+" + _GOVERNED + r")*")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega\s+" + _SPAN_ES + r"no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega\s+" + _SPAN_ES + r"|favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+" + _SPAN_ES + r"ni\s+" + _GOVERNED + r")*")
 _BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_VI_RE = re.compile(r"\bkhông (?:cần(?:\s+thiết)?|nhất thiết|bắt buộc|việc gì)(\s+phải)?\s+\w+(\s+" + _SPAN_VI + r"hay\s+\w+)*")
 _DO_NOT_EN_RE = re.compile(r"\b(do not|don't|that you not)\s+\w+(\s+(or|and)\s+\w+)*")
@@ -426,10 +440,8 @@ def _has_ask(text, lang="en"):
     ask anywhere outranks a no-ask phrase anywhere; a question mark alone
     is conversation, not a duty."""
     low = (text or "").lower().replace("\u2019", "'").replace("\u2018", "'")
-    for p in _NO_ASK_ALL:
-        low = low.replace(p, " ")
-    for p in _SCOPES_ALL:
-        low = low.replace(p, " ")
+    low = _NO_ASK_RE.sub(" ", low)
+    low = _SCOPES_RE.sub(" ", low)
     low = _SE_SCOPE_RE.sub(" ", low)
     low = _SUBJ_SCOPE_RE.sub(" ", low)
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
