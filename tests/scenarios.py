@@ -502,6 +502,14 @@ def unit():
     check("U399", "duties guard: 'el museo, en atención a la muestra, presenta una exposición' asks NOTHING - the scope no longer starves the stamp of its anchor (round-30 judge)", cd._has_ask("El museo, en atención a la muestra, presenta una exposición.", "es") is False)
     check("U400", "duties guard: 'el museo, en la muestra, presenta una exposición' asks NOTHING (round-30 judge)", cd._has_ask("El museo, en la muestra, presenta una exposición.", "es") is False)
     check("U401", "duties guard: 'el titular, en atención a la muestra, presenta los documentos' still ASKS - the role twin keeps its duty (round-30 judge control)", cd._has_ask("El titular, en atención a la muestra, presenta los documentos.", "es") is True)
+    check("U402", "duties guard: 'el titular envía el pago y archiva los documentos' ASKS - the tempered segment no longer eats a duty first verb (round-31 judge)", cd._has_ask("El titular envía el pago y archiva los documentos.", "es") is True)
+    check("U403", "duties guard: 'el titular firma el contrato y guarda la copia' ASKS (round-31 judge)", cd._has_ask("El titular firma el contrato y guarda la copia.", "es") is True)
+    check("U404", "duties guard: 'el paciente entrega la tarjeta y espera en la sala' ASKS (round-31 judge)", cd._has_ask("El paciente entrega la tarjeta y espera en la sala.", "es") is True)
+    check("U405", "duties guard: 'el titular envía el pago y la directora archiva los documentos' ASKS - a new clause after the y is not the segment's cell (round-31 judge)", cd._has_ask("El titular envía el pago y la directora archiva los documentos.", "es") is True)
+    check("U406", "duties guard: 'su titular, en su portal, presenta los documentos' ASKS - the stamp no longer re-anchors on the intervener's noun (round-31 technical)", cd._has_ask("Su titular, en su portal, presenta los documentos.", "es") is True)
+    check("U407", "duties guard: 'su paciente, en su sala, presenta los documentos' ASKS (round-31 technical)", cd._has_ask("Su paciente, en su sala, presenta los documentos.", "es") is True)
+    check("U408", "duties guard: 'la galería, con la muestra gratuita, presenta una exposición' asks NOTHING - the refusal sees past gratuita (round-31 technical)", cd._has_ask("La galería, con la muestra gratuita, presenta una exposición.", "es") is False)
+    check("U409", "duties guard: 'la muestra gratuita presenta los resultados' asks NOTHING (round-31 technical)", cd._has_ask("La muestra gratuita presenta los resultados.", "es") is False)
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):
