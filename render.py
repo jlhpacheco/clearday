@@ -315,14 +315,27 @@ def render_bulk(lang="en", waiting=0, results=None, counts=None, up=True):
             all_actions += f"<div class='big'>&#9654; {esc(a)} <span style='font-size:18px;'>— {s['bulk_from']} {esc(r.get('sender',''))}</span></div>"
     if not all_actions:
         all_actions = f"<div class='big'>{s['no_actions'] if 'no_actions' in s else ''}</div>"
-    cards = ""
+    # Slim results (dyslexic-reader lens, rounds 2-5, built Nov 28): the
+    # combined must-do list above, then ONE short line per email - sender,
+    # subject, first date - with the full clear page behind a tap.
+    import re as _re
+    _MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre"
+    def _dateish(v):
+        return bool(_re.search(r"\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{2,4}|" + _MONTHS, v or ""))
+    lines = ""
     for r in results:
-        acts = "".join(f"<div class='big'>{i}. {esc(a)}</div>" for i, a in enumerate(r.get("actions", []), 1))
-        dates = _dates_html(r, s)
-        cards += f"""<div class='box blue'><span class='lbl'>&#9632; {esc(r.get('sender',''))} — {esc(r.get('subject',''))}</span><div class='big'>{esc(r.get('what',''))}</div></div>
-<div class='box amber'><span class='lbl'>&#9654; {s['do']}</span>{acts}</div>
-<div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
-<p class='big'><a href='/inbox/clear?id={esc(r.get('mid',''))}&lang={esc(lang)}'>{s['bulk_open']}</a></p>"""
+        first = ""
+        lab = r.get("dates_labeled") or []
+        dated = [it.get("value", "") for it in lab if _dateish(it.get("value", ""))]
+        if dated:
+            first = dated[0]
+        elif lab:
+            first = lab[0].get("value", "")
+        elif r.get("dates_numbers"):
+            first = r["dates_numbers"][0]
+        date_bit = f" — {esc(first)}" if first else ""
+        lines += f"""<div class='bulkline' style='padding:8px 0;border-top:1px solid #d8cf9f'><span class='big'>&#9632; {esc(r.get('sender',''))} — {esc(r.get('subject',''))}{date_bit}</span> &middot; <a href='/inbox/clear?id={esc(r.get('mid',''))}&lang={esc(lang)}'>{s['bulk_open']}</a></div>"""
+    cards = f"<div class='box plain'>{lines}</div>" if lines else ""
     skips = ""
     if counts.get("own"):
         skips += f"<div style='font-size:18px;'>{counts['own']} {s['bulk_skip_own']}</div>"
