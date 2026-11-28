@@ -9,8 +9,8 @@ import json, os, html, http.client, smtplib, urllib.request, threading
 from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
-from clearday import transform, draft_reply, connector_proof
-from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, render_connected, render_bulk, S
+from clearday import transform, draft_reply, connector_proof, heuristic_transform
+from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, render_connected, render_bulk, render_followups_page, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
 MP = "http://127.0.0.1:8025/mailpit"  # Mailpit on the same Sprite (webroot /mailpit)
@@ -173,7 +173,8 @@ class H(BaseHTTPRequestHandler):
                 r = transform(msg.get("Text") or "", sender, msg.get("Subject") or "", lang)
                 results.append({"sender": sender, "subject": msg.get("Subject") or "",
                                 "what": r.get("what", ""), "actions": r.get("actions", []),
-                                "dates_numbers": r.get("dates_numbers", []), "mid": mid})
+                                "dates_numbers": r.get("dates_numbers", []),
+                                "dates_labeled": r.get("dates_labeled", []), "mid": mid})
                 if mid in have:
                     dupe += 1
                 else:
@@ -324,7 +325,7 @@ class H(BaseHTTPRequestHandler):
                 return f"<div style='font-size:22px;padding:10px;'>&#9679; {html.escape(str(i['what']))} — {s['nudge']} {html.escape(str(i['sender']))}{btn}</div>"
             en = S("en")
             rows = "".join(row(i) for i in items) or f"<div style='font-size:22px;padding:10px;'>{en['no_followups']}</div>"
-            self._send(render_form(f"<h2 style='font-size:28px;'>{en['followups_title']}</h2><p class='big'><b>{en['demo_entries']}</b></p>{rows}"))
+            self._send(render_followups_page(rows))
         elif "sample=1" in self.path:
             q = parse_qs(urlparse(self.path).query)
             lang = (q.get("lang") or ["en"])[0]
@@ -420,7 +421,7 @@ class H(BaseHTTPRequestHandler):
                             found = True
                 except Exception:
                     pass
-            dates = transform(text, sender, subject, lang)["dates_numbers"] if text else []
+            dates = heuristic_transform(text, sender, subject, lang)["dates_numbers"] if text else []
             draft, dsrc = draft_reply(text, sender, subject, lang, dates)
             rsubject = subject if subject.lower().startswith("re:") else "Re: " + subject
             # DRAFT ONLY. Nothing is sent here - the reader sees the draft
@@ -490,6 +491,7 @@ class H(BaseHTTPRequestHandler):
             self._send_json({"what": r.get("what", ""), "actions": r.get("actions", []),
                              "facts": r.get("facts", {}), "steps": r.get("steps", []),
                              "risk": r.get("risk", ""), "dates_numbers": r.get("dates_numbers", []),
+                             "dates_labeled": r.get("dates_labeled", []),
                              "sender": r.get("sender", ""), "subject": str(data.get("subject") or ""),
                              "lang": r.get("lang", lang), "source": r.get("source", "rules"),
                              "model_name": r.get("model_name", "")})
