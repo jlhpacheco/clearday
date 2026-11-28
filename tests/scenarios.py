@@ -173,6 +173,19 @@ def unit():
     check("U78", "duties guard: formal 'tenga a bien remitir' is a real ask (round-5 skeptic)", cd._has_ask("Tenga a bien remitir el pago antes del día 5.", "es") is True)
     check("U79", "duties guard: 'no es necesario que responda' asks nothing - the subjunctive cannot slip past the lift (round-5 skeptic)", cd._has_ask("Solo para su información: la reunión cambió de sala. No es necesario que responda.", "es") is False)
     check("U80", "duties guard: a pronoun tail alone ('devolverlo') is a real ask (round-5 skeptic)", cd._has_ask("El paquete llegó hoy. Devolverlo antes del viernes, por favor.", "es") is True)
+    check("U81", "duties guard: accented glued form 'envíelos' is a real ask (round-6 skeptic)", cd._has_ask("Adjunto los dos formularios. Envíelos antes del viernes, por favor.", "es") is True)
+    check("U82", "duties guard: accented glued form 'devuélvalo' is a real ask (round-6 skeptic)", cd._has_ask("Devuélvalo a la oficina antes del lunes.", "es") is True)
+    check("U83", "duties guard: accented glued forms 'fírmelas' + 'envíelas' are real asks (round-6 skeptic)", cd._has_ask("Fírmelas y envíelas hoy.", "es") is True)
+    check("U84", "duties guard: formal English 'kindly requested to remit' is a real ask (round-6 skeptic)", cd._has_ask("You are kindly requested to remit payment of the invoice before Friday.", "en") is True)
+    import app as _app, tempfile as _tf, os as _os
+    _old_mf = _app.MEMORY_FILE
+    try:
+        _app.MEMORY_FILE = _os.path.join(_tf.mkdtemp(), "memory.json")
+        _app.save_memory([{"what": "x", "sender": "y", "lang": "en"}])
+        open(_app.MEMORY_FILE, "w").write("{ torn")
+        check("U85", "memory: a torn main file falls back to the .bak - follow-ups survive a crash (round-6 technical)", _app.load_memory() == [{"what": "x", "sender": "y", "lang": "en"}])
+    finally:
+        _app.MEMORY_FILE = _old_mf
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):
@@ -308,7 +321,7 @@ def live():
     post("/inbox/fresh", {}); time.sleep(1)
     code, bpage = post("/bulk/clear", {"lang": "en"})
     lines = bpage.split("class='bulkline'")
-    check("L21", "bulk slim: 1 email -> exactly 1 line naming Maria + subject + her first date + the tap-to-open link", code == 200 and len(lines) - 1 == 1 and "Maria Lopez" in bpage and "Board meeting moved" in bpage and "Monday, November 23" in bpage and "/inbox/clear?id=" in bpage)
+    check("L21", "bulk slim: 1 email -> exactly 1 line naming Maria + subject + her NEW meeting date WITH its label + the tap-to-open link", code == 200 and len(lines) - 1 == 1 and "Maria Lopez" in bpage and "Board meeting moved" in bpage and "New Meeting Date: Tuesday, November 24 at 5:15 PM" in bpage and "/inbox/clear?id=" in bpage)
     _m = re.search(r"/inbox/clear\?id=([A-Za-z0-9_\-]+)", bpage)
     code, opened = get("/inbox/clear?id=" + (_m.group(1) if _m else "") + "&lang=en")
     check("L22", "bulk slim: behind the tap, Maria's full clear page with her labeled dates", "EVERYTHING YOU MUST DO" in bpage and code == 200 and "Tuesday, November 24 at 5:15 PM" in opened and "Friday, November 27" in opened)
@@ -323,7 +336,7 @@ def live():
             if token in c:
                 return c
         return ""
-    check("L23", "bulk slim: 3 emails -> 3 lines, each with ONLY its own first date", len(lines) == 3 and "2026-11-30" not in line_with("11/24/2026") and "Monday, November 23" not in line_with("11/24/2026") and "11/24/2026" not in line_with("2026-11-30") and "11/24/2026" not in line_with("Monday, November 23") and "2026-11-30" not in line_with("Monday, November 23"))
+    check("L23", "bulk slim: 3 emails -> 3 lines, each with ONLY its own date (Maria's line carries her NEW date, labeled)", len(lines) == 3 and "2026-11-30" not in line_with("11/24/2026") and "Tuesday, November 24" not in line_with("11/24/2026") and "11/24/2026" not in line_with("2026-11-30") and "11/24/2026" not in line_with("Tuesday, November 24") and "2026-11-30" not in line_with("Tuesday, November 24"))
     combined = bpage.split("class='box blue'")[0]
     check("L24", "bulk: combined list aggregates actions from all 3 emails", combined.count("&#9654;") >= 3)
     check("L25", "bulk: the inbox itself is untouched (nothing deleted, nothing sent)", mp_list()["total"] == before)
