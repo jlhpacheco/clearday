@@ -291,10 +291,12 @@ NO_ASK_PHRASES = {
 # not carry - a subject, a following word, an "except when" - does NOT
 # belong in this list.
 SCOPES = {
-    "en": ("at present", "the present", "present address", "the show",
+    "en": ("at present", "the present", "this present", "all present", "a present",
+           "your present address", "the show", "show times",
            "come monday", "come tuesday", "come wednesday", "come thursday",
            "come friday", "come saturday", "come sunday",
-           "come rain or shine", "will come"),
+           "come spring", "come summer", "come fall", "come autumn", "come winter",
+           "come rain or shine"),
     "es": ("una muestra", "la muestra", "muestra gratuita"),
     "vi": (),
 }
@@ -368,10 +370,15 @@ _NO_ASK_ALL = tuple(p for lg in ("en", "es", "vi") for p in NO_ASK_PHRASES[lg])
 _SCOPES_ALL = tuple(p for lg in ("en", "es", "vi") for p in SCOPES[lg])
 # The Spanish announcement verbs are stamped by a GUARDED pattern, not a
 # literal (round-17 skeptic): "se muestra / se presenta / se enseña" is an
-# announcement only while no place or time follows within four words -
+# announcement only while no place or time follows before the sentence ends -
 # "Se presenta a la oficina mañana" is an order to appear, and the stamp
 # must not touch it.
-_SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?!\s+(?:\w+\s+){0,4}?(?:a la\b|al\b|a trabajar\b|en la puerta\b|mañana\b|a las\b|al entrar\b))")
+_SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?![^.!?;\n]*?\b(?:a la\b|al\b|a trabajar\b|ante el\b|ante la\b|en la puerta\b|en recepción\b|mañana\b|a las\b|al entrar\b))")
+# Named-subject descriptives (round-18 skeptic): "El museo presenta
+# una exposición" announces what a third party does - the reader is
+# asked nothing. Determiner + one noun + the verb stamps, unless a
+# reader word (tu / su) follows the verb.
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:el|la|los|las|un|una|este|esta|ese|esa)\s+\w+\s+(?:muestra|presenta|enseña)\b(?!\s+(?:tu|su)\b)")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
@@ -402,7 +409,7 @@ _NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es p
                          r"(\s+ni)?(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
                          + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not|not required to|not necessary to|no obligation to|under no obligation to|not obliged to)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega(?:\s+\w+){0,4}?\s+no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega(?:\s+\w+){0,4}? |favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+ni\s+" + _GOVERNED + r")*")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega\s+" + _SPAN_ES + r"no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega\s+" + _SPAN_ES + r"|favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+ni\s+" + _GOVERNED + r")*")
 _BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_VI_RE = re.compile(r"\bkhông (?:cần(?:\s+thiết)?|nhất thiết|bắt buộc|việc gì)(\s+phải)?\s+\w+(\s+" + _SPAN_VI + r"hay\s+\w+)*")
 _DO_NOT_EN_RE = re.compile(r"\b(do not|don't|that you not)\s+\w+(\s+(or|and)\s+\w+)*")
@@ -424,6 +431,7 @@ def _has_ask(text, lang="en"):
     for p in _SCOPES_ALL:
         low = low.replace(p, " ")
     low = _SE_SCOPE_RE.sub(" ", low)
+    low = _SUBJ_SCOPE_RE.sub(" ", low)
     low = _NO_NEED_EN_RE.sub(" ", _NO_NEED_RE.sub(" ", low))
     low = _NO_NEED_VI_RE.sub(" ", _BARE_NO_ES_RE.sub(" ", _NEG_ASK_ES_RE.sub(" ", low)))
     low = _NEG_ASK_VI_RE.sub(" ", _NEVER_EN_RE.sub(" ", _DO_NOT_EN_RE.sub(" ", low)))
