@@ -387,14 +387,14 @@ def _es_finite():
             # never sees them. The length floor keeps "ir" / "dar"
             # stems from minting bare syllables.
             stem = d[:-2]
-            out |= {stem + "an", stem + "en"}
+            out |= {stem + "an", stem + "en", stem + "a", stem + "e"}
         if d[-1:] in "ae":
             out.add(d + "n")
     return out | _ES_IRREGULAR
 
 _ES_IRREGULAR = {"viene", "vienen", "vendra", "vendras", "vendran",
                  "vendremos", "dira", "diras", "diran", "diremos",
-                 "dicen", "digan", "tengan", "pidan", "duermen"}
+                 "dicen", "digan", "tengan", "pidan"}
 _ES_FINITE = _es_finite()
 # Plural imperatives (the ustedes forms) carry glued pronouns too -
 # "presentenlo" (present it, all of you) - so their stems join the tail
@@ -403,7 +403,8 @@ _ES_FINITE = _es_finite()
 _ES_IMP_PL = sorted({_deacc(w)[:-2] + "en" for w in _ES_BASE
                      if " " not in w and w.endswith("ar") and len(_deacc(w)) >= 5} |
                     {_deacc(w)[:-2] + "an" for w in _ES_BASE
-                     if " " not in w and w.endswith(("er", "ir")) and len(_deacc(w)) >= 5})
+                     if " " not in w and w.endswith(("er", "ir")) and len(_deacc(w)) >= 5} |
+                    {"paguen", "entreguen", "digan", "traigan", "vengan"})
 _ES_DEACC = sorted({_deacc(w) for w in _ES_BASE} | _ES_FINITE |
                    {_deacc(w) + t for w in _ES_STEMS + _ES_IMP_PL for t in _ES_TAILS + _ES_STACKS})
 _ASK_RE_ES = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in _ES_DEACC) + r")\b")
@@ -446,7 +447,11 @@ _SE_GUARD = r"(?!se\b)"
 # stamp can never restart at a determiner inside the role's own
 # de-phrase and re-read "la cuenta" as the subject - "el titular de
 # la cuenta presenta..." asks, because the reader's party is acting.
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b(?:\s+(?:de\s+(?:el|la|los|las)|del)\s+\w+)?|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+de\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
+# Its modifier chain is prep-headed (de / en / del) on purpose: the
+# verb is never prep-headed, so the chain can repeat without ever
+# eating it - a bare optional word in that seat ate the verb in this
+# fix's first build, and U268 caught it.
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _READER_ROLES + r")\b(?:\s+(?:de|en|del)\s+(?:(?:el|la|los|las)\s+)?\w+)*|(?:(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+(?:de|del)\s+\w+(?:\s+\w+)?)?[\s,]+(?:" + _ANNOUNCE_ES + r")\b(?!\s+(?:tu|su)\b)))")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
