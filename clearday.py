@@ -390,9 +390,16 @@ _SE_SCOPE_RE = re.compile(r"\bse (muestra|presenta|enseña)\b(?![^.!?;\n]*?\b(?:
 # noun is a reader-role noun (round-19 skeptic): bureaucratic Spanish
 # writes instructions in the third person - "El solicitante presenta
 # los documentos" is an order to the reader wearing a role name.
-_READER_ROLES = "solicitante|participante|interesado|aspirante|postulante|candidato|cliente|usuario|estudiante|empleado|miembro|pasajero|vecino"
+# The subject guard answers one question - may this word serve as the
+# subject noun? Reader-role nouns fail it (they name the reader), and
+# "se" fails it in every branch: it is not a noun at all, and letting it
+# fill a slot lets the stamp eat "se presenta" duties (U196). The role
+# guard applies only under definite determiners (round-20 skeptic):
+# "un solicitante" in a news sentence is a stranger, not the reader.
+_READER_ROLES = "solicitante|participante|aspirante|postulante|estudiante|titular|contribuyente|paciente|residente|interesad[oa]|candidat[oa]|usuari[oa]|emplead[oa]|pasajer[oa]|vecin[oa]|client[ea]|miembr[oa]|beneficiari[oa]|asegurad[oa]|afiliad[oa]|inquilin[oa]|pensionad[oa]|alumn[oa]"
 _ROLE_GUARD = r"(?!(?:" + _READER_ROLES + r"|se)\b)"
-_SUBJ_SCOPE_RE = re.compile(r"\b(?:el|la|los|las|un|una|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+(?:\s+de\s+\w+)?\s+(?:muestra|presenta|enseña)\b(?!\s+(?:tu|su)\b)")
+_SE_GUARD = r"(?!se\b)"
+_SUBJ_SCOPE_RE = re.compile(r"\b(?:(?:el|la|los|las|este|esta|ese|esa)\s+(?:" + _ROLE_GUARD + r"\w+\s+)?" + _ROLE_GUARD + r"\w+|(?:un|una)\s+(?:" + _SE_GUARD + r"\w+\s+)?" + _SE_GUARD + r"\w+)(?:\s+de\s+\w+)?[\s,]+(?:muestra|presenta|enseña)\b(?!\s+(?:tu|su)\b)")
 
 # A chain link may cross a short object ("el documento firmado por el
 # notario o..."), but it may not step over a word that is itself an ask
@@ -421,10 +428,10 @@ _PRON = "lo|la|los|las|le|les|me|te|se|nos"
 _GOVERNED = "(?:(" + _PRON + r")\s+)?\w+(?:" + _PRON + ")?"
 _NO_NEED_RE = re.compile(r"\b(no hace falta|no es necesario|no necesitas|no es preciso|no tienes|no hay que|no hay necesidad de|no es obligatorio|no es menester|no resulta necesario|no se precisa|no procede|no se requiere|no corresponde|no cabe)"
                          r"(\s+ni)?(\s+que)?(?:[\s,]*(?:por ahora|por el momento))?[\s,]*"
-                         + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
+                         + _GOVERNED + r"([\s,]+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_EN_RE = re.compile(r"\b(no need to|there is no need to|don't need to|do not need to|don't have to|do not have to|needn't|need not|not required to|not necessary to|no obligation to|under no obligation to|not obliged to)\s+\w+(\s+(or|and)\s+\w+)*")
-_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega\s+" + _SPAN_ES + r"no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega\s+" + _SPAN_ES + r"|favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"(\s+" + _SPAN_ES + r"ni\s+" + _GOVERNED + r")*")
-_BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"(\s+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
+_NEG_ASK_ES_RE = re.compile(r"\b(favor de no|se ruega\s+" + _SPAN_ES + r"no|se solicita no|sin necesidad de|por favor,?\s+no|(?:te |le |les )?pedimos que no|se pide que no|(?:te |le |les )?ruego que no|rogamos no|rogamos que no|absténgase de|(?:se ruega\s+" + _SPAN_ES + r"|favor de )?abstenerse de|evite|evita|eviten|sírvase no|se le pide no|no se moleste en)\s+" + _GOVERNED + r"([\s,]+" + _SPAN_ES + r"ni\s+" + _GOVERNED + r")*")
+_BARE_NO_ES_RE = re.compile(r"\bno\s+" + _GOVERNED + r"([\s,]+" + _SPAN_ES + r"(?:ni|o)\s+(?:que\s+)?" + _GOVERNED + ")*")
 _NO_NEED_VI_RE = re.compile(r"\bkhông (?:cần(?:\s+thiết)?|nhất thiết|bắt buộc|việc gì)(\s+phải)?\s+\w+(\s+" + _SPAN_VI + r"hay\s+\w+)*")
 _DO_NOT_EN_RE = re.compile(r"\b(do not|don't|that you not)\s+\w+(\s+(or|and)\s+\w+)*")
 _NEVER_EN_RE = re.compile(r"\bnever\s+\w+(\s+(or|and)\s+\w+)*")
@@ -439,6 +446,7 @@ def _has_ask(text, lang="en"):
     'add' inside 'addition' and 'sign' inside 'signed' stay silent. A real
     ask anywhere outranks a no-ask phrase anywhere; a question mark alone
     is conversation, not a duty."""
+    text = unicodedata.normalize("NFC", text)  # round-20 technical: decomposed (NFD) Vietnamese must match the literal phrases
     low = (text or "").lower().replace("\u2019", "'").replace("\u2018", "'")
     low = _NO_ASK_RE.sub(" ", low)
     low = _SCOPES_RE.sub(" ", low)
