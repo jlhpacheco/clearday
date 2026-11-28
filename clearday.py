@@ -782,6 +782,65 @@ def draft_reply(text, sender="", subject="", lang="en", dates=None):
     dates_line = REPLY_DATES_LINE[lang].format(dates=", ".join(dates[:3])) if dates else ""
     return REPLY_TEMPLATES[lang].format(name=name, dates_line=dates_line), "rules"
 
+_VI_CHARS = set("ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ")
+_ES_MARKERS = {"el", "la", "los", "las", "de", "que", "en", "un", "una", "por", "para", "con", "gracias", "hola", "su", "es", "del", "al", "reunión", "correo"}
+_EN_MARKERS = {"the", "and", "you", "please", "thank", "thanks", "meeting", "is", "are", "to", "of", "for", "your", "this", "will", "on", "at"}
+
+def detect_lang(text):
+    """Which of the three languages was this email WRITTEN in? Rules only:
+    Vietnamese diacritics are decisive; otherwise Spanish and English
+    marker words vote. Defaults to English - the demo's home language.
+    Used for one thing: offering to send the reply back in the language
+    the email arrived in (Jose Luis's round trip, Nov 28)."""
+    low = (text or "").lower()
+    if sum(1 for ch in low if ch in _VI_CHARS) >= 2:
+        return "vi"
+    words = set(re.findall(r"[a-záéíóúñü]+", low))
+    es = len(words & _ES_MARKERS)
+    en = len(words & _EN_MARKERS)
+    if es >= 3 and es > en:
+        return "es"
+    return "en"
+
+_TIME_RE = re.compile(r"\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\b")
+
+def _dates_survive(src, out):
+    """Every date and time written in src appears word-for-word in out.
+    The founding promise, enforced on translations: a date the model
+    reformats is a wrong date waiting to be sent, so it fails the check."""
+    wanted = [m.group(0) for m in DATE_RE.finditer(src or "")] + _TIME_RE.findall(src or "")
+    return all(w in (out or "") for w in wanted)
+
+def translate_reply(body, to_lang):
+    """Translate the reader's approved reply back into the language the
+    email arrived in. The prompt is the one the model test passed with
+    (Nov 28): ONLY the translation out, and every date, time, and name
+    copied exactly. The dates are then CHECKED, not trusted - if any
+    date or time from the draft is missing word-for-word, the
+    translation is refused and nothing is sent. Returns (text, ok)."""
+    base = os.environ.get("CLEARDAY_MODEL_URL")
+    if not base or to_lang not in LANG_NAMES or not (body or "").strip():
+        return None, False
+    prompt = (
+        f"Translate the following reply into {LANG_NAMES[to_lang]}. "
+        "Output ONLY the translation, with no commentary, no quotes, and no explanation. "
+        "Copy every date, time, and name exactly as written - never reformat them.\n\n" + body
+    )
+    req_body = json.dumps({"model": os.environ.get("CLEARDAY_MODEL", "unused"),
+                           "temperature": 0.2, "max_tokens": 2500,
+                           "messages": [{"role": "user", "content": prompt}]}).encode()
+    req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=req_body,
+                                 headers={"Content-Type": "application/json", "Authorization": "Bearer unused",
+                                          "User-Agent": "ClearDay/1.0"})
+    try:
+        data = json.loads(_call_model(req))
+        out = (data["choices"][0]["message"]["content"] or "").strip()
+    except Exception:
+        return None, False
+    if len(out) < 10 or not _dates_survive(body, out):
+        return None, False
+    return out[:2000], True
+
 def transform(text, sender="", subject="", lang="en"):
     """Hybrid: rules first (they own dates + numbers, copied exactly).
     If a model is configured, its cleaned words overlay the rule output.

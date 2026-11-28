@@ -9,7 +9,7 @@ import json, os, html, http.client, smtplib, urllib.request, threading
 from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
-from clearday import transform, draft_reply, connector_proof, heuristic_transform
+from clearday import transform, draft_reply, connector_proof, heuristic_transform, detect_lang, translate_reply
 from render import render_page, render_form, render_inbox, render_reply_sent, render_reply_draft, render_why, render_connected, render_bulk, render_followups_page, S
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
@@ -400,6 +400,25 @@ class H(BaseHTTPRequestHandler):
         if self.path.startswith("/mailpit"):
             self._proxy_mailpit()
             return
+        if self.path.startswith("/reply/translate"):
+            length = int(self.headers.get("Content-Length") or 0)
+            f = parse_qs(self.rfile.read(length).decode(errors="replace")) if length else {}
+            def one0(k):
+                return (f.get(k) or [""])[0]
+            lang = one0("lang") or "en"
+            if lang not in ("en", "es", "vi"):
+                lang = "en"
+            mid, to, rsubject, body, orig = one0("mid"), one0("to"), one0("subject"), one0("body"), one0("orig")
+            if orig not in ("en", "es", "vi"):
+                orig = ""
+            translated, ok = translate_reply(body, orig) if orig else (None, False)
+            if ok:
+                self._send(render_reply_draft(to, rsubject, translated, lang, mid=mid, addr=to, orig=orig,
+                                              mode="translated", source="model", orig_body=body,
+                                              model_name=os.environ.get("CLEARDAY_MODEL", "")))
+            else:
+                self._send(render_reply_draft(to, rsubject, body, lang, mid=mid, addr=to, orig=orig, mode="failed"))
+            return
         if self.path.startswith("/reply") and not self.path.startswith("/reply/send"):
             length = int(self.headers.get("Content-Length") or 0)
             if length > 60000:
@@ -468,11 +487,12 @@ class H(BaseHTTPRequestHandler):
             dates = heuristic_transform(text, sender, subject, lang)["dates_numbers"] if text else []
             draft, dsrc = draft_reply(text, sender, subject, lang, dates)
             rsubject = subject if subject.lower().startswith("re:") else "Re: " + subject
+            orig = detect_lang(text) if text else lang
             # DRAFT ONLY. Nothing is sent here - the reader sees the draft
             # first and sends it with a separate, explicit press (/reply/send).
             self._send(render_reply_draft(addr or sender, rsubject, draft, lang, mid=mid, addr=addr,
                                           source=dsrc, model_name=os.environ.get("CLEARDAY_MODEL", "") if dsrc == "model" else "",
-                                          found=found))
+                                          found=found, orig=orig))
             return
         if self.path.startswith("/reply/send"):
             length = int(self.headers.get("Content-Length") or 0)
@@ -483,18 +503,34 @@ class H(BaseHTTPRequestHandler):
             if lang not in ("en", "es", "vi"):
                 lang = "en"
             mid, to, rsubject, draft = one2("mid"), one2("to"), one2("subject"), one2("body")
+            orig = one2("orig")
+            if orig not in ("en", "es", "vi"):
+                orig = ""
+            already = one2("translated") == "1"
+            notranslate = one2("notranslate") == "1"
             sent = False
+            send_body, wrote, did_trans = draft, "", False
             if mid and to and draft:
                 try:
                     # Gate: the To must be the real sender of that inbox message.
                     msg = mp_api("/api/v1/message/" + mid)
                     real_addr = (msg.get("From") or {}).get("Address") or ""
                     if real_addr and real_addr == to:
+                        if orig and orig != lang and not already and not notranslate:
+                            # The round trip: his words go back in the language
+                            # the email arrived in. If the translation does not
+                            # come back clean, NOTHING is sent - he chooses.
+                            t_body, t_ok = translate_reply(draft, orig)
+                            if not t_ok:
+                                self._send(render_reply_draft(to, rsubject, draft, lang, mid=mid, addr=to,
+                                                              orig=orig, mode="failed"))
+                                return
+                            send_body, wrote, did_trans = t_body, draft, True
                         m = EmailMessage()
                         m["From"] = "Jose Luis (ClearDay) <you@clearday.demo>"
                         m["To"] = to
                         m["Subject"] = rsubject
-                        m.set_content(draft)
+                        m.set_content(send_body)
                         s2 = smtplib.SMTP("127.0.0.1", 1025, timeout=10)
                         s2.send_message(m)
                         s2.quit()
@@ -503,7 +539,13 @@ class H(BaseHTTPRequestHandler):
                         save_memory(items)
                 except Exception:
                     sent = False
-            self._send(render_reply_sent(to, rsubject, draft, sent, lang))
+            if not did_trans and already and orig and orig != lang and sent:
+                wrote_field = one2("wrote")
+                if wrote_field:
+                    wrote, did_trans = wrote_field, True
+            self._send(render_reply_sent(to, rsubject, send_body, sent, lang,
+                                         wrote=wrote if did_trans else "",
+                                         sent_lang=orig if did_trans else ""))
             return
         if self.path.startswith("/api/clear"):
             if not api_rate_ok():

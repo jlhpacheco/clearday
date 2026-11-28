@@ -270,6 +270,32 @@ async function main() {
   check("Reply: sent page shows subject 'Re: Board meeting moved'", rp.includes("Re: Board meeting moved"));
   check("Reply: sent page has the BIG 'See both emails in Mailpit' button", rp.includes("See both emails in Mailpit") && (await page.locator("a.bigbtn[href='/mailpit/']").isVisible()), "");
 
+  // ---------- Step 2e: the ROUND TRIP walk (added Nov 28) ----------
+  // Jose Luis's novel loop: Maria's email is in English; he reads it on the
+  // Spanish clear page, drafts in Spanish, sees the English version first,
+  // sends - Maria receives English, dates word-for-word.
+  await page.goto(BASE + "/inbox?lang=es", { waitUntil: "load", timeout: 90_000 });
+  await page.click("text=Hazlo claro");
+  await page.waitForSelector("text=QUÉ ES ESTO", { timeout: 60_000 });
+  await page.click('form[action="/reply"] button[type="submit"]');
+  await page.waitForSelector("text=TU BORRADOR DE RESPUESTA", { timeout: 150_000 });
+  const des = await bodyText(page);
+  check("Round trip: Spanish draft page says the email came in English and the reply goes back in English", des.includes("Este correo llegó en inglés") && des.includes("volverá en inglés"));
+  check("Round trip: a 'see the English version first' button is offered", des.includes("Ver primero la versión en inglés"));
+  await page.fill('textarea[name="body"]', "Hola Maria: Confirmo que la reunión es el Tuesday November 24 a las 5:15 PM y confirmo mi asistencia. Gracias, Maria. Jose Luis");
+  await page.click("text=Ver primero la versión en inglés");
+  await page.waitForSelector("text=TU RESPUESTA, LISTA PARA ENVIAR", { timeout: 150_000 }).catch(() => null);
+  const tes = await bodyText(page);
+  if (tes.includes("TU RESPUESTA, LISTA PARA ENVIAR")) {
+    check("Round trip: the English version keeps the dates word-for-word", tes.includes("Tuesday November 24") && tes.includes("5:15 PM"));
+    await page.click("text=Enviar esta respuesta");
+    await page.waitForSelector("text=RESPUESTA ENVIADA", { timeout: 150_000 });
+    const ses = await bodyText(page);
+    check("Round trip: sent page shows BOTH versions - what he wrote and what was sent in English", ses.includes("Tú escribiste") && ses.includes("Enviado en inglés"));
+  } else {
+    check("Round trip: translation did not come back - the page says so honestly and offers Send in my language", tes.includes("La traducción no llegó") && tes.includes("Enviar en mi idioma"));
+  }
+
   // ---------- Step 2d: inbox in Spanish + the seed button (added Nov 24) ----------
   await page.goto(BASE + "/inbox?lang=es", { waitUntil: "load", timeout: 90_000 });
   const ibes = await bodyText(page);

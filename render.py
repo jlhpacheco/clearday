@@ -47,7 +47,7 @@ STRINGS = {
            "reply_draft_only": "You read the draft first. Nothing is sent until you press Send.",
            "reply_sent_title": "REPLY SENT", "raw_close": "Close - back to my story", "see_line": "See for yourself", "fresh_step1": "A brand-new email from Maria is on its way to you...", "fresh_step2": "It just landed in the raw inbox. This is what I see:", "story_btn": "Read my story", "see_email": "See the email", "raw_close_plain": "Close", "story_close": "Close", "raw_dialog_title": "The raw inbox - this is what I see", "found_addr": "Good news - we found the real address in the raw inbox:", "sent_see": "Your email was sent and landed in Mailpit, right next to Maria's email to you. Go see both:", "sent_both": "See both emails in Mailpit", "sent_mailpit": "Open Mailpit", "reply_draft_title": "YOUR REPLY DRAFT",
            "reply_to": "To", "reply_subject": "Subject", "followups_reply": "Reply",
-           "send_btn": "Send this reply", "dont_send": "No - don't send it", "draft_check": "Below, please read the proposed draft reply email generated for you. Please feel free to revise it and afterwards, approve it by pressing the dark blue Send this reply button. Thank you.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "We have the words, but no real email address to send to - the raw inbox is empty. Go to the clear page and press Mailpit: a fresh email from Maria lands there. Then draft the reply again, and the Send button will be here.",
+           "send_btn": "Send this reply", "dont_send": "No - don't send it", "lang_en": "English", "lang_es": "Spanish", "lang_vi": "Vietnamese", "came_in": "This email came in {name}.", "goes_back": "When you press Send, your reply goes back in {name}.", "see_version": "See the {name} version first", "trans_title": "YOUR REPLY, READY TO SEND", "trans_note": "These are your words in {name}. This is exactly what will be sent.", "you_wrote": "You wrote", "sent_in": "Sent in {name}", "trans_failed": "The translation did not come back. Nothing was sent.", "send_mine": "Send in my language instead", "draft_check": "Below, please read the proposed draft reply email generated for you. Please feel free to revise it and afterwards, approve it by pressing the dark blue Send this reply button. Thank you.", "edit_hint": "You can change any words in the box. Then press Send.", "no_send_here": "NO SEND BUTTON ON THIS PAGE", "no_send_why": "We have the words, but no real email address to send to - the raw inbox is empty. Go to the clear page and press Mailpit: a fresh email from Maria lands there. Then draft the reply again, and the Send button will be here.",
            "inbox_line": "This is a real inbox (Mailpit). Real email arrives here and sits in small, dense text - hard to read. That is the problem ClearDay fixes.",
            "inbox_clear": "Make it clear", "inbox_empty": "The inbox is empty.",
            "inbox_seed": "Send the sample email into this inbox",
@@ -102,7 +102,7 @@ STRINGS = {
            "reply_draft_only": "Primero lees el borrador. Nada se envía hasta que presiones Enviar.",
            "reply_sent_title": "RESPUESTA ENVIADA", "raw_close": "Cerrar - volver a mi historia", "see_line": "Míralo por ti mismo", "fresh_step1": "Un correo nuevo de Maria viene en camino para ti...", "fresh_step2": "Acaba de llegar a la bandeja cruda. Esto es lo que yo veo:", "story_btn": "Lee mi historia", "see_email": "Ver el correo", "raw_close_plain": "Cerrar", "story_close": "Cerrar", "raw_dialog_title": "La bandeja sin procesar - esto es lo que yo veo", "found_addr": "Buenas noticias: encontramos la dirección real en la bandeja cruda:", "sent_see": "Tu correo fue enviado y llegó a Mailpit, junto al correo de Maria para ti. Ve a ver ambos:", "sent_both": "Ver ambos correos en Mailpit", "sent_mailpit": "Abrir Mailpit", "reply_draft_title": "TU BORRADOR DE RESPUESTA",
            "reply_to": "Para", "reply_subject": "Asunto", "followups_reply": "Responder",
-           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "draft_check": "Abajo, por favor lee el correo del borrador de respuesta propuesto, generado para ti. Siéntete libre de revisarlo y, después, apruébalo al presionar el botón azul oscuro Enviar esta respuesta. Gracias.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Tenemos las palabras, pero no una dirección real a la que enviar: la bandeja cruda está vacía. Ve a la página clara y presiona Mailpit: un correo nuevo de Maria llega allí. Luego redacta la respuesta otra vez y el botón Enviar estará aquí.",
+           "send_btn": "Enviar esta respuesta", "dont_send": "No - no lo envíes", "lang_en": "inglés", "lang_es": "español", "lang_vi": "vietnamita", "came_in": "Este correo llegó en {name}.", "goes_back": "Cuando presiones Enviar, tu respuesta volverá en {name}.", "see_version": "Ver primero la versión en {name}", "trans_title": "TU RESPUESTA, LISTA PARA ENVIAR", "trans_note": "Estas son tus palabras en {name}. Esto es exactamente lo que se enviará.", "you_wrote": "Tú escribiste", "sent_in": "Enviado en {name}", "trans_failed": "La traducción no llegó. No se envió nada.", "send_mine": "Enviar en mi idioma", "draft_check": "Abajo, por favor lee el correo del borrador de respuesta propuesto, generado para ti. Siéntete libre de revisarlo y, después, apruébalo al presionar el botón azul oscuro Enviar esta respuesta. Gracias.", "edit_hint": "Puedes cambiar las palabras en el cuadro. Luego presiona Enviar.", "no_send_here": "EN ESTA PÁGINA NO HAY BOTÓN DE ENVIAR", "no_send_why": "Tenemos las palabras, pero no una dirección real a la que enviar: la bandeja cruda está vacía. Ve a la página clara y presiona Mailpit: un correo nuevo de Maria llega allí. Luego redacta la respuesta otra vez y el botón Enviar estará aquí.",
            "inbox_line": "Esta es una bandeja real (Mailpit). El correo real llega aquí y queda en texto pequeño y denso - difícil de leer. Ese es el problema que ClearDay resuelve.",
            "inbox_clear": "Hazlo claro", "inbox_empty": "La bandeja está vacía.",
            "inbox_seed": "Enviar el correo de ejemplo a esta bandeja",
@@ -157,7 +157,7 @@ STRINGS = {
            "reply_draft_only": "Bạn đọc bản nháp trước. Không có gì được gửi cho đến khi bạn nhấn Gửi.",
            "reply_sent_title": "ĐÃ GỬI TRẢ LỜI", "raw_close": "Đóng - quay lại câu chuyện của tôi", "see_line": "Hãy tự xem", "fresh_step1": "Một email hoàn toàn mới từ Maria đang trên đường đến với bạn...", "fresh_step2": "Nó vừa đến hộp thư thô. Đây là những gì tôi thấy:", "story_btn": "Đọc câu chuyện của tôi", "see_email": "Xem thư", "raw_close_plain": "Đóng", "story_close": "Đóng", "raw_dialog_title": "Hộp thư thô - đây là những gì tôi thấy", "found_addr": "Tin vui - chúng tôi tìm thấy địa chỉ thật trong hộp thư thô:", "sent_see": "Thư của bạn đã được gửi và đã đến Mailpit, ngay cạnh email của Maria gửi bạn. Hãy xem cả hai:", "sent_both": "Xem cả hai email trong Mailpit", "sent_mailpit": "Mở Mailpit", "reply_draft_title": "BẢN NHÁP TRẢ LỜI CỦA BẠN",
            "reply_to": "Đến", "reply_subject": "Tiêu đề", "followups_reply": "Trả lời",
-           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "draft_check": "Bên dưới, xin hãy đọc email nháp trả lời được đề xuất, tạo ra cho bạn. Xin cứ tự nhiên sửa lại nó và sau đó, duyệt nó bằng cách nhấn nút Gửi thư trả lời này màu xanh đậm. Cảm ơn bạn.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Chúng ta có nội dung, nhưng không có địa chỉ email thật để gửi: hộp thư thô đang trống. Hãy vào trang rõ ràng và nhấn Mailpit: một email mới từ Maria sẽ đến đó. Rồi soạn thư trả lời lại, nút Gửi sẽ ở đây.",
+           "send_btn": "Gửi thư trả lời này", "dont_send": "Không - đừng gửi", "lang_en": "tiếng Anh", "lang_es": "tiếng Tây Ban Nha", "lang_vi": "tiếng Việt", "came_in": "Email này đến bằng {name}.", "goes_back": "Khi bạn nhấn Gửi, thư trả lời của bạn sẽ quay lại bằng {name}.", "see_version": "Xem bản {name} trước", "trans_title": "THƯ TRẢ LỜI CỦA BẠN, SẴN SÀNG GỬI", "trans_note": "Đây là lời của bạn bằng {name}. Đây là chính xác những gì sẽ được gửi.", "you_wrote": "Bạn đã viết", "sent_in": "Đã gửi bằng {name}", "trans_failed": "Bản dịch không đến được. Chưa gửi gì cả.", "send_mine": "Gửi bằng ngôn ngữ của tôi", "draft_check": "Bên dưới, xin hãy đọc email nháp trả lời được đề xuất, tạo ra cho bạn. Xin cứ tự nhiên sửa lại nó và sau đó, duyệt nó bằng cách nhấn nút Gửi thư trả lời này màu xanh đậm. Cảm ơn bạn.", "edit_hint": "Bạn có thể sửa bất kỳ từ nào trong khung. Rồi nhấn Gửi.", "no_send_here": "TRANG NÀY KHÔNG CÓ NÚT GỬI", "no_send_why": "Chúng ta có nội dung, nhưng không có địa chỉ email thật để gửi: hộp thư thô đang trống. Hãy vào trang rõ ràng và nhấn Mailpit: một email mới từ Maria sẽ đến đó. Rồi soạn thư trả lời lại, nút Gửi sẽ ở đây.",
            "inbox_line": "Đây là hộp thư thật (Mailpit). Email thật đến đây và nằm trong chữ nhỏ, dày - khó đọc. Đó là vấn đề ClearDay giải quyết.",
            "inbox_clear": "Làm rõ", "inbox_empty": "Hộp thư trống.",
            "inbox_seed": "Gửi email mẫu vào hộp thư này",
@@ -503,7 +503,7 @@ def render_page(p):
 </div></div>
 <p class='big'><a href='/'>{s['another']}</a></p>""", s)
 
-def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", source="rules", model_name="", found=False):
+def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", source="rules", model_name="", found=False, orig="", mode="", orig_body=""):
     s = S(lang)
     if source == "model":
         short_model = esc(str(model_name or "").split("/")[-1])
@@ -511,15 +511,30 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
     else:
         pill = f"<span class='pill'>&#9670; {s['ai_rules']}</span>"
     box = "width:100%;font-size:21px;line-height:1.7;font-family:Arial,Verdana,sans-serif;padding:12px;margin-top:12px;box-sizing:border-box;"
+    title = s['trans_title'] if mode == "translated" else s['reply_draft_title']
     send_form = ""
     if addr:
         found_box = f"<div class='box plain' style='border-color:#0E7A5F;background:#EFFAF4'><div class='big'><b>&#10003; {s['found_addr']} {esc(addr)}</b></div></div>" if found else ""
-        send_form = found_box + f"""<form method='post' action='/reply/send'>
+        lname = s['lang_' + orig] if orig in ("en", "es", "vi") else ""
+        orig_box, extra_btns = "", ""
+        if mode == "translated":
+            orig_box = f"<div class='box plain'><div class='big'><b>{s['trans_note'].format(name=esc(lname))}</b></div></div>"
+        elif mode == "failed":
+            orig_box = f"<div class='box amber'><div class='big'><b>{s['trans_failed']}</b></div></div>"
+            extra_btns = f"<p style='margin-top:12px'><button type='submit' name='notranslate' value='1' class='bigbtn'>{s['send_mine']}</button></p>"
+        elif orig and orig != lang:
+            orig_box = f"<div class='box plain'><div class='big'><b>{s['came_in'].format(name=esc(lname))} {s['goes_back'].format(name=esc(lname))}</b></div></div>"
+            extra_btns = f"<p style='margin-top:12px'><button type='submit' formaction='/reply/translate' class='bigbtn'>{s['see_version'].format(name=esc(lname))}</button></p>"
+        send_form = found_box + orig_box + f"""<form method='post' action='/reply/send'>
 <input type='hidden' name='mid' value='{esc(mid)}'>
 <input type='hidden' name='to' value='{esc(addr)}'>
 <input type='hidden' name='subject' value='{esc(subject)}'>
 <input type='hidden' name='lang' value='{esc(lang)}'>
+{"<input type='hidden' name='orig' value='" + esc(orig) + "'>" if orig else ""}
+{"<input type='hidden' name='translated' value='1'>" if mode == "translated" else ""}
+{"<input type='hidden' name='wrote' value='" + esc(orig_body) + "'>" if mode == "translated" and orig_body else ""}
 <p style='margin-top:12px'><button type='submit' class='bigbtn sendbtn'>{s['send_btn']}</button></p>
+{extra_btns}
 <p class='big'><a href='/'>{s['dont_send']}</a></p>
 <div>{s['edit_hint']}</div>
 <textarea name='body' rows='9' style='{box}'>{esc(body_text)}</textarea></form>"""
@@ -529,21 +544,28 @@ def render_reply_draft(to, subject, body_text, lang="en", mid="", addr="", sourc
 <textarea rows='9' style='{box}'>{esc(body_text)}</textarea>
 <p class='big'>{s['reply_draft_only']}</p>"""
     return _shell(f"""{_bar(pill, s)}
-<h1>{s['reply_draft_title']}</h1>
+<h1>{title}</h1>
 <p class='big'><b>{s['draft_check']}</b></p>
 <div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
 <div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
 {send_form}</div>
 <p class='big'><a href='/'>{s['another']}</a></p>""", s)
 
-def render_reply_sent(to, subject, body_text, sent, lang="en"):
+def render_reply_sent(to, subject, body_text, sent, lang="en", wrote="", sent_lang=""):
     s = S(lang)
     title = s['reply_sent_title'] if sent else s['reply_draft_title']
+    if wrote and sent_lang in ("en", "es", "vi"):
+        bodies = (f"<div class='box plain'><span class='lbl'>{s['you_wrote']}</span>"
+                  f"<div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:8px;'>{esc(wrote)}</div></div>"
+                  f"<div class='box plain'><span class='lbl'>{s['sent_in'].format(name=esc(s['lang_' + sent_lang]))}</span>"
+                  f"<div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:8px;'>{esc(body_text)}</div></div>")
+    else:
+        bodies = f"<div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div>"
     return _shell(f"""{_bar(f"<span class='pill'>&#9679; {s['brand_pill']}</span>", s)}
 <h1>{title}</h1>
 <div class='card'><div class='big'><b>{s['reply_to']}:</b> {esc(to)}</div>
 <div class='big'><b>{s['reply_subject']}:</b> {esc(subject)}</div>
-<div style='white-space:pre-wrap;font-size:21px;line-height:1.7;margin-top:12px;'>{esc(body_text)}</div></div>
+{bodies}</div>
 {("<p class='big'><b>" + s['sent_see'] + "</b></p><p><a class='btn bigbtn' href='/mailpit/' target='_blank' rel='noopener'>" + s['sent_both'] + "</a></p>") if sent else ""}
 <p class='big'><a href='/'>{s['back_clear']}</a></p>""", s)
 

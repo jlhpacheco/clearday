@@ -510,6 +510,16 @@ def unit():
     check("U407", "duties guard: 'su paciente, en su sala, presenta los documentos' ASKS (round-31 technical)", cd._has_ask("Su paciente, en su sala, presenta los documentos.", "es") is True)
     check("U408", "duties guard: 'la galería, con la muestra gratuita, presenta una exposición' asks NOTHING - the refusal sees past gratuita (round-31 technical)", cd._has_ask("La galería, con la muestra gratuita, presenta una exposición.", "es") is False)
     check("U409", "duties guard: 'la muestra gratuita presenta los resultados' asks NOTHING (round-31 technical)", cd._has_ask("La muestra gratuita presenta los resultados.", "es") is False)
+    check("U410", "round trip: the Maria sample email is detected as written in English", cd.detect_lang("Hello Maria, the board meeting moved to Tuesday November 24 at 5:15 PM in Room 4. Please reply to confirm and bring your photo ID. Thank you.") == "en")
+    check("U411", "round trip: a Spanish email is detected as Spanish", cd.detect_lang("Hola Jose Luis, la reunión se mueve para el martes. Por favor confirma tu asistencia y trae los documentos a la oficina. Gracias por tu ayuda con la cuenta.") == "es")
+    check("U412", "round trip: a Vietnamese email is detected as Vietnamese", cd.detect_lang("Xin chào, cuộc họp sẽ chuyển sang thứ Ba. Vui lòng xác nhận và mang theo giấy tờ. Cảm ơn bạn rất nhiều.") == "vi")
+    check("U413", "round trip: a translation that copies the date and time word-for-word passes the dates check", cd._dates_survive("Confirmo que la reunión es el Tuesday November 24 a las 5:15 PM.", "I confirm the meeting is on Tuesday November 24 at 5:15 PM.") is True)
+    check("U414", "round trip: a translation that REFORMATS the date fails the dates check - it would never be sent", cd._dates_survive("Confirmo que la reunión es el Tuesday November 24 a las 5:15 PM.", "I confirm the meeting is on November 24 at 5:15 in the evening.") is False)
+    _saved_url = cd.os.environ.pop("CLEARDAY_MODEL_URL", None)
+    _no_model = cd.translate_reply("Hola, confirmo mi asistencia.", "en")
+    if _saved_url:
+        cd.os.environ["CLEARDAY_MODEL_URL"] = _saved_url
+    check("U415", "round trip: with no model configured, translate_reply refuses cleanly instead of guessing", _no_model == (None, False))
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):

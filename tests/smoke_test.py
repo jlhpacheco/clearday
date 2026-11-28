@@ -241,6 +241,20 @@ check("REPLY SENT: page bottom is ONE door - 'Back to the clear page', no Follow
 before = mp_list()["total"]
 code, rp3 = post("/reply", {"sender": "Maria Lopez", "subject": "Board meeting moved", "text": sample, "lang": "en"})
 check("REPLY (paste path): real address found in the Inbox - Send button IS here, banner says where it came from, nothing sent yet", code == 200 and "YOUR REPLY DRAFT" in rp3 and "/reply/send" in rp3 and "found the real address in the raw inbox" in rp3 and "maria.lopez@example.org" in rp3 and mp_list()["total"] == before)
+# ---- reply ROUND TRIP: read in Spanish, the reply flies back in English ----
+before = mp_list()["total"]
+code, rt = post("/reply", {"mid": _mid, "lang": "es"})
+check("ROUND TRIP: Spanish draft page for an English email says it came in English, the reply goes back in English, and a see-first button is offered", code == 200 and "Este correo llegó en inglés" in rt and "volverá en inglés" in rt and "formaction='/reply/translate'" in rt and "name='orig' value='en'" in rt and mp_list()["total"] == before)
+code, rt2 = post("/reply/translate", {"mid": _mid, "to": "maria.lopez@example.org", "subject": "Re: Board meeting moved", "body": "Hola Maria: Confirmo que la reunión es el Tuesday November 24 a las 5:15 PM y confirmo mi asistencia. Gracias, Maria. Jose Luis", "lang": "es", "orig": "en"})
+check("ROUND TRIP: see-first page shows the reply in English with the dates word-for-word - or the honest failure page; never a silent send", code == 200 and (("Tuesday November 24" in rt2 and "5:15 PM" in rt2 and "name='translated' value='1'" in rt2) or "La traducción no llegó" in rt2) and mp_list()["total"] == before)
+code, rt3 = post("/reply/send", {"mid": _mid, "to": "maria.lopez@example.org", "subject": "Re: Board meeting moved", "body": "Hola Maria: Confirmo que la reunión es el Tuesday November 24 a las 5:15 PM y confirmo mi asistencia. Gracias, Maria. Jose Luis", "lang": "es", "orig": "en"})
+_msgs_rt = mp_list()
+if _msgs_rt["total"] == before + 1:
+    _rt_text = json.loads(mp_get(MP + "/api/v1/message/" + _msgs_rt["messages"][0]["ID"]))["Text"]
+    rt3_ok = "Tuesday November 24" in _rt_text and "5:15 PM" in _rt_text and "Tú escribiste" in rt3 and "Enviado en inglés" in rt3
+else:
+    rt3_ok = _msgs_rt["total"] == before and "La traducción no llegó" in rt3
+check("ROUND TRIP SEND: Send on a Spanish draft delivers the reply in English with exact dates and the sent page shows both versions - or nothing sends and the page says why", code == 200 and rt3_ok)
 code, rp3b = post("/reply", {"sender": "Nobody Here", "subject": "Unmatched subject zzz", "text": "Hello, a short note with no inbox match.", "lang": "en"})
 check("REPLY (paste path, NO inbox match): no Send button, big notice says why", code == 200 and "/reply/send" not in rp3b and "NO SEND BUTTON ON THIS PAGE" in rp3b and mp_list()["total"] == before)
 code, homenav = get("/")
