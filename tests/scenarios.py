@@ -186,6 +186,15 @@ def unit():
         check("U85", "memory: a torn main file falls back to the .bak - follow-ups survive a crash (round-6 technical)", _app.load_memory() == [{"what": "x", "sender": "y", "lang": "en"}])
     finally:
         _app.MEMORY_FILE = _old_mf
+    check("U86", "duties guard: two-pronoun stack 'envíemelos' (send them to me) is a real ask (round-7 skeptic)", cd._has_ask("Le adjunto las dos copias. Envíemelos firmados antes del viernes, por favor.", "es") is True)
+    check("U87", "duties guard: se-stacks 'fírmeselo' + 'entrégueselo' are real asks (round-7 skeptic)", cd._has_ask("Fírmeselo y entrégueselo al mensajero hoy.", "es") is True)
+    check("U88", "duties guard: gerund glue 'enviándolos' is a real ask (round-7 skeptic)", cd._has_ask("Podrá cerrar el expediente enviándolos antes del viernes.", "es") is True)
+    check("U89", "duties guard: formal Vietnamese 'chuyển khoản' (transfer the money) is a real ask (round-7 skeptic)", cd._has_ask("Xin vui lòng chuyển khoản số tiền còn lại trước thứ Sáu.", "vi") is True)
+    check("U90", "duties guard: formal Vietnamese 'nộp' (submit) is a real ask (round-7 skeptic)", cd._has_ask("Xin vui lòng nộp lại hồ sơ trước ngày 5.", "vi") is True)
+    check("U91", "duties guard: passive 'must be signed and returned by Friday' is a real ask (round-7 skeptic)", cd._has_ask("Please be advised that the enclosed form must be signed and returned by Friday.", "en") is True)
+    check("U92", "duties guard: 'no hace falta firmarlo ni enviarlo' asks NOTHING - the no-need phrase governs its glued verbs (round-7 skeptic)", cd._has_ask("No hace falta firmarlo ni enviarlo.", "es") is False)
+    check("U93", "duties guard: 'no hace falta firmar' (plain infinitive) asks nothing either (round-7 skeptic family)", cd._has_ask("No hace falta firmar el documento.", "es") is False)
+    check("U94", "duties guard: a no-need clause does NOT erase a real duty later in the email (guard stays honest)", cd._has_ask("No hace falta que traigas nada, solo firma aquí.", "es") is True)
 
 # ============================ LIVE (40) ============================
 def _open(req, timeout=120, tries=3):
