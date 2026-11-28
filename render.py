@@ -478,9 +478,9 @@ def render_page(p):
 <div class='box plain'><span class='lbl'>&#9670; {s['dates']}</span>{dates}</div>
 <p class='big' style='margin-top:16px;'>{s['steps']}: {steps}</p>
 <p style='font-size:18px;'>{s['source']}: {esc(p.get('sender',''))} &middot; {esc(p.get('source_date',''))}</p>
+{risk}
 </div><div>
 {reply_card}
-{risk}
 </div></div>
 <p class='big'><a href='/'>{s['another']}</a> &middot; <a href='/followups'>{s['followups']}</a></p>""", s)
 
